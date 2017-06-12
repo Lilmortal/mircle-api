@@ -15,14 +15,17 @@ ext {
     springDataJpaVersion = '1.4.7.RELEASE'
     springCloudAwsVersion = '1.2.1.RELEASE'
     postgresqlDriverVersion = '42.1.1'
+    swaggerVersion = '2.7.0'
+    jacksonVersion = '2.8.8'
 }
 
 dependencies {
     compile "org.springframework.boot:spring-boot-starter-web"
     //compile "org.springframework.boot:spring-boot-starter-jdbc:${springJdbcVersion}"
     compile "org.springframework.boot:spring-boot-starter-data-jpa:${springDataJpaVersion}"
-    //compile "org.springframework.cloud:spring-cloud-starter-aws:${springCloudAwsVersion}"
-    //compile "org.springframework.cloud:spring-cloud-starter-aws-jdbc:${springCloudAwsVersion}"
+    compile "io.springfox:springfox-swagger-ui:${swaggerVersion}"
+    compile "io.springfox:springfox-swagger2:${swaggerVersion}"
+    compile "com.fasterxml.jackson.datatype:jackson-datatype-jsr310:${jacksonVersion}"
     compile "org.postgresql:postgresql:${postgresqlDriverVersion}"
     testCompile 'junit:junit:4.12'
 }

@@ -1,5 +1,8 @@
 package nz.co.mircle.profile.model;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+import io.swagger.annotations.ApiModelProperty;
+
 import javax.persistence.*;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -11,36 +14,47 @@ import java.time.LocalDateTime;
 public class Profile {
     @Id
     @GeneratedValue(strategy= GenerationType.AUTO)
+    @ApiModelProperty(notes = "The database generated profile ID")
     private Long id;
 
     @Column(name = "username")
+    @ApiModelProperty(notes = "Profile username")
     private String username;
 
     @Column(name = "password")
+    @ApiModelProperty(notes = "Profile password")
     private String password;
 
     @Column(name = "first_name")
+    @ApiModelProperty(notes = "Profile first name")
     private String firstName;
 
     @Column(name = "last_name")
+    @ApiModelProperty(notes = "Profile last name")
     private String lastName;
 
     @Column(name = "gender")
+    @ApiModelProperty(notes = "Profile gender")
     private String gender;
 
     @Column(name = "email_address")
+    @ApiModelProperty(notes = "Profile email address")
     private String emailAddress;
 
     @Column(name = "phone_number")
+    @ApiModelProperty(notes = "Profile phone number")
     private String phoneNumber;
 
     @Column(name = "birth_date")
+    @ApiModelProperty(notes = "Profile birth date")
     private LocalDate birthDate;
 
     @Column(name = "created_on")
+    @ApiModelProperty(notes = "Profile creation date")
     private LocalDateTime createdOn;
 
     @Column(name = "last_logged_in")
+    @ApiModelProperty(notes = "Profile last logged in")
     private LocalDateTime lastLoggedIn;
 
     // no args constructor needed for hibernate

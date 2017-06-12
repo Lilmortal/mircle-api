@@ -1,5 +1,9 @@
 package nz.co.mircle.profile.controller;
 
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiResponse;
+import io.swagger.annotations.ApiResponses;
 import nz.co.mircle.AbstractController;
 import nz.co.mircle.profile.model.Profile;
 import nz.co.mircle.profile.services.ProfileService;
@@ -17,6 +21,7 @@ import java.time.LocalDateTime;
  */
 
 @RestController
+@Api(value="profile", description="Profile API")
 @RequestMapping("/profile")
 public class ProfileController extends AbstractController {
     private final Logger LOG = LoggerFactory.getLogger(ProfileController.class);
@@ -28,8 +33,17 @@ public class ProfileController extends AbstractController {
         this.profileService = profileService;
     }
 
-    @RequestMapping("/create")
-    public ResponseEntity createProfile(Profile profile) {
+    @ApiOperation(value = "Create a profile",response = Iterable.class)
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Successfully created a profile"),
+            @ApiResponse(code = 201, message = "Successfully created a profile"),
+            @ApiResponse(code = 401, message = "You are not authorized to create a profile."),
+            @ApiResponse(code = 403, message = "Accessing the resource you were trying to reach is forbidden"),
+            @ApiResponse(code = 404, message = "The resource you were trying to reach is not found")
+    }
+    )
+    @RequestMapping(value = "/create", method = RequestMethod.POST)
+    public ResponseEntity createProfile(@RequestBody Profile profile) {
         LOG.info("Creating a new profile...");
 
         try {

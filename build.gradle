@@ -1,0 +1,33 @@
+plugins {
+    id 'java'
+    id 'eclipse'
+    id 'idea'
+    //id 'checkstyle'
+    id 'org.springframework.boot' version '1.5.2.RELEASE'
+}
+
+repositories {
+    jcenter()
+}
+
+ext {
+    springJdbcVersion = '3.1.0.RELEASE'
+    springDataJpaVersion = '1.4.7.RELEASE'
+    springCloudAwsVersion = '1.2.1.RELEASE'
+    postgresqlDriverVersion = '42.1.1'
+}
+
+dependencies {
+    compile "org.springframework.boot:spring-boot-starter-web"
+    //compile "org.springframework.boot:spring-boot-starter-jdbc:${springJdbcVersion}"
+    compile "org.springframework.boot:spring-boot-starter-data-jpa:${springDataJpaVersion}"
+    //compile "org.springframework.cloud:spring-cloud-starter-aws:${springCloudAwsVersion}"
+    //compile "org.springframework.cloud:spring-cloud-starter-aws-jdbc:${springCloudAwsVersion}"
+    compile "org.postgresql:postgresql:${postgresqlDriverVersion}"
+    testCompile 'junit:junit:4.12'
+}
+
+springBoot {
+    mainClass = "nz.co.mircle.MircleApplication"
+}
+

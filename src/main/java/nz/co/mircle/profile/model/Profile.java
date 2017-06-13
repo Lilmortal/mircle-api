@@ -1,11 +1,14 @@
 package nz.co.mircle.profile.model;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.annotations.ApiModelProperty;
+import nz.co.mircle.friend.model.Friend;
 
 import javax.persistence.*;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.Set;
 
 /**
  * Created by Jack on 01/06/2017.
@@ -17,40 +20,43 @@ public class Profile {
     @ApiModelProperty(notes = "The database generated profile ID")
     private Long id;
 
+    @OneToMany(mappedBy = "profile", cascade = CascadeType.ALL)
+    private Set<Friend> friends;
+
     @Column(name = "username")
-    @ApiModelProperty(notes = "Profile username")
+    @ApiModelProperty(notes = "Profile username", required = true)
     private String username;
 
     @Column(name = "password")
-    @ApiModelProperty(notes = "Profile password")
+    @ApiModelProperty(notes = "Profile password", required = true)
     private String password;
 
     @Column(name = "first_name")
-    @ApiModelProperty(notes = "Profile first name")
+    @ApiModelProperty(notes = "Profile first name", required = true)
     private String firstName;
 
     @Column(name = "last_name")
-    @ApiModelProperty(notes = "Profile last name")
+    @ApiModelProperty(notes = "Profile last name", required = true)
     private String lastName;
 
     @Column(name = "gender")
-    @ApiModelProperty(notes = "Profile gender")
+    @ApiModelProperty(notes = "Profile gender", required = true)
     private String gender;
 
     @Column(name = "email_address")
-    @ApiModelProperty(notes = "Profile email address")
+    @ApiModelProperty(notes = "Profile email address", required = true)
     private String emailAddress;
 
     @Column(name = "phone_number")
-    @ApiModelProperty(notes = "Profile phone number")
+    @ApiModelProperty(notes = "Profile phone number", required = true)
     private String phoneNumber;
 
     @Column(name = "birth_date")
-    @ApiModelProperty(notes = "Profile birth date")
+    @ApiModelProperty(notes = "Profile birth date", required = true)
     private LocalDate birthDate;
 
     @Column(name = "created_on")
-    @ApiModelProperty(notes = "Profile creation date")
+    @ApiModelProperty(notes = "Profile creation date", required = true)
     private LocalDateTime createdOn;
 
     @Column(name = "last_logged_in")
@@ -67,6 +73,14 @@ public class Profile {
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public Set<Friend> getFriends() {
+        return friends;
+    }
+
+    public void setFriends(Set<Friend> friends) {
+        this.friends = friends;
     }
 
     public String getUsername() {
@@ -143,23 +157,6 @@ public class Profile {
 
     public LocalDateTime getLastLoggedIn() {
         return lastLoggedIn;
-    }
-
-    @Override
-    public String toString() {
-        return "Profile{" +
-                "id=" + id +
-                ", username='" + username + '\'' +
-                ", password='" + password + '\'' +
-                ", firstName='" + firstName + '\'' +
-                ", lastName='" + lastName + '\'' +
-                ", gender='" + gender + '\'' +
-                ", emailAddress='" + emailAddress + '\'' +
-                ", phoneNumber='" + phoneNumber + '\'' +
-                ", birthDate=" + birthDate +
-                ", createdOn=" + createdOn +
-                ", lastLoggedIn=" + lastLoggedIn +
-                '}';
     }
 
     public void setLastLoggedIn(LocalDateTime lastLoggedIn) {

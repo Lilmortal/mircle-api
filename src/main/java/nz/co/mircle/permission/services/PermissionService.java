@@ -1,6 +1,7 @@
 package nz.co.mircle.permission.services;
 
 import nz.co.mircle.permission.model.Permission;
+import nz.co.mircle.socialMedia.model.SocialMedia;
 import org.springframework.stereotype.Service;
 
 /**
@@ -8,4 +9,6 @@ import org.springframework.stereotype.Service;
  */
 public interface PermissionService {
     void createPermission(Permission permission);
+
+    Permission findPermission(SocialMedia socialMedia, boolean hasAccess);
 }

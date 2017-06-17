@@ -10,7 +10,7 @@ import java.io.Serializable;
  * Created by jacktan on 17/06/17.
  */
 @Embeddable
-public class RelationshipId implements Serializable {
+public class RelationshipPK implements Serializable {
     @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private User user;
@@ -19,10 +19,10 @@ public class RelationshipId implements Serializable {
     @JoinColumn(name = "friend_id")
     private User friend;
 
-    public RelationshipId() {
+    public RelationshipPK() {
     }
 
-    public RelationshipId(User user, User friend) {
+    public RelationshipPK(User user, User friend) {
         this.user = user;
         this.friend = friend;
     }

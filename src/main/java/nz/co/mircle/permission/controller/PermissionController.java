@@ -3,6 +3,8 @@ package nz.co.mircle.permission.controller;
 import nz.co.mircle.AbstractController;
 import nz.co.mircle.permission.model.Permission;
 import nz.co.mircle.permission.services.PermissionService;
+import nz.co.mircle.socialMedia.model.SocialMedia;
+import nz.co.mircle.socialMedia.services.SocialMediaService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,16 +22,21 @@ public class PermissionController extends AbstractController {
 
     private PermissionService permissionService;
 
+    private SocialMediaService socialMediaService;
+
     @Autowired
-    public PermissionController(PermissionService permissionService) {
+    public PermissionController(PermissionService permissionService, SocialMediaService socialMediaService) {
         this.permissionService = permissionService;
+        this.socialMediaService = socialMediaService;
     }
 
     @RequestMapping(name = "/create", method = RequestMethod.POST)
-    public ResponseEntity createPermission(@RequestBody Permission permission) {
+    public ResponseEntity createPermission(@RequestParam("socialMediaId") Long socialMediaId, @RequestParam("hasAccess") boolean hasAccess) {
         LOG.info("Creating a permission...");
 
         try {
+            SocialMedia socialMedia = socialMediaService.findSocialMedia(socialMediaId);
+            Permission permission = new Permission(socialMedia, hasAccess);
             permissionService.createPermission(permission);
             LOG.info("Permission created.");
         } catch (Exception e) {

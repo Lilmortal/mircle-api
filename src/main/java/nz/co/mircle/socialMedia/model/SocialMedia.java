@@ -1,5 +1,7 @@
 package nz.co.mircle.socialMedia.model;
 
+import nz.co.mircle.permission.model.Permission;
+
 import javax.persistence.*;
 
 /**

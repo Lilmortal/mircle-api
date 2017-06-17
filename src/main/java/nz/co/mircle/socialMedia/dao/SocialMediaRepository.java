@@ -7,4 +7,7 @@ import org.springframework.data.repository.CrudRepository;
  * Created by jacktan on 17/06/17.
  */
 public interface SocialMediaRepository extends CrudRepository<SocialMedia, Long> {
+    SocialMedia findById(Long id);
+
+    SocialMedia findByTitle(String title);
 }

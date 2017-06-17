@@ -7,4 +7,8 @@ import nz.co.mircle.socialMedia.model.SocialMedia;
  */
 public interface SocialMediaService {
     void createSocialMedia(SocialMedia socialMedia);
+
+    SocialMedia findSocialMedia(Long id);
+
+    SocialMedia findSocialMedia(String title);
 }

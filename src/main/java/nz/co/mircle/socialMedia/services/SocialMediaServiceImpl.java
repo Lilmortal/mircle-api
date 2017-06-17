@@ -21,4 +21,14 @@ public class SocialMediaServiceImpl implements SocialMediaService {
     public void createSocialMedia(SocialMedia socialMedia) {
         socialMediaRepository.save(socialMedia);
     }
+
+    @Override
+    public SocialMedia findSocialMedia(Long id) {
+        return socialMediaRepository.findById(id);
+    }
+
+    @Override
+    public SocialMedia findSocialMedia(String title) {
+        return socialMediaRepository.findByTitle(title);
+    }
 }

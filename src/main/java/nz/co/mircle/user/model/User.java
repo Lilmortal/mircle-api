@@ -1,0 +1,157 @@
+package nz.co.mircle.user.model;
+
+import io.swagger.annotations.ApiModelProperty;
+import nz.co.mircle.relationship.model.Relationship;
+
+import javax.persistence.*;
+import javax.validation.constraints.NotNull;
+import java.io.Serializable;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Set;
+
+/**
+ * Created by Jack on 01/06/2017.
+ */
+@Entity
+@Table(name = "usr")
+public class User {
+    @Id
+    @GeneratedValue(strategy= GenerationType.AUTO)
+    @ApiModelProperty(notes = "The database generated profile ID")
+    private Long id;
+
+    @Column(name = "username")
+    @NotNull
+    @ApiModelProperty(notes = "User username", required = true)
+    private String username;
+
+    @Column(name = "password")
+    @ApiModelProperty(notes = "User password", required = true)
+    private String password;
+
+    @Column(name = "first_name")
+    @ApiModelProperty(notes = "User first name", required = true)
+    private String firstName;
+
+    @Column(name = "last_name")
+    @ApiModelProperty(notes = "User last name", required = true)
+    private String lastName;
+
+    @Column(name = "gender")
+    @ApiModelProperty(notes = "User gender", required = true)
+    private String gender;
+
+    @Column(name = "email_address")
+    @ApiModelProperty(notes = "User email address", required = true)
+    private String emailAddress;
+
+    @Column(name = "phone_number")
+    @ApiModelProperty(notes = "User phone number", required = true)
+    private String phoneNumber;
+
+    @Column(name = "birth_date")
+    @ApiModelProperty(notes = "User birth date", required = true)
+    private LocalDate birthDate;
+
+    @Column(name = "created_on")
+    @ApiModelProperty(notes = "User creation date", required = true)
+    private LocalDateTime createdOn;
+
+    @Column(name = "last_logged_in")
+    @ApiModelProperty(notes = "User last logged in")
+    private LocalDateTime lastLoggedIn;
+
+    // no args constructor needed for hibernate
+    public User() {
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    public String getFirstName() {
+        return firstName;
+    }
+
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
+    }
+
+    public String getLastName() {
+        return lastName;
+    }
+
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
+    }
+
+    public String getGender() {
+        return gender;
+    }
+
+    public void setGender(String gender) {
+        this.gender = gender;
+    }
+
+    public String getEmailAddress() {
+        return emailAddress;
+    }
+
+    public void setEmailAddress(String emailAddress) {
+        this.emailAddress = emailAddress;
+    }
+
+    public String getPhoneNumber() {
+        return phoneNumber;
+    }
+
+    public void setPhoneNumber(String phoneNumber) {
+        this.phoneNumber = phoneNumber;
+    }
+
+    public LocalDate getBirthDate() {
+        return birthDate;
+    }
+
+    public void setBirthDate(LocalDate birthDate) {
+        this.birthDate = birthDate;
+    }
+
+    public LocalDateTime getCreatedOn() {
+        return createdOn;
+    }
+
+    public void setCreatedOn(LocalDateTime createdOn) {
+        this.createdOn = createdOn;
+    }
+
+    public LocalDateTime getLastLoggedIn() {
+        return lastLoggedIn;
+    }
+
+    public void setLastLoggedIn(LocalDateTime lastLoggedIn) {
+        this.lastLoggedIn = lastLoggedIn;
+    }
+}

@@ -6,7 +6,7 @@ import javax.persistence.*;
 import java.util.List;
 
 /**
- * Created by jacktan on 17/06/17.
+ * Permission entity.
  */
 @Entity
 @Table(name = "permission")
@@ -22,6 +22,7 @@ public class Permission {
     @Column(name = "has_access")
     private boolean hasAccess;
 
+    // empty no arg constructor needed for hibernate
     public Permission() {
     }
 

@@ -12,7 +12,7 @@ import java.util.List;
 import java.util.Set;
 
 /**
- * Created by Jack on 01/06/2017.
+ * User entity.
  */
 @Entity
 @Table(name = "usr")

@@ -13,7 +13,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 /**
- * Created by jacktan on 17/06/17.
+ * Here are a lists of permissions API.
  */
 @RestController
 @RequestMapping("/permission")
@@ -40,7 +40,7 @@ public class PermissionController extends AbstractController {
             permissionService.createPermission(permission);
             LOG.info("Permission created.");
         } catch (Exception e) {
-            LOG.error("Permission failed");
+            LOG.error("Permission failed to be created.");
             return new ResponseEntity(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
 

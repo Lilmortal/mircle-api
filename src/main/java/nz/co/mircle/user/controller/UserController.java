@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.*;
 import java.time.LocalDateTime;
 
 /**
- * Created by Jack on 01/06/2017.
+ * Here are a lists of user API.
  */
 
 @RestController

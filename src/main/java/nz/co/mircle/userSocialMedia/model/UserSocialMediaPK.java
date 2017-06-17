@@ -7,7 +7,7 @@ import javax.persistence.*;
 import java.io.Serializable;
 
 /**
- * Created by jacktan on 17/06/17.
+ * User social media primary keys.
  */
 @Embeddable
 public class UserSocialMediaPK implements Serializable {

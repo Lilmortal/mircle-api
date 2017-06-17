@@ -5,7 +5,7 @@ import nz.co.mircle.socialMedia.model.SocialMedia;
 import org.springframework.stereotype.Service;
 
 /**
- * Created by jacktan on 17/06/17.
+ * Lists of services that can be used to call the permission repository.
  */
 public interface PermissionService {
     void createPermission(Permission permission);

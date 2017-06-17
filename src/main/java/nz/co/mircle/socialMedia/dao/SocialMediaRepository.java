@@ -4,7 +4,7 @@ import nz.co.mircle.socialMedia.model.SocialMedia;
 import org.springframework.data.repository.CrudRepository;
 
 /**
- * Created by jacktan on 17/06/17.
+ * CRUD operations on the social media table.
  */
 public interface SocialMediaRepository extends CrudRepository<SocialMedia, Long> {
     SocialMedia findById(Long id);

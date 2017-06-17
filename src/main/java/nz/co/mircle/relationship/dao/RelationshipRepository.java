@@ -4,7 +4,7 @@ import nz.co.mircle.relationship.model.Relationship;
 import org.springframework.data.repository.CrudRepository;
 
 /**
- * Created by Jack on 13/06/2017.
+ * CRUD operations on the permission table.
  */
 public interface RelationshipRepository extends CrudRepository<Relationship, Long> {
 }

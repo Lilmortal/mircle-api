@@ -4,7 +4,7 @@ import nz.co.mircle.relationship.model.Relationship;
 import nz.co.mircle.user.model.User;
 
 /**
- * Created by Jack on 13/06/2017.
+ * Lists of services that can be used to call the relationship repository.
  */
 public interface RelationshipService {
     void createRelationship(Relationship relationship);

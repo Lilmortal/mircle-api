@@ -7,7 +7,7 @@ import javax.persistence.*;
 import java.io.Serializable;
 
 /**
- * Created by jacktan on 17/06/17.
+ * Relationship primary keys.
  */
 @Embeddable
 public class RelationshipPK implements Serializable {

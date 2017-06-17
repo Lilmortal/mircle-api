@@ -7,7 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 /**
- * Created by jacktan on 17/06/17.
+ * List of permission services implementation that are used to call the repository.
  */
 @Service
 public class PermissionServiceImpl implements PermissionService {

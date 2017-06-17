@@ -9,7 +9,7 @@ import javax.persistence.Entity;
 import javax.persistence.Table;
 
 /**
- * Created by jacktan on 17/06/17.
+ * User social media entity.
  */
 @Entity
 @Table(name = "user_social_media")

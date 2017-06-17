@@ -4,7 +4,7 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 /**
- * Created by Jack on 01/06/2017.
+ * This application is used to create the Mircle CRUD API endpoints.
  */
 
 @SpringBootApplication

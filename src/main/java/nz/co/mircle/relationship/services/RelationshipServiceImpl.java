@@ -7,7 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 /**
- * Created by Jack on 13/06/2017.
+ * List of relationship services implementation that are used to call the repository.
  */
 @Service
 public class RelationshipServiceImpl implements RelationshipService {

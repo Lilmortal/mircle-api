@@ -21,7 +21,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 /**
- * Created by Jack on 13/06/2017.
+ * Here are a lists of relationship API.
  */
 @RestController
 @Api(value="friend", description="Relationship API")

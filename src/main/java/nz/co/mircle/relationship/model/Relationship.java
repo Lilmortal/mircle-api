@@ -7,7 +7,7 @@ import javax.persistence.*;
 import java.io.Serializable;
 
 /**
- * Created by Jack on 13/06/2017.
+ * Relationship entity.
  */
 @Entity
 @Table(name = "relationship")

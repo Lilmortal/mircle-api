@@ -5,7 +5,7 @@ import nz.co.mircle.permission.model.Permission;
 import javax.persistence.*;
 
 /**
- * Created by jacktan on 17/06/17.
+ * Social media entity.
  */
 @Entity
 @Table(name = "social_media")

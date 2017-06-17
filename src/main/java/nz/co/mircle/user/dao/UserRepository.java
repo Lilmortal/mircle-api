@@ -5,7 +5,7 @@ import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 
 /**
- * Created by Jack on 01/06/2017.
+ * CRUD operations on the user table.
  */
 @Repository
 public interface UserRepository extends CrudRepository<User, Long> {

@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
- * Created by jacktan on 17/06/17.
+ * Here are a lists of user social media API.
  */
 @RestController
 @RequestMapping("/social/media/user")

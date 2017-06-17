@@ -5,7 +5,7 @@ import nz.co.mircle.socialMedia.model.SocialMedia;
 import org.springframework.data.repository.CrudRepository;
 
 /**
- * Created by jacktan on 17/06/17.
+ * CRUD operations on the permission table.
  */
 public interface PermissionRepository extends CrudRepository<Permission, Long> {
     Permission findBySocialMediaAndHasAccess(SocialMedia socialMedia, boolean hasAccess);

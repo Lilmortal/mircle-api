@@ -10,5 +10,5 @@ public interface SocialMediaService {
 
     SocialMedia findSocialMedia(Long id);
 
-    SocialMedia findSocialMedia(String title);
+    SocialMedia findSocialMedia(String name);
 }

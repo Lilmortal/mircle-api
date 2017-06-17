@@ -1,9 +1,11 @@
 package nz.co.mircle.relationship.model;
 
+import io.swagger.annotations.ApiModelProperty;
 import nz.co.mircle.permission.model.Permission;
 import nz.co.mircle.user.model.User;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 
 /**
@@ -17,6 +19,8 @@ public class Relationship implements Serializable {
 
     @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name = "permission_id")
+    @NotNull
+    @ApiModelProperty(notes = "The permission the friend has to be able to see the users social media")
     private Permission permission;
 
     // Needs no arg constructor for hibernate

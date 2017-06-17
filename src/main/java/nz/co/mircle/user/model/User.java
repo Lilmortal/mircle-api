@@ -1,15 +1,11 @@
 package nz.co.mircle.user.model;
 
 import io.swagger.annotations.ApiModelProperty;
-import nz.co.mircle.relationship.model.Relationship;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
-import java.io.Serializable;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Set;
 
 /**
  * User entity.
@@ -24,42 +20,51 @@ public class User {
 
     @Column(name = "username")
     @NotNull
-    @ApiModelProperty(notes = "User username", required = true)
+    @ApiModelProperty(notes = "User username")
     private String username;
 
     @Column(name = "password")
-    @ApiModelProperty(notes = "User password", required = true)
+    @NotNull
+    @ApiModelProperty(notes = "User password")
     private String password;
 
     @Column(name = "first_name")
-    @ApiModelProperty(notes = "User first name", required = true)
+    @NotNull
+    @ApiModelProperty(notes = "User first name")
     private String firstName;
 
     @Column(name = "last_name")
-    @ApiModelProperty(notes = "User last name", required = true)
+    @NotNull
+    @ApiModelProperty(notes = "User last name")
     private String lastName;
 
     @Column(name = "gender")
-    @ApiModelProperty(notes = "User gender", required = true)
+    @NotNull
+    @ApiModelProperty(notes = "User gender")
     private String gender;
 
     @Column(name = "email_address")
-    @ApiModelProperty(notes = "User email address", required = true)
+    @NotNull
+    @ApiModelProperty(notes = "User email address")
     private String emailAddress;
 
     @Column(name = "phone_number")
-    @ApiModelProperty(notes = "User phone number", required = true)
+    @NotNull
+    @ApiModelProperty(notes = "User phone number")
     private String phoneNumber;
 
     @Column(name = "birth_date")
-    @ApiModelProperty(notes = "User birth date", required = true)
+    @NotNull
+    @ApiModelProperty(notes = "User birth date")
     private LocalDate birthDate;
 
     @Column(name = "created_on")
-    @ApiModelProperty(notes = "User creation date", required = true)
+    @NotNull
+    @ApiModelProperty(notes = "User creation date")
     private LocalDateTime createdOn;
 
     @Column(name = "last_logged_in")
+    @NotNull
     @ApiModelProperty(notes = "User last logged in")
     private LocalDateTime lastLoggedIn;
 

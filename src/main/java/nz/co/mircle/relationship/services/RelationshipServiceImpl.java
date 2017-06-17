@@ -2,7 +2,6 @@ package nz.co.mircle.relationship.services;
 
 import nz.co.mircle.relationship.dao.RelationshipRepository;
 import nz.co.mircle.relationship.model.Relationship;
-import nz.co.mircle.user.model.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

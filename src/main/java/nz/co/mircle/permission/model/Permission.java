@@ -1,9 +1,10 @@
 package nz.co.mircle.permission.model;
 
+import io.swagger.annotations.ApiModelProperty;
 import nz.co.mircle.socialMedia.model.SocialMedia;
 
 import javax.persistence.*;
-import java.util.List;
+import javax.validation.constraints.NotNull;
 
 /**
  * Permission entity.
@@ -17,9 +18,13 @@ public class Permission {
 
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "social_media_id")
+    @NotNull
+    @ApiModelProperty(notes = "Social media")
     private SocialMedia socialMedia;
 
     @Column(name = "has_access")
+    @NotNull
+    @ApiModelProperty(notes = "Determines whether the friend has access to this social media or not")
     private boolean hasAccess;
 
     // empty no arg constructor needed for hibernate

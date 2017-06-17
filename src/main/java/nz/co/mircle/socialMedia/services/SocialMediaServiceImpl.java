@@ -28,7 +28,7 @@ public class SocialMediaServiceImpl implements SocialMediaService {
     }
 
     @Override
-    public SocialMedia findSocialMedia(String title) {
-        return socialMediaRepository.findByTitle(title);
+    public SocialMedia findSocialMedia(String name) {
+        return socialMediaRepository.findByName(name);
     }
 }

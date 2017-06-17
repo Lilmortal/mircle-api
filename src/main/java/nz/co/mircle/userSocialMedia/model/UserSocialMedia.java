@@ -1,5 +1,6 @@
 package nz.co.mircle.userSocialMedia.model;
 
+import io.swagger.annotations.ApiModelProperty;
 import nz.co.mircle.socialMedia.model.SocialMedia;
 import nz.co.mircle.user.model.User;
 
@@ -7,6 +8,7 @@ import javax.persistence.Column;
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
 import javax.persistence.Table;
+import javax.validation.constraints.NotNull;
 
 /**
  * User social media entity.
@@ -18,6 +20,7 @@ public class UserSocialMedia {
     private UserSocialMediaPK id;
 
     @Column(name = "url")
+    @ApiModelProperty(notes = "User social media URL")
     private String url;
 
     public UserSocialMedia() {

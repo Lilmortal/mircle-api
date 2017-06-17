@@ -1,5 +1,9 @@
 package nz.co.mircle.socialMedia.controller;
 
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiResponse;
+import io.swagger.annotations.ApiResponses;
 import nz.co.mircle.AbstractController;
 import nz.co.mircle.socialMedia.model.SocialMedia;
 import nz.co.mircle.socialMedia.services.SocialMediaService;
@@ -18,6 +22,7 @@ import org.springframework.web.bind.annotation.RestController;
  * Here are a lists of social media API.
  */
 @RestController
+@Api(value="social media", description="Social Media API")
 @RequestMapping("/social/media")
 public class SocialMediaController extends AbstractController {
     private final Logger LOG = LoggerFactory.getLogger(SocialMediaController.class);
@@ -29,7 +34,16 @@ public class SocialMediaController extends AbstractController {
         this.socialMediaService = socialMediaService;
     }
 
-    @RequestMapping(name = "/create", method = RequestMethod.POST)
+    @ApiOperation(value = "Create a social media",response = Iterable.class)
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Successfully created a social media"),
+            @ApiResponse(code = 201, message = "Successfully created a social media"),
+            @ApiResponse(code = 401, message = "You are not authorized to create a social media."),
+            @ApiResponse(code = 403, message = "Accessing the resource you were trying to reach is forbidden"),
+            @ApiResponse(code = 404, message = "The resource you were trying to reach is not found")
+    }
+    )
+    @RequestMapping(value = "/create", method = RequestMethod.POST)
     public ResponseEntity createSocialMedia(@RequestBody SocialMedia socialMedia) {
         LOG.info("Create a social media...");
 

@@ -18,14 +18,17 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 /**
  * Here are a lists of relationship API.
  */
 @RestController
-@Api(value="friend", description="Relationship API")
-@RequestMapping("/friend")
+@Api(value="relationship", description="Relationship API")
+@RequestMapping("/relationship")
 public class RelationshipController extends AbstractController {
     private final Logger LOG = LoggerFactory.getLogger(RelationshipController.class);
 
@@ -54,15 +57,14 @@ public class RelationshipController extends AbstractController {
             @ApiResponse(code = 404, message = "The resource you were trying to reach is not found")
     }
     )
-
-    @RequestMapping(value = "/add", method = RequestMethod.POST)
-    public ResponseEntity createRelationship(@RequestParam("userId") String userId, @RequestParam("friendId") String friendId, @RequestParam("socialMediaTitle") String socialMediaTitle, @RequestParam("hasAccess") boolean hasAccess) {
+    @RequestMapping(value = "/create", method = RequestMethod.POST)
+    public ResponseEntity createRelationship(@RequestParam("userId") Long userId, @RequestParam("friendId") Long friendId, @RequestParam("socialMediaName") String socialMediaName, @RequestParam("hasAccess") boolean hasAccess) {
         LOG.info("Creating a new relationship...");
 
         try {
-            User user = userService.findUser(Long.parseLong(userId));
-            User friend = userService.findUser(Long.parseLong(friendId));
-            SocialMedia socialMedia = socialMediaService.findSocialMedia(socialMediaTitle);
+            User user = userService.findUser(userId);
+            User friend = userService.findUser(friendId);
+            SocialMedia socialMedia = socialMediaService.findSocialMedia(socialMediaName);
             Permission permission = permissionService.findPermission(socialMedia, hasAccess);
 
             Relationship relationship = new Relationship(user, friend, permission);

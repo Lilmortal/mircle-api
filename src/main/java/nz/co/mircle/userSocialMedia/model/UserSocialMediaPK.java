@@ -1,9 +1,11 @@
 package nz.co.mircle.userSocialMedia.model;
 
+import io.swagger.annotations.ApiModelProperty;
 import nz.co.mircle.socialMedia.model.SocialMedia;
 import nz.co.mircle.user.model.User;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 
 /**
@@ -13,10 +15,14 @@ import java.io.Serializable;
 public class UserSocialMediaPK implements Serializable {
     @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
+    @NotNull
+    @ApiModelProperty(notes = "The current user")
     private User user;
 
     @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name = "social_media_id")
+    @NotNull
+    @ApiModelProperty(notes = "User social media")
     private SocialMedia socialMedia;
 
     public UserSocialMediaPK() {

@@ -4,6 +4,7 @@ import io.swagger.annotations.ApiModelProperty;
 import nz.co.mircle.user.model.User;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 
 /**
@@ -13,10 +14,14 @@ import java.io.Serializable;
 public class RelationshipPK implements Serializable {
     @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
+    @NotNull
+    @ApiModelProperty(notes = "The current user")
     private User user;
 
     @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name = "friend_id")
+    @NotNull
+    @ApiModelProperty(notes = "The user friend")
     private User friend;
 
     public RelationshipPK() {

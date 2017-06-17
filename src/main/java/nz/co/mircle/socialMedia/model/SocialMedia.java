@@ -1,8 +1,9 @@
 package nz.co.mircle.socialMedia.model;
 
-import nz.co.mircle.permission.model.Permission;
+import io.swagger.annotations.ApiModelProperty;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 
 /**
  * Social media entity.
@@ -15,9 +16,13 @@ public class SocialMedia {
     private Long id;
 
     @Column(name = "title")
-    private String title;
+    @NotNull
+    @ApiModelProperty(notes = "Social media name")
+    private String name;
 
     @Column(name = "logo")
+    @NotNull
+    @ApiModelProperty(notes = "Social media logo")
     private String logo;
 
     public SocialMedia() {
@@ -31,12 +36,12 @@ public class SocialMedia {
         this.id = id;
     }
 
-    public String getTitle() {
-        return title;
+    public String getName() {
+        return name;
     }
 
-    public void setTitle(String title) {
-        this.title = title;
+    public void setName(String name) {
+        this.name = name;
     }
 
     public String getLogo() {

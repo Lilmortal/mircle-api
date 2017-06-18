@@ -22,12 +22,7 @@ import static org.mockito.Mockito.when;
 @RunWith(SpringRunner.class)
 @ContextConfiguration
 public class PermissionServiceImplTest {
-    private static final SocialMedia SOCIAL_MEDIA = new SocialMedia("facebook", "facebook_logo");
-
     private static final boolean HAS_ACCESS = true;
-
-    @MockBean
-    private PermissionRepository permissionRepository;
 
     @TestConfiguration
     static class PermissionServiceImplTestContextConfiguration {
@@ -40,17 +35,28 @@ public class PermissionServiceImplTest {
     @Autowired
     private PermissionService permissionService;
 
+    @MockBean
+    private PermissionRepository permissionRepository;
+
+    @MockBean
+    private SocialMedia socialMedia;
+
+    @MockBean
+    private Permission permission;
+
     @Before
     public void setup() {
-        Permission permission = new Permission(SOCIAL_MEDIA, HAS_ACCESS);
-        when(permissionRepository.findBySocialMediaAndHasAccess(SOCIAL_MEDIA, HAS_ACCESS)).thenReturn(permission);
+        when(permission.getSocialMedia()).thenReturn(socialMedia);
+        when(permission.isHasAccess()).thenReturn(HAS_ACCESS);
+
+        when(permissionRepository.findBySocialMediaAndHasAccess(socialMedia, HAS_ACCESS)).thenReturn(permission);
     }
 
     @Test
     public void givenSocialMediaAndHasAccessReturnPermission() {
-        Permission result = permissionService.findPermission(SOCIAL_MEDIA, HAS_ACCESS);
+        Permission result = permissionService.findPermission(socialMedia, HAS_ACCESS);
 
-        assertThat(result.getSocialMedia()).isEqualTo(SOCIAL_MEDIA);
+        assertThat(result.getSocialMedia()).isEqualTo(socialMedia);
         assertThat(result.isHasAccess()).isEqualTo(HAS_ACCESS);
     }
 }

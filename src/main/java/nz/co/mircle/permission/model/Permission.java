@@ -16,15 +16,14 @@ public class Permission {
     @GeneratedValue(strategy= GenerationType.AUTO)
     private Long id;
 
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name = "social_media_id")
-    @NotNull
-    @ApiModelProperty(notes = "Social media")
+    @ApiModelProperty(notes = "Social media", required = true)
     private SocialMedia socialMedia;
 
     @Column(name = "has_access")
     @NotNull
-    @ApiModelProperty(notes = "Determines whether the friend has access to this social media or not")
+    @ApiModelProperty(notes = "Determines whether the friend has access to this social media or not", required = true)
     private boolean hasAccess;
 
     // empty no arg constructor needed for hibernate

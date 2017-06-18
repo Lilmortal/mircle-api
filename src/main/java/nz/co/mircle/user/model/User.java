@@ -20,52 +20,52 @@ public class User {
 
     @Column(name = "username")
     @NotNull
-    @ApiModelProperty(notes = "User username")
+    @ApiModelProperty(notes = "User username", required = true)
     private String username;
 
     @Column(name = "password")
     @NotNull
-    @ApiModelProperty(notes = "User password")
+    @ApiModelProperty(notes = "User password", required = true)
     private String password;
 
     @Column(name = "first_name")
     @NotNull
-    @ApiModelProperty(notes = "User first name")
+    @ApiModelProperty(notes = "User first name", required = true)
     private String firstName;
 
     @Column(name = "last_name")
     @NotNull
-    @ApiModelProperty(notes = "User last name")
+    @ApiModelProperty(notes = "User last name", required = true)
     private String lastName;
 
     @Column(name = "gender")
     @NotNull
-    @ApiModelProperty(notes = "User gender")
+    @ApiModelProperty(notes = "User gender", required = true)
     private String gender;
 
     @Column(name = "email_address")
     @NotNull
-    @ApiModelProperty(notes = "User email address")
+    @ApiModelProperty(notes = "User email address", required = true)
     private String emailAddress;
 
     @Column(name = "phone_number")
     @NotNull
-    @ApiModelProperty(notes = "User phone number")
+    @ApiModelProperty(notes = "User phone number", required = true)
     private String phoneNumber;
 
     @Column(name = "birth_date")
     @NotNull
-    @ApiModelProperty(notes = "User birth date")
+    @ApiModelProperty(notes = "User birth date", required = true)
     private LocalDate birthDate;
 
     @Column(name = "created_on")
     @NotNull
-    @ApiModelProperty(notes = "User creation date")
+    @ApiModelProperty(notes = "User creation date", required = true)
     private LocalDateTime createdOn;
 
     @Column(name = "last_logged_in")
     @NotNull
-    @ApiModelProperty(notes = "User last logged in")
+    @ApiModelProperty(notes = "User last logged in", required = true)
     private LocalDateTime lastLoggedIn;
 
     // no args constructor needed for hibernate

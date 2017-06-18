@@ -20,7 +20,7 @@ public class Relationship implements Serializable {
     @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name = "permission_id")
     @NotNull
-    @ApiModelProperty(notes = "The permission the friend has to be able to see the users social media")
+    @ApiModelProperty(notes = "The permission the friend has to be able to see the users social media", required = true)
     private Permission permission;
 
     // Needs no arg constructor for hibernate

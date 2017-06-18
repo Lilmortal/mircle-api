@@ -16,13 +16,13 @@ public class UserSocialMediaPK implements Serializable {
     @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     @NotNull
-    @ApiModelProperty(notes = "The current user")
+    @ApiModelProperty(notes = "The current user", required = true)
     private User user;
 
     @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name = "social_media_id")
     @NotNull
-    @ApiModelProperty(notes = "User social media")
+    @ApiModelProperty(notes = "User social media", required = true)
     private SocialMedia socialMedia;
 
     public UserSocialMediaPK() {

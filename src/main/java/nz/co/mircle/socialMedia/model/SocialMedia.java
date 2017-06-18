@@ -15,13 +15,12 @@ public class SocialMedia {
     @GeneratedValue(strategy= GenerationType.AUTO)
     private Long id;
 
-    @Column(name = "title")
+    @Column(name = "name")
     @NotNull
-    @ApiModelProperty(notes = "Social media name")
+    @ApiModelProperty(notes = "Social media name", required = true)
     private String name;
 
     @Column(name = "logo")
-    @NotNull
     @ApiModelProperty(notes = "Social media logo")
     private String logo;
 

@@ -4,6 +4,7 @@ import nz.co.mircle.permission.model.Permission;
 import nz.co.mircle.socialMedia.model.SocialMedia;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * CRUD operations on the permission table.

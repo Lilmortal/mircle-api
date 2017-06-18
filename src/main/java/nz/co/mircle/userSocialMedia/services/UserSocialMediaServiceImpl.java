@@ -10,12 +10,8 @@ import org.springframework.stereotype.Service;
  */
 @Service
 public class UserSocialMediaServiceImpl implements UserSocialMediaService {
-    private UserSocialMediaRepository userSocialMediaRepository;
-
     @Autowired
-    public UserSocialMediaServiceImpl(UserSocialMediaRepository userSocialMediaRepository) {
-        this.userSocialMediaRepository = userSocialMediaRepository;
-    }
+    private UserSocialMediaRepository userSocialMediaRepository;
 
     @Override
     public void createUserSocialMedia(UserSocialMedia userSocialMedia) {

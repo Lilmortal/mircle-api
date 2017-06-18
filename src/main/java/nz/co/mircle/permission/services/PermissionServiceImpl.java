@@ -11,12 +11,8 @@ import org.springframework.stereotype.Service;
  */
 @Service
 public class PermissionServiceImpl implements PermissionService {
-    private PermissionRepository permissionRepository;
-
     @Autowired
-    public PermissionServiceImpl(PermissionRepository permissionRepository) {
-        this.permissionRepository = permissionRepository;
-    }
+    private PermissionRepository permissionRepository;
 
     @Override
     public void createPermission(Permission permission) {

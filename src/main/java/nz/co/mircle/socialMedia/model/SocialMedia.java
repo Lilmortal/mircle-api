@@ -27,6 +27,11 @@ public class SocialMedia {
     public SocialMedia() {
     }
 
+    public SocialMedia(String name, String logo) {
+        this.name = name;
+        this.logo = logo;
+    }
+
     public Long getId() {
         return id;
     }

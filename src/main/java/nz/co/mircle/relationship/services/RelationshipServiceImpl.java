@@ -10,12 +10,8 @@ import org.springframework.stereotype.Service;
  */
 @Service
 public class RelationshipServiceImpl implements RelationshipService {
-    private RelationshipRepository relationshipRepository;
-
     @Autowired
-    public RelationshipServiceImpl(RelationshipRepository relationshipRepository) {
-        this.relationshipRepository = relationshipRepository;
-    }
+    private RelationshipRepository relationshipRepository;
 
     @Override
     public void createRelationship(Relationship relationship) {

@@ -17,6 +17,7 @@ ext {
     postgresqlDriverVersion = '42.1.1'
     swaggerVersion = '2.7.0'
     jacksonVersion = '2.8.8'
+    h2DatabaseVersion = '1.4.196'
 }
 
 dependencies {
@@ -27,7 +28,10 @@ dependencies {
     compile "io.springfox:springfox-swagger2:${swaggerVersion}"
     compile "com.fasterxml.jackson.datatype:jackson-datatype-jsr310:${jacksonVersion}"
     compile "org.postgresql:postgresql:${postgresqlDriverVersion}"
+
     testCompile 'junit:junit:4.12'
+    testCompile "org.springframework.boot:spring-boot-starter-test"
+    testCompile "com.h2database:h2:${h2DatabaseVersion}"
 }
 
 springBoot {

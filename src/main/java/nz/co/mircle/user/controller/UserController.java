@@ -52,6 +52,7 @@ public class UserController extends AbstractController {
         try {
             LocalDateTime currentDateTime = LocalDateTime.now();
             user.setCreatedOn(currentDateTime);
+            user.setLastLoggedIn(currentDateTime);
 
             userService.createUser(user);
             LOG.info("User " + user.getId() + " created.");

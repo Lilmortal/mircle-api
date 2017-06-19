@@ -1,13 +1,12 @@
-package nz.co.mircle.relationship.controller;
+package nz.co.mircle.userSocialMedia.controller;
 
-import nz.co.mircle.permission.model.Permission;
-import nz.co.mircle.permission.services.PermissionService;
-import nz.co.mircle.relationship.model.Relationship;
-import nz.co.mircle.relationship.services.RelationshipService;
+import nz.co.mircle.permission.controller.PermissionController;
 import nz.co.mircle.socialMedia.model.SocialMedia;
 import nz.co.mircle.socialMedia.services.SocialMediaService;
 import nz.co.mircle.user.model.User;
 import nz.co.mircle.user.services.UserService;
+import nz.co.mircle.userSocialMedia.model.UserSocialMedia;
+import nz.co.mircle.userSocialMedia.services.UserSocialMediaService;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -25,24 +24,22 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 /**
- * Relationship controller test
+ * User social media controller test
  */
 @RunWith(SpringRunner.class)
-@WebMvcTest(RelationshipController.class)
-public class RelationshipControllerTest {
+@WebMvcTest(UserSocialMediaController.class)
+public class UserSocialMediaControllerTest {
     private static final Long USER_ID = Long.parseLong("1");
 
-    private static final Long FRIEND_ID = Long.parseLong("2");
+    private static final Long SOCIAL_MEDIA_ID = Long.parseLong("2");
 
-    private static final String SOCIAL_MEDIA_NAME = "Facebook";
-
-    private static final boolean HAS_ACCESS = true;
+    private static final String URL = "url";
 
     @Autowired
     private MockMvc mvc;
 
     @MockBean
-    private RelationshipService relationshipService;
+    private UserSocialMediaService userSocialMediaService;
 
     @MockBean
     private UserService userService;
@@ -51,31 +48,25 @@ public class RelationshipControllerTest {
     private SocialMediaService socialMediaService;
 
     @MockBean
-    private PermissionService permissionService;
+    private UserSocialMedia userSocialMedia;
 
-    @MockBean(name = "user")
+    @MockBean
     private User user;
-
-    @MockBean(name = "friend")
-    private User friend;
 
     @MockBean
     private SocialMedia socialMedia;
 
-    @MockBean
-    private Permission permission;
-
     @Before
     public void setup() {
-        doNothing().when(relationshipService).createRelationship(any(Relationship.class));
-
         when(userService.findUser(USER_ID)).thenReturn(user);
-        when(userService.findUser(FRIEND_ID)).thenReturn(friend);
-        when(socialMediaService.findSocialMedia(SOCIAL_MEDIA_NAME)).thenReturn(socialMedia);
+        when(socialMediaService.findSocialMedia(SOCIAL_MEDIA_ID)).thenReturn(socialMedia);
+
+        doNothing().when(userSocialMediaService).createUserSocialMedia(any(UserSocialMedia.class));
     }
 
     @Test
-    public void givenUserAndFriendIdAndSocialMediaNameAndHasAccessReturnARelationship() throws Exception {
-        mvc.perform(post("/relationship/create?userId=" + USER_ID +  "&friendId=" + FRIEND_ID + "&socialMediaName=" + SOCIAL_MEDIA_NAME + "&hasAccess=" + HAS_ACCESS).contentType(MediaType.APPLICATION_JSON)).andExpect(status().isCreated());
+    public void givenUserIdAndSocialMediaIdAndUrlCreateAUserSocialMedia() throws Exception {
+        mvc.perform(post("/social/media/user/create?userId=" + USER_ID +
+                "&socialMediaId=" + SOCIAL_MEDIA_ID + "&url=" + URL).contentType(MediaType.APPLICATION_JSON)).andExpect(status().isCreated());
     }
 }

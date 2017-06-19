@@ -9,7 +9,6 @@ import org.springframework.transaction.annotation.Transactional;
  * CRUD operations on the user table.
  */
 @Repository
-@Transactional (noRollbackFor = Exception.class)
 public interface UserRepository extends CrudRepository<User, Long> {
     User findById(Long id);
 }

@@ -41,17 +41,17 @@ public class PermissionControllerTest {
     @MockBean
     private SocialMediaService socialMediaService;
 
+    @MockBean
+    private Permission permission;
+
     @Before
     public void setup() {
+        doNothing().when(permissionService).createPermission(permission);
         when(socialMediaService.findSocialMedia(SOCIAL_MEDIA_ID)).thenReturn(socialMedia);
     }
 
     @Test
     public void givenSocialMediaIdAndHasAccessCreateANewPermission() throws Exception {
-        Permission permission = new Permission(socialMedia, HAS_ACCESS);
-
-        doNothing().when(permissionService).createPermission(permission);
-
         mvc.perform(post("/permission/create?socialMediaId=" + SOCIAL_MEDIA_ID +
                 "&hasAccess=" + HAS_ACCESS).contentType(MediaType.APPLICATION_JSON)).andExpect(status().isCreated());
     }

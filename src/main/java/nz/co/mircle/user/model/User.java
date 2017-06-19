@@ -72,6 +72,19 @@ public class User {
     public User() {
     }
 
+    public User(String username, String password, String firstName, String lastName, String gender, String emailAddress, String phoneNumber, LocalDate birthDate, LocalDateTime createdOn, LocalDateTime lastLoggedIn) {
+        this.username = username;
+        this.password = password;
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.gender = gender;
+        this.emailAddress = emailAddress;
+        this.phoneNumber = phoneNumber;
+        this.birthDate = birthDate;
+        this.createdOn = createdOn;
+        this.lastLoggedIn = lastLoggedIn;
+    }
+
     public Long getId() {
         return id;
     }

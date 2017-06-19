@@ -32,17 +32,9 @@ public class PermissionRepositoryTest {
     @Autowired
     private PermissionRepository permissionRepository;
 
-    @MockBean
-    private SocialMedia socialMedia;
-
-    @Before
-    public void setup() {
-        when(socialMedia.getName()).thenReturn(SOCIAL_MEDIA_NAME);
-        when(socialMedia.getLogo()).thenReturn(SOCIAL_MEDIA_LOGO);
-    }
-
     @Test
     public void givenSocialMediaAndHasAccessReturnPermission() {
+        SocialMedia socialMedia = new SocialMedia(SOCIAL_MEDIA_NAME, SOCIAL_MEDIA_LOGO);
         Permission permission = new Permission(socialMedia, HAS_ACCESS);
         entityManager.persist(permission);
         entityManager.flush();

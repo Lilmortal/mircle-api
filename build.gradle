@@ -19,6 +19,8 @@ ext {
     jacksonVersion = '2.8.8'
     h2DatabaseVersion = '1.4.196'
     gsonVersion = '2.8.1'
+
+    junitVersion = '4.12'
 }
 
 dependencies {
@@ -32,7 +34,7 @@ dependencies {
     compile "com.google.code.gson:gson:${gsonVersion}"
 
 
-    testCompile 'junit:junit:4.12'
+    testCompile "junit:junit:${junitVersion}"
     testCompile "org.springframework.boot:spring-boot-starter-test"
     testCompile "com.h2database:h2:${h2DatabaseVersion}"
 }
@@ -41,3 +43,6 @@ springBoot {
     mainClass = "nz.co.mircle.MircleApplication"
 }
 
+task wrapper(type: Wrapper) {
+    gradleVersion = '2.0'
+}

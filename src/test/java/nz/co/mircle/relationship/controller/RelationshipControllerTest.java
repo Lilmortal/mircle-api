@@ -75,7 +75,7 @@ public class RelationshipControllerTest {
     }
 
     @Test
-    public void givenUserAndFriendIdAndSocialMediaNameAndHasAccessReturnARelationship() throws Exception {
+    public void givenUserAndFriendIdAndSocialMediaNameAndHasAccessCreateARelationship() throws Exception {
         mvc.perform(post("/relationship/create?userId=" + USER_ID +  "&friendId=" + FRIEND_ID + "&socialMediaName=" + SOCIAL_MEDIA_NAME + "&hasAccess=" + HAS_ACCESS).contentType(MediaType.APPLICATION_JSON)).andExpect(status().isCreated());
     }
 }

@@ -3,6 +3,7 @@ plugins {
     id 'eclipse'
     id 'idea'
     //id 'checkstyle'
+    id "com.avast.gradle.docker-compose" version '0.4.4'
     id 'org.springframework.boot' version '1.5.2.RELEASE'
 }
 
@@ -19,6 +20,7 @@ ext {
     jacksonVersion = '2.8.8'
     h2DatabaseVersion = '1.4.196'
     gsonVersion = '2.8.1'
+    dockerComposeVersion = '0.4.4'
 
     junitVersion = '4.12'
 }
@@ -32,7 +34,7 @@ dependencies {
     compile "com.fasterxml.jackson.datatype:jackson-datatype-jsr310:${jacksonVersion}"
     compile "org.postgresql:postgresql:${postgresqlDriverVersion}"
     compile "com.google.code.gson:gson:${gsonVersion}"
-
+    compile "com.avast.gradle:docker-compose-gradle-plugin"
 
     testCompile "junit:junit:${junitVersion}"
     testCompile "org.springframework.boot:spring-boot-starter-test"

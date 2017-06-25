@@ -1,0 +1,5 @@
+FROM java:8
+EXPOSE 8080
+ADD build/libs/mircle-api.jar /mircle/mircle-api.jar
+ENV SPRING.PROFILES.ACTIVE "dev"
+ENTRYPOINT ["java", "-jar", "/mircle/mircle-api.jar"]

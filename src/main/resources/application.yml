@@ -29,10 +29,10 @@ spring:
 spring:
   profiles: test
   jpa:
-    database: POSTGRESQL
+    database: platform
     show-sql: true
     hibernate:
-      ddl-auto: update
+      ddl-auto: create
   database:
     driverClassName: org.postgresql.Driver
   datasource:

@@ -23,6 +23,8 @@ ext {
     dockerComposeVersion = '0.4.4'
 
     junitVersion = '4.12'
+
+    dockerComposeFile = 'docker/docker-compose.yml'
 }
 
 dependencies {
@@ -34,7 +36,7 @@ dependencies {
     compile "com.fasterxml.jackson.datatype:jackson-datatype-jsr310:${jacksonVersion}"
     compile "org.postgresql:postgresql:${postgresqlDriverVersion}"
     compile "com.google.code.gson:gson:${gsonVersion}"
-    compile "com.avast.gradle:docker-compose-gradle-plugin"
+    compile "com.avast.gradle:docker-compose-gradle-plugin:0.4.4"
 
     testCompile "junit:junit:${junitVersion}"
     testCompile "org.springframework.boot:spring-boot-starter-test"
@@ -47,4 +49,37 @@ springBoot {
 
 task wrapper(type: Wrapper) {
     gradleVersion = '4.0'
+}
+
+dockerCompose {
+    useComposeFiles = [project.ext.dockerComposeFile]
+    captureContainersOutput = true
+}
+
+composeUp.dependsOn build
+
+task composeAppSetup(group: 'docker', description: 'Setup and compose app to docker') {
+    doFirst {
+        dockerCompose.useComposeFiles = [project.ext.dockerComposeFile]
+    }
+}
+
+task composeAppUp(group: 'docker', description: 'Compose app up') {
+    dependsOn composeAppSetup
+    finalizedBy composeUp
+}
+
+task composeAppDown(group: 'docker', description: 'Compose app down') {
+    dependsOn composeAppSetup
+    finalizedBy composeDown
+}
+
+task composeAppRestart(group: 'docker', description: 'Restart app on docker') {
+    dependsOn composeAppDown
+    finalizedBy composeAppUp
+}
+
+task composeAppForCI(group: 'docker', description: 'Compose app up, run test, then compose it down and push to a repo') {
+    dependsOn composeAppUp
+    finalizedBy composeDown
 }

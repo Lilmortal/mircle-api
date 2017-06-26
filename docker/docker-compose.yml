@@ -1,0 +1,12 @@
+version: '3'
+
+services:
+  mircle_api_service:
+    build:
+      context: ..
+      dockerfile: docker/DockerFile
+    container_name: MircleApi
+    ports:
+      - 8080:8080
+    env_file:
+      - .env

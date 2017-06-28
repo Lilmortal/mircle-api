@@ -65,6 +65,14 @@ public class PermissionController extends AbstractController {
         return new ResponseEntity(HttpStatus.CREATED);
     }
 
+    @ApiOperation(value = "Find a permission",response = Iterable.class)
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Successfully found a permission"),
+            @ApiResponse(code = 401, message = "You are not authorized to find a permission."),
+            @ApiResponse(code = 403, message = "Accessing the resource you were trying to reach is forbidden"),
+            @ApiResponse(code = 404, message = "The resource you were trying to reach is not found")
+    }
+    )
     @RequestMapping(value = "/get", method = RequestMethod.GET)
     public ResponseEntity getPermission(@RequestParam("id") Long id) {
         LOG.info("Getting permission with id " + id);

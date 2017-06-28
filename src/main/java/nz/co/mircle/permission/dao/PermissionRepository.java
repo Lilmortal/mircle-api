@@ -11,5 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
  */
 @Repository
 public interface PermissionRepository extends CrudRepository<Permission, Long> {
+    Permission findById(Long id);
+
     Permission findBySocialMediaAndHasAccess(SocialMedia socialMedia, boolean hasAccess);
 }

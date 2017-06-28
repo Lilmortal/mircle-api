@@ -9,5 +9,7 @@ import nz.co.mircle.socialMedia.model.SocialMedia;
 public interface PermissionService {
     void createPermission(Permission permission);
 
+    Permission findPermission(Long id);
+
     Permission findPermission(SocialMedia socialMedia, boolean hasAccess);
 }

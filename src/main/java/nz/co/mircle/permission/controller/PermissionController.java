@@ -64,4 +64,20 @@ public class PermissionController extends AbstractController {
 
         return new ResponseEntity(HttpStatus.CREATED);
     }
+
+    @RequestMapping(value = "/get", method = RequestMethod.GET)
+    public ResponseEntity getPermission(@RequestParam("id") Long id) {
+        LOG.info("Getting permission with id " + id);
+
+        Permission permission = null;
+        try {
+            permission = permissionService.findPermission(id);
+            LOG.info(String.format("Permission with id %d found."), id);
+        } catch (Exception e) {
+            LOG.error("Attempt to find permission with id " + id + " failed.");
+            LOG.error(e.getMessage());
+        }
+
+        return new ResponseEntity(permission, HttpStatus.ACCEPTED);
+    }
 }

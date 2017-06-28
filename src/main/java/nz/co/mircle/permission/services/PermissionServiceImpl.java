@@ -20,6 +20,11 @@ public class PermissionServiceImpl implements PermissionService {
     }
 
     @Override
+    public Permission findPermission(Long id) {
+        return permissionRepository.findById(id);
+    }
+
+    @Override
     public Permission findPermission(SocialMedia socialMedia, boolean hasAccess) {
         return permissionRepository.findBySocialMediaAndHasAccess(socialMedia, hasAccess);
     }

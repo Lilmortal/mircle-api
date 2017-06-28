@@ -23,8 +23,10 @@ ext {
     dockerComposeVersion = '0.4.4'
 
     junitVersion = '4.12'
+    wiremockVersion = '2.1.12'
+    restAssuredVersion = '3.0.3'
 
-    dockerComposeFile = 'docker/docker-compose.yml'
+    dockerComposeFile = 'docker/docker-compose.dev.yml'
 }
 
 dependencies {
@@ -41,6 +43,8 @@ dependencies {
     testCompile "junit:junit:${junitVersion}"
     testCompile "org.springframework.boot:spring-boot-starter-test"
     testCompile "com.h2database:h2:${h2DatabaseVersion}"
+    testCompile "com.github.tomakehurst:wiremock:${wiremockVersion}"
+    testCompile "io.rest-assured:rest-assured:${restAssuredVersion}"
 }
 
 springBoot {

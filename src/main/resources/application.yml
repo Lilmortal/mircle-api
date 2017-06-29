@@ -20,7 +20,7 @@ spring:
     driverClassName: org.postgresql.Driver
   datasource:
     platform: postgres
-    url: jdbc:postgresql://aa1o2cfy5fjcurp.cbmwsuphlpqy.ap-southeast-2.rds.amazonaws.com:5432/aa1o2cfy5fjcurp
+    url: jdbc:postgresql://mircle-db-dev.cbmwsuphlpqy.ap-southeast-2.rds.amazonaws.com:5432/ebdb
     username: ${POSTGRESQL_USERNAME}
     password: ${POSTGRESQL_PASSWORD}
 

@@ -5,26 +5,23 @@ import nz.co.mircle.socialMedia.model.SocialMedia;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-/**
- * List of social media services implementation that are used to call the repository.
- */
+/** List of social media services implementation that are used to call the repository. */
 @Service
 public class SocialMediaServiceImpl implements SocialMediaService {
-    @Autowired
-    private SocialMediaRepository socialMediaRepository;
+  @Autowired private SocialMediaRepository socialMediaRepository;
 
-    @Override
-    public void createSocialMedia(SocialMedia socialMedia) {
-        socialMediaRepository.save(socialMedia);
-    }
+  @Override
+  public void createSocialMedia(SocialMedia socialMedia) {
+    socialMediaRepository.save(socialMedia);
+  }
 
-    @Override
-    public SocialMedia findSocialMedia(Long id) {
-        return socialMediaRepository.findById(id);
-    }
+  @Override
+  public SocialMedia findSocialMedia(Long id) {
+    return socialMediaRepository.findById(id);
+  }
 
-    @Override
-    public SocialMedia findSocialMedia(String name) {
-        return socialMediaRepository.findByName(name);
-    }
+  @Override
+  public SocialMedia findSocialMedia(String name) {
+    return socialMediaRepository.findByName(name);
+  }
 }

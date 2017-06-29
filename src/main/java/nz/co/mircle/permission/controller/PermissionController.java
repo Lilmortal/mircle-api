@@ -19,73 +19,82 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-/**
- * Here are a lists of permissions API.
- */
+/** Here are a lists of permissions API. */
 @RestController
-@Api(value="permission", description="Permission API")
+@Api(value = "permission", description = "Permission API")
 @RequestMapping("/permission")
 public class PermissionController extends AbstractController {
-    private final Logger LOG = LoggerFactory.getLogger(PermissionController.class);
+  private final Logger LOG = LoggerFactory.getLogger(PermissionController.class);
 
-    private PermissionService permissionService;
+  private PermissionService permissionService;
 
-    private SocialMediaService socialMediaService;
+  private SocialMediaService socialMediaService;
 
-    @Autowired
-    public PermissionController(PermissionService permissionService, SocialMediaService socialMediaService) {
-        this.permissionService = permissionService;
-        this.socialMediaService = socialMediaService;
+  @Autowired
+  public PermissionController(
+      PermissionService permissionService, SocialMediaService socialMediaService) {
+    this.permissionService = permissionService;
+    this.socialMediaService = socialMediaService;
+  }
+
+  @ApiOperation(value = "Create a permission", response = Iterable.class)
+  @ApiResponses(
+    value = {
+      @ApiResponse(code = 200, message = "Successfully created a permission"),
+      @ApiResponse(code = 201, message = "Successfully created a permission"),
+      @ApiResponse(code = 401, message = "You are not authorized to create a permission."),
+      @ApiResponse(
+        code = 403,
+        message = "Accessing the resource you were trying to reach is forbidden"
+      ),
+      @ApiResponse(code = 404, message = "The resource you were trying to reach is not found")
+    }
+  )
+  @RequestMapping(value = "/create", method = RequestMethod.POST)
+  public ResponseEntity createPermission(
+      @RequestParam("socialMediaId") Long socialMediaId,
+      @RequestParam("hasAccess") boolean hasAccess) {
+    LOG.info("Creating a permission...");
+
+    try {
+      SocialMedia socialMedia = socialMediaService.findSocialMedia(socialMediaId);
+      Permission permission = new Permission(socialMedia, hasAccess);
+      permissionService.createPermission(permission);
+      LOG.info("Permission created.");
+    } catch (Exception e) {
+      LOG.error("Attempt to create a new permission failed.");
+      LOG.error(e.getMessage());
+      return new ResponseEntity(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
-    @ApiOperation(value = "Create a permission",response = Iterable.class)
-    @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "Successfully created a permission"),
-            @ApiResponse(code = 201, message = "Successfully created a permission"),
-            @ApiResponse(code = 401, message = "You are not authorized to create a permission."),
-            @ApiResponse(code = 403, message = "Accessing the resource you were trying to reach is forbidden"),
-            @ApiResponse(code = 404, message = "The resource you were trying to reach is not found")
+    return new ResponseEntity(HttpStatus.CREATED);
+  }
+
+  @ApiOperation(value = "Find a permission", response = Iterable.class)
+  @ApiResponses(
+    value = {
+      @ApiResponse(code = 200, message = "Successfully found a permission"),
+      @ApiResponse(code = 401, message = "You are not authorized to find a permission."),
+      @ApiResponse(
+        code = 403,
+        message = "Accessing the resource you were trying to reach is forbidden"
+      ),
+      @ApiResponse(code = 404, message = "The resource you were trying to reach is not found")
     }
-    )
-    @RequestMapping(value = "/create", method = RequestMethod.POST)
-    public ResponseEntity createPermission(@RequestParam("socialMediaId") Long socialMediaId, @RequestParam("hasAccess") boolean hasAccess) {
-        LOG.info("Creating a permission...");
+  )
+  @RequestMapping(value = "/get", method = RequestMethod.GET)
+  public ResponseEntity getPermission(@RequestParam("id") Long id) {
+    LOG.info("Getting permission with id " + id);
 
-        try {
-            SocialMedia socialMedia = socialMediaService.findSocialMedia(socialMediaId);
-            Permission permission = new Permission(socialMedia, hasAccess);
-            permissionService.createPermission(permission);
-            LOG.info("Permission created.");
-        } catch (Exception e) {
-            LOG.error("Attempt to create a new permission failed.");
-            LOG.error(e.getMessage());
-            return new ResponseEntity(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-
-        return new ResponseEntity(HttpStatus.CREATED);
+    Permission permission = null;
+    try {
+      permission = permissionService.findPermission(id);
+      LOG.info(String.format("Permission with id %d found."), id);
+    } catch (Exception e) {
+      LOG.error("Attempt to find permission with id " + id + " failed.");
+      LOG.error(e.getMessage());
     }
 
-    @ApiOperation(value = "Find a permission",response = Iterable.class)
-    @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "Successfully found a permission"),
-            @ApiResponse(code = 401, message = "You are not authorized to find a permission."),
-            @ApiResponse(code = 403, message = "Accessing the resource you were trying to reach is forbidden"),
-            @ApiResponse(code = 404, message = "The resource you were trying to reach is not found")
-    }
-    )
-    @RequestMapping(value = "/get", method = RequestMethod.GET)
-    public ResponseEntity getPermission(@RequestParam("id") Long id) {
-        LOG.info("Getting permission with id " + id);
-
-        Permission permission = null;
-        try {
-            permission = permissionService.findPermission(id);
-            LOG.info(String.format("Permission with id %d found."), id);
-        } catch (Exception e) {
-            LOG.error("Attempt to find permission with id " + id + " failed.");
-            LOG.error(e.getMessage());
-        }
-
-        return new ResponseEntity(permission, HttpStatus.ACCEPTED);
-    }
+    return new ResponseEntity(permission, HttpStatus.ACCEPTED);
+  }
 }

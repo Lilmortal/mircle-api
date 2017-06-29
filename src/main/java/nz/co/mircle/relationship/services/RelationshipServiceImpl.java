@@ -5,17 +5,13 @@ import nz.co.mircle.relationship.model.Relationship;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-/**
- * List of relationship services implementation that are used to call the repository.
- */
+/** List of relationship services implementation that are used to call the repository. */
 @Service
 public class RelationshipServiceImpl implements RelationshipService {
-    @Autowired
-    private RelationshipRepository relationshipRepository;
+  @Autowired private RelationshipRepository relationshipRepository;
 
-    @Override
-    public void createRelationship(Relationship relationship) {
-        relationshipRepository.save(relationship);
-    }
-
+  @Override
+  public void createRelationship(Relationship relationship) {
+    relationshipRepository.save(relationship);
+  }
 }

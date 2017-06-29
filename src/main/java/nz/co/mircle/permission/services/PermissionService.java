@@ -3,13 +3,11 @@ package nz.co.mircle.permission.services;
 import nz.co.mircle.permission.model.Permission;
 import nz.co.mircle.socialMedia.model.SocialMedia;
 
-/**
- * Lists of services that can be used to call the permission repository.
- */
+/** Lists of services that can be used to call the permission repository. */
 public interface PermissionService {
-    void createPermission(Permission permission);
+  void createPermission(Permission permission);
 
-    Permission findPermission(Long id);
+  Permission findPermission(Long id);
 
-    Permission findPermission(SocialMedia socialMedia, boolean hasAccess);
+  Permission findPermission(SocialMedia socialMedia, boolean hasAccess);
 }

@@ -1,5 +1,8 @@
 package nz.co.mircle.permission.services;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.when;
+
 import nz.co.mircle.permission.dao.PermissionRepository;
 import nz.co.mircle.permission.model.Permission;
 import nz.co.mircle.socialMedia.model.SocialMedia;
@@ -13,50 +16,42 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Mockito.when;
-
-/**
- * Permission service layer test.
- */
+/** Permission service layer test. */
 @RunWith(SpringRunner.class)
 @ContextConfiguration
 public class PermissionServiceImplTest {
-    private static final boolean HAS_ACCESS = true;
+  private static final boolean HAS_ACCESS = true;
 
-    @TestConfiguration
-    static class PermissionServiceImplTestContextConfiguration {
-        @Bean
-        public PermissionService permissionService() {
-            return new PermissionServiceImpl();
-        }
+  @TestConfiguration
+  static class PermissionServiceImplTestContextConfiguration {
+    @Bean
+    public PermissionService permissionService() {
+      return new PermissionServiceImpl();
     }
+  }
 
-    @Autowired
-    private PermissionService permissionService;
+  @Autowired private PermissionService permissionService;
 
-    @MockBean
-    private PermissionRepository permissionRepository;
+  @MockBean private PermissionRepository permissionRepository;
 
-    @MockBean
-    private SocialMedia socialMedia;
+  @MockBean private SocialMedia socialMedia;
 
-    @MockBean
-    private Permission permission;
+  @MockBean private Permission permission;
 
-    @Before
-    public void setup() {
-        when(permission.getSocialMedia()).thenReturn(socialMedia);
-        when(permission.isHasAccess()).thenReturn(HAS_ACCESS);
+  @Before
+  public void setup() {
+    when(permission.getSocialMedia()).thenReturn(socialMedia);
+    when(permission.isHasAccess()).thenReturn(HAS_ACCESS);
 
-        when(permissionRepository.findBySocialMediaAndHasAccess(socialMedia, HAS_ACCESS)).thenReturn(permission);
-    }
+    when(permissionRepository.findBySocialMediaAndHasAccess(socialMedia, HAS_ACCESS))
+        .thenReturn(permission);
+  }
 
-    @Test
-    public void givenSocialMediaAndHasAccessReturnPermission() {
-        Permission result = permissionService.findPermission(socialMedia, HAS_ACCESS);
+  @Test
+  public void givenSocialMediaAndHasAccessReturnPermission() {
+    Permission result = permissionService.findPermission(socialMedia, HAS_ACCESS);
 
-        assertThat(result.getSocialMedia()).isEqualTo(socialMedia);
-        assertThat(result.isHasAccess()).isEqualTo(HAS_ACCESS);
-    }
+    assertThat(result.getSocialMedia()).isEqualTo(socialMedia);
+    assertThat(result.isHasAccess()).isEqualTo(HAS_ACCESS);
+  }
 }

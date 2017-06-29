@@ -1,5 +1,11 @@
 package nz.co.mircle.relationship.controller;
 
+import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
 import nz.co.mircle.permission.model.Permission;
 import nz.co.mircle.permission.services.PermissionService;
 import nz.co.mircle.relationship.model.Relationship;
@@ -18,64 +24,60 @@ import org.springframework.http.MediaType;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 
-import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.doNothing;
-import static org.mockito.Mockito.when;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-
-/**
- * Relationship controller test
- */
+/** Relationship controller test */
 @RunWith(SpringRunner.class)
 @WebMvcTest(RelationshipController.class)
 public class RelationshipControllerTest {
-    private static final Long USER_ID = Long.parseLong("1");
+  private static final Long USER_ID = Long.parseLong("1");
 
-    private static final Long FRIEND_ID = Long.parseLong("2");
+  private static final Long FRIEND_ID = Long.parseLong("2");
 
-    private static final String SOCIAL_MEDIA_NAME = "Facebook";
+  private static final String SOCIAL_MEDIA_NAME = "Facebook";
 
-    private static final boolean HAS_ACCESS = true;
+  private static final boolean HAS_ACCESS = true;
 
-    @Autowired
-    private MockMvc mvc;
+  @Autowired private MockMvc mvc;
 
-    @MockBean
-    private RelationshipService relationshipService;
+  @MockBean private RelationshipService relationshipService;
 
-    @MockBean
-    private UserService userService;
+  @MockBean private UserService userService;
 
-    @MockBean
-    private SocialMediaService socialMediaService;
+  @MockBean private SocialMediaService socialMediaService;
 
-    @MockBean
-    private PermissionService permissionService;
+  @MockBean private PermissionService permissionService;
 
-    @MockBean(name = "user")
-    private User user;
+  @MockBean(name = "user")
+  private User user;
 
-    @MockBean(name = "friend")
-    private User friend;
+  @MockBean(name = "friend")
+  private User friend;
 
-    @MockBean
-    private SocialMedia socialMedia;
+  @MockBean private SocialMedia socialMedia;
 
-    @MockBean
-    private Permission permission;
+  @MockBean private Permission permission;
 
-    @Before
-    public void setup() {
-        doNothing().when(relationshipService).createRelationship(any(Relationship.class));
+  @Before
+  public void setup() {
+    doNothing().when(relationshipService).createRelationship(any(Relationship.class));
 
-        when(userService.findUser(USER_ID)).thenReturn(user);
-        when(userService.findUser(FRIEND_ID)).thenReturn(friend);
-        when(socialMediaService.findSocialMedia(SOCIAL_MEDIA_NAME)).thenReturn(socialMedia);
-    }
+    when(userService.findUser(USER_ID)).thenReturn(user);
+    when(userService.findUser(FRIEND_ID)).thenReturn(friend);
+    when(socialMediaService.findSocialMedia(SOCIAL_MEDIA_NAME)).thenReturn(socialMedia);
+  }
 
-    @Test
-    public void givenUserAndFriendIdAndSocialMediaNameAndHasAccessCreateARelationship() throws Exception {
-        mvc.perform(post("/relationship/create?userId=" + USER_ID +  "&friendId=" + FRIEND_ID + "&socialMediaName=" + SOCIAL_MEDIA_NAME + "&hasAccess=" + HAS_ACCESS).contentType(MediaType.APPLICATION_JSON)).andExpect(status().isCreated());
-    }
+  @Test
+  public void givenUserAndFriendIdAndSocialMediaNameAndHasAccessCreateARelationship()
+      throws Exception {
+    mvc.perform(
+            post("/relationship/create?userId="
+                    + USER_ID
+                    + "&friendId="
+                    + FRIEND_ID
+                    + "&socialMediaName="
+                    + SOCIAL_MEDIA_NAME
+                    + "&hasAccess="
+                    + HAS_ACCESS)
+                .contentType(MediaType.APPLICATION_JSON))
+        .andExpect(status().isCreated());
+  }
 }

@@ -5,16 +5,13 @@ import nz.co.mircle.userSocialMedia.model.UserSocialMedia;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-/**
- * List of user social media services implementation that are used to call the repository.
- */
+/** List of user social media services implementation that are used to call the repository. */
 @Service
 public class UserSocialMediaServiceImpl implements UserSocialMediaService {
-    @Autowired
-    private UserSocialMediaRepository userSocialMediaRepository;
+  @Autowired private UserSocialMediaRepository userSocialMediaRepository;
 
-    @Override
-    public void createUserSocialMedia(UserSocialMedia userSocialMedia) {
-        userSocialMediaRepository.save(userSocialMedia);
-    }
+  @Override
+  public void createUserSocialMedia(UserSocialMedia userSocialMedia) {
+    userSocialMediaRepository.save(userSocialMedia);
+  }
 }

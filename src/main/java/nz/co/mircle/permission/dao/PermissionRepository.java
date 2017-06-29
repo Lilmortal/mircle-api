@@ -4,14 +4,11 @@ import nz.co.mircle.permission.model.Permission;
 import nz.co.mircle.socialMedia.model.SocialMedia;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Transactional;
 
-/**
- * CRUD operations on the permission table.
- */
+/** CRUD operations on the permission table. */
 @Repository
 public interface PermissionRepository extends CrudRepository<Permission, Long> {
-    Permission findById(Long id);
+  Permission findById(Long id);
 
-    Permission findBySocialMediaAndHasAccess(SocialMedia socialMedia, boolean hasAccess);
+  Permission findBySocialMediaAndHasAccess(SocialMedia socialMedia, boolean hasAccess);
 }

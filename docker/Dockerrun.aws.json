@@ -1,13 +1,13 @@
 {
-  "AWSEBDockerrunVersion": "1",
+  "AWSEBDockerrunVersion": "dev-8",
   "Image": {
-    "Name": "529574644861.dkr.ecr.ap-southeast-2.amazonaws.com/mircle-api:latest",
+    "Name": "529574644861.dkr.ecr.ap-southeast-2.amazonaws.com/mircle-api-dev:latest",
     "Update": "true"
   },
   "Ports": [
     {
-      "ContainerPort": "8080"
+      "ContainerPort": "80"
     }
   ],
-  "Logging": "/app/log/mircle-api-log"
+  "Logging": "/mircle/log/mircle-api-log"
 }

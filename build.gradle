@@ -29,7 +29,7 @@ ext {
     wiremockVersion = '2.1.12'
     restAssuredVersion = '3.0.3'
 
-    dockerComposeFile = 'docker/docker-compose.yml'
+    dockerComposeFile = 'build/docker-compose.yml'
     checkstyleFile = 'config/checkstyle/checkstyle.xml'
     checkstyleReportFile = 'build/reports/checkstyle/'
 
@@ -97,6 +97,14 @@ task composeAppForCI(group: 'docker', description: 'Compose app up, run test, th
     dependsOn composeAppUp
     finalizedBy composeDown
 }
+
+// Move docker yml scripts to the build folder
+task copyDocker(type: Copy, group: 'copy', description: 'Copy docker files to build folder') {
+    from 'docker'
+    into 'build'
+}
+
+build.dependsOn copyDocker
 
 // Checkstyle related tasks
 checkstyle {

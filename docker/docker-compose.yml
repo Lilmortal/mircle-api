@@ -4,9 +4,10 @@ services:
   mircle_api_service:
     build:
       context: ..
-      dockerfile: docker/DockerFile
+      dockerfile: build/DockerFile
+    image: mircle-api-dev
     container_name: MircleApi
     ports:
-      - 8080:8080
+      - 80:80
     env_file:
       - .env

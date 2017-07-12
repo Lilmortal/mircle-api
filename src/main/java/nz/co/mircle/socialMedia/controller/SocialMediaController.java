@@ -31,7 +31,7 @@ public class SocialMediaController extends AbstractController {
     this.socialMediaService = socialMediaService;
   }
 
-  @ApiOperation(value = "Create a social media (test that heroku works)", response = Iterable.class)
+  @ApiOperation(value = "Create a social media", response = Iterable.class)
   @ApiResponses(
     value = {
       @ApiResponse(code = 200, message = "Successfully created a social media"),

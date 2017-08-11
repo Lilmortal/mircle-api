@@ -5,7 +5,6 @@ plugins {
     id 'checkstyle'
     id "com.diffplug.gradle.spotless" version '3.4.0'
     id "net.saliman.cobertura" version '2.5.0'
-    id "com.avast.gradle.docker-compose" version '0.4.4'
     id 'org.springframework.boot' version '1.5.2.RELEASE'
 }
 
@@ -16,20 +15,17 @@ repositories {
 ext {
     springJdbcVersion = '3.1.0.RELEASE'
     springDataJpaVersion = '1.4.7.RELEASE'
-    springCloudAwsVersion = '1.2.1.RELEASE'
     postgresqlDriverVersion = '42.1.1'
     swaggerVersion = '2.7.0'
     jacksonVersion = '2.8.8'
-    h2DatabaseVersion = '1.4.196'
+    h2DatabaseVersion = '1.4.195'
     gsonVersion = '2.8.1'
-    dockerComposeVersion = '0.4.4'
     googleJavaFormatVersion = '1.3'
 
     junitVersion = '4.12'
     wiremockVersion = '2.1.12'
     restAssuredVersion = '3.0.3'
 
-    dockerComposeFile = 'build/docker-compose.yml'
     checkstyleFile = 'config/checkstyle/checkstyle.xml'
     checkstyleReportFile = 'build/reports/checkstyle/'
 
@@ -45,11 +41,10 @@ dependencies {
     compile "com.fasterxml.jackson.datatype:jackson-datatype-jsr310:${jacksonVersion}"
     compile "org.postgresql:postgresql:${postgresqlDriverVersion}"
     compile "com.google.code.gson:gson:${gsonVersion}"
-    compile "com.avast.gradle:docker-compose-gradle-plugin:${dockerComposeVersion}"
+    compile "com.h2database:h2:${h2DatabaseVersion}"
 
     testCompile "junit:junit:${junitVersion}"
     testCompile "org.springframework.boot:spring-boot-starter-test"
-    testCompile "com.h2database:h2:${h2DatabaseVersion}"
     testCompile "com.github.tomakehurst:wiremock:${wiremockVersion}"
     testCompile "io.rest-assured:rest-assured:${restAssuredVersion}"
 
@@ -64,47 +59,9 @@ task wrapper(type: Wrapper) {
     gradleVersion = '4.0'
 }
 
-// Docker related tasks
-dockerCompose {
-    useComposeFiles = [project.ext.dockerComposeFile]
-    captureContainersOutput = true
+bootRun {
+    systemProperties System.properties
 }
-
-composeUp.dependsOn build
-
-task composeAppSetup(group: 'docker', description: 'Setup and compose app to docker') {
-    doFirst {
-        dockerCompose.useComposeFiles = [project.ext.dockerComposeFile]
-    }
-}
-
-task composeAppUp(group: 'docker', description: 'Compose app up') {
-    dependsOn composeAppSetup
-    finalizedBy composeUp
-}
-
-task composeAppDown(group: 'docker', description: 'Compose app down') {
-    dependsOn composeAppSetup
-    finalizedBy composeDown
-}
-
-task composeAppRestart(group: 'docker', description: 'Restart app on docker') {
-    dependsOn composeAppDown
-    finalizedBy composeAppUp
-}
-
-task composeAppForCI(group: 'docker', description: 'Compose app up, run test, then compose it down and push to a repo') {
-    dependsOn composeAppUp
-    finalizedBy composeDown
-}
-
-// Move docker yml scripts to the build folder
-task copyDocker(type: Copy, group: 'copy', description: 'Copy docker files to build folder') {
-    from 'docker'
-    into 'build'
-}
-
-build.dependsOn copyDocker
 
 // Checkstyle related tasks
 checkstyle {

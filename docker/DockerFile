@@ -1,4 +1,0 @@
-FROM java:8
-EXPOSE 80
-ADD build/libs/mircle-api.jar /mircle/mircle-api.jar
-ENTRYPOINT ["java", "-jar", "/mircle/mircle-api.jar"]

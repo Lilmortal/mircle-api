@@ -65,13 +65,24 @@ public class User {
   @ApiModelProperty(notes = "User last logged in", required = true)
   private LocalDateTime lastLoggedIn;
 
-  @OneToOne(mappedBy = "user")
+  @OneToOne(cascade = CascadeType.ALL)
   private ProfilePicture profilePicture;
 
   // no args constructor needed for hibernate
   public User() {}
 
-  public User(String emailAddress, String password, String firstName, String surname, String gender, String phoneNumber, LocalDate birthDate, String occupation, LocalDateTime createdOn, LocalDateTime lastLoggedIn) {
+  public User(
+      String emailAddress,
+      String password,
+      String firstName,
+      String surname,
+      String gender,
+      String phoneNumber,
+      LocalDate birthDate,
+      String occupation,
+      LocalDateTime createdOn,
+      LocalDateTime lastLoggedIn,
+      ProfilePicture profilePicture) {
     this.emailAddress = emailAddress;
     this.password = password;
     this.firstName = firstName;
@@ -82,6 +93,7 @@ public class User {
     this.occupation = occupation;
     this.createdOn = createdOn;
     this.lastLoggedIn = lastLoggedIn;
+    this.profilePicture = profilePicture;
   }
 
   public Long getId() {
@@ -172,20 +184,48 @@ public class User {
     this.lastLoggedIn = lastLoggedIn;
   }
 
+  public ProfilePicture getProfilePicture() {
+    return profilePicture;
+  }
+
+  public void setProfilePicture(ProfilePicture profilePicture) {
+    this.profilePicture = profilePicture;
+  }
+
   @Override
   public String toString() {
-    return "User{" +
-            "id=" + id +
-            ", emailAddress='" + emailAddress + '\'' +
-            ", password='" + password + '\'' +
-            ", firstName='" + firstName + '\'' +
-            ", surname='" + surname + '\'' +
-            ", gender='" + gender + '\'' +
-            ", phoneNumber='" + phoneNumber + '\'' +
-            ", birthDate=" + birthDate +
-            ", occupation='" + occupation + '\'' +
-            ", createdOn=" + createdOn +
-            ", lastLoggedIn=" + lastLoggedIn +
-            '}';
+    return "User{"
+        + "id="
+        + id
+        + ", emailAddress='"
+        + emailAddress
+        + '\''
+        + ", password='"
+        + password
+        + '\''
+        + ", firstName='"
+        + firstName
+        + '\''
+        + ", surname='"
+        + surname
+        + '\''
+        + ", gender='"
+        + gender
+        + '\''
+        + ", phoneNumber='"
+        + phoneNumber
+        + '\''
+        + ", birthDate="
+        + birthDate
+        + ", occupation='"
+        + occupation
+        + '\''
+        + ", createdOn="
+        + createdOn
+        + ", lastLoggedIn="
+        + lastLoggedIn
+        + ", profilePicture="
+        + profilePicture
+        + '}';
   }
 }

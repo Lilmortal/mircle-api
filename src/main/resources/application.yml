@@ -4,14 +4,15 @@ spring:
       enabled: true
       path: /h2
   jpa:
-    database: POSTGRESQL
+    # database: POSTGRESQL
     show-sql: true
     hibernate:
       ddl-auto: create
   database:
     driverClassName: org.h2.Driver
   datasource:
-    url: jdbc:h2:file:~/h2
+    platform: h2
+    url: jdbc:h2:file:~/test
     username: sa
     password:
 

@@ -13,10 +13,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 /** Here are a lists of user API. */
 @RestController
@@ -32,6 +29,11 @@ public class UserController extends AbstractController {
     this.userService = userService;
   }
 
+  @RequestMapping(value = "/test", method = RequestMethod.GET)
+  public ResponseEntity test(@RequestParam String param) {
+    return new ResponseEntity(param, HttpStatus.ACCEPTED);
+  }
+  
   @ApiOperation(value = "Create a user", response = Iterable.class)
   @ApiResponses(
     value = {

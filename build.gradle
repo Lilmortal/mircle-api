@@ -43,6 +43,7 @@ dependencies {
     compile "com.google.code.gson:gson:${gsonVersion}"
     compile "com.h2database:h2:${h2DatabaseVersion}"
 
+    testCompile "com.h2database:h2:${h2DatabaseVersion}"
     testCompile "junit:junit:${junitVersion}"
     testCompile "org.springframework.boot:spring-boot-starter-test"
     testCompile "com.github.tomakehurst:wiremock:${wiremockVersion}"
@@ -79,6 +80,7 @@ checkstyleTest.source = 'src/test/java'
 spotless {
     java {
         googleJavaFormat()
+        paddedCell()
     }
 }
 

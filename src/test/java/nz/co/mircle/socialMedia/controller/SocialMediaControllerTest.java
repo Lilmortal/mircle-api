@@ -5,8 +5,9 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.google.gson.Gson;
-import nz.co.mircle.socialMedia.model.SocialMedia;
-import nz.co.mircle.socialMedia.services.SocialMediaService;
+import nz.co.mircle.v1.api.socialMedia.controller.SocialMediaController;
+import nz.co.mircle.v1.api.socialMedia.model.SocialMedia;
+import nz.co.mircle.v1.api.socialMedia.services.SocialMediaService;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;

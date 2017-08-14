@@ -5,10 +5,11 @@ import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import nz.co.mircle.permission.model.Permission;
-import nz.co.mircle.permission.services.PermissionService;
-import nz.co.mircle.socialMedia.model.SocialMedia;
-import nz.co.mircle.socialMedia.services.SocialMediaService;
+import nz.co.mircle.v1.api.permission.controller.PermissionController;
+import nz.co.mircle.v1.api.permission.model.Permission;
+import nz.co.mircle.v1.api.permission.services.PermissionService;
+import nz.co.mircle.v1.api.socialMedia.model.SocialMedia;
+import nz.co.mircle.v1.api.socialMedia.services.SocialMediaService;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;

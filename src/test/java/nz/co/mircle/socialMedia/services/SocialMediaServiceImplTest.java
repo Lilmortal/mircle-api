@@ -3,8 +3,10 @@ package nz.co.mircle.socialMedia.services;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.when;
 
-import nz.co.mircle.socialMedia.dao.SocialMediaRepository;
-import nz.co.mircle.socialMedia.model.SocialMedia;
+import nz.co.mircle.v1.api.socialMedia.dao.SocialMediaRepository;
+import nz.co.mircle.v1.api.socialMedia.model.SocialMedia;
+import nz.co.mircle.v1.api.socialMedia.services.SocialMediaService;
+import nz.co.mircle.v1.api.socialMedia.services.SocialMediaServiceImpl;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;

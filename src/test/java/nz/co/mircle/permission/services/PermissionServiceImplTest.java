@@ -3,9 +3,11 @@ package nz.co.mircle.permission.services;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.when;
 
-import nz.co.mircle.permission.dao.PermissionRepository;
-import nz.co.mircle.permission.model.Permission;
-import nz.co.mircle.socialMedia.model.SocialMedia;
+import nz.co.mircle.v1.api.permission.dao.PermissionRepository;
+import nz.co.mircle.v1.api.permission.model.Permission;
+import nz.co.mircle.v1.api.socialMedia.model.SocialMedia;
+import nz.co.mircle.v1.api.permission.services.PermissionService;
+import nz.co.mircle.v1.api.permission.services.PermissionServiceImpl;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;

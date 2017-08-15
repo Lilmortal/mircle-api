@@ -1,9 +1,7 @@
 package nz.co.mircle.v1.api.user.model;
 
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import io.swagger.annotations.ApiModelProperty;
-import java.time.LocalDate;
+
 import java.time.LocalDateTime;
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
@@ -49,10 +47,8 @@ public class User {
 
   @Column(name = "birth_date")
   @NotNull
-  @JsonSerialize(using = CustomLocalDateSerializer.class)
-  @JsonDeserialize(using = ISO8601LocalDateDeserializer.class)
   @ApiModelProperty(notes = "User birth date", required = true)
-  private LocalDate birthDate;
+  private LocalDateTime birthDate;
 
   @Column(name = "occupation")
   @NotNull
@@ -70,7 +66,7 @@ public class User {
   private LocalDateTime lastLoggedIn;
 
   @OneToOne(cascade = CascadeType.ALL)
-  private ProfilePicture profilePicture;
+  private ProfileImage profileImage;
 
   // no args constructor needed for hibernate
   public User() {}
@@ -82,11 +78,11 @@ public class User {
       String surname,
       String gender,
       String phoneNumber,
-      LocalDate birthDate,
+      LocalDateTime birthDate,
       String occupation,
       LocalDateTime createdOn,
       LocalDateTime lastLoggedIn,
-      ProfilePicture profilePicture) {
+      ProfileImage profileImage) {
     this.emailAddress = emailAddress;
     this.password = password;
     this.firstName = firstName;
@@ -97,7 +93,7 @@ public class User {
     this.occupation = occupation;
     this.createdOn = createdOn;
     this.lastLoggedIn = lastLoggedIn;
-    this.profilePicture = profilePicture;
+    this.profileImage = profileImage;
   }
 
   public Long getId() {
@@ -156,11 +152,11 @@ public class User {
     this.phoneNumber = phoneNumber;
   }
 
-  public LocalDate getBirthDate() {
+  public LocalDateTime getBirthDate() {
     return birthDate;
   }
 
-  public void setBirthDate(LocalDate birthDate) {
+  public void setBirthDate(LocalDateTime birthDate) {
     this.birthDate = birthDate;
   }
 
@@ -188,12 +184,12 @@ public class User {
     this.lastLoggedIn = lastLoggedIn;
   }
 
-  public ProfilePicture getProfilePicture() {
-    return profilePicture;
+  public ProfileImage getProfileImage() {
+    return profileImage;
   }
 
-  public void setProfilePicture(ProfilePicture profilePicture) {
-    this.profilePicture = profilePicture;
+  public void setProfileImage(ProfileImage profileImage) {
+    this.profileImage = profileImage;
   }
 
   @Override
@@ -228,8 +224,8 @@ public class User {
         + createdOn
         + ", lastLoggedIn="
         + lastLoggedIn
-        + ", profilePicture="
-        + profilePicture
+        + ", profileImage="
+        + profileImage
         + '}';
   }
 }

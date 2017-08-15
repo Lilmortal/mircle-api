@@ -6,11 +6,11 @@ import javax.validation.constraints.NotNull;
 
 /** Created by tanj1 on 11/08/2017. */
 @Entity
-@Table(name = "profile_picture")
-public class ProfilePicture {
+@Table(name = "profile_image")
+public class ProfileImage {
   @Id
   @GeneratedValue(strategy = GenerationType.AUTO)
-  @ApiModelProperty(notes = "The database generated profile ID")
+  @ApiModelProperty(notes = "The database generated profile image ID")
   private Long id;
 
   @Column(name = "default")
@@ -20,10 +20,8 @@ public class ProfilePicture {
   )
   private boolean isDefaultImage;
 
-  @Column(name = "image")
-  @NotNull
-  @ApiModelProperty(notes = "Profile picture")
-  private Long image;
+  @OneToOne(cascade = CascadeType.ALL)
+  private Image image;
 
   @Column(name = "mime")
   @ApiModelProperty(notes = "Profile picture mime")
@@ -41,11 +39,11 @@ public class ProfilePicture {
   @ApiModelProperty(notes = "Profile picture height")
   private Long height;
 
-  public ProfilePicture() {}
+  public ProfileImage() {}
 
-  public ProfilePicture(
+  public ProfileImage(
       boolean isDefaultImage,
-      Long image,
+      Image image,
       String mime,
       Long size,
       Long width,
@@ -74,11 +72,11 @@ public class ProfilePicture {
     isDefaultImage = defaultImage;
   }
 
-  public Long getImage() {
+  public Image getImage() {
     return image;
   }
 
-  public void setImage(Long image) {
+  public void setImage(Image image) {
     this.image = image;
   }
 
@@ -116,7 +114,7 @@ public class ProfilePicture {
 
   @Override
   public String toString() {
-    return "ProfilePicture{"
+    return "ProfileImage{"
         + "isDefaultImage="
         + isDefaultImage
         + ", image="

@@ -5,7 +5,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
-import nz.co.mircle.v1.api.user.model.ProfilePicture;
+import nz.co.mircle.v1.api.user.model.ProfileImage;
 import nz.co.mircle.v1.api.user.model.User;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -41,7 +41,7 @@ public class UserRepositoryTest {
   private static final LocalDateTime LAST_LOGGED_IN = LocalDateTime.now();
 
   @Autowired
-  private ProfilePicture profilePicture;
+  private ProfileImage profileImage;
 
   @Autowired private TestEntityManager entityManager;
 
@@ -61,7 +61,7 @@ public class UserRepositoryTest {
                 OCCUPATION,
                 CREATED_ON,
             LAST_LOGGED_IN,
-                profilePicture);
+                profileImage);
     entityManager.persist(user);
     entityManager.flush();
 
@@ -76,6 +76,6 @@ public class UserRepositoryTest {
     assertThat(result.getOccupation()).isEqualTo(OCCUPATION);
     assertThat(result.getCreatedOn()).isEqualTo(CREATED_ON);
     assertThat(result.getLastLoggedIn()).isEqualTo(LAST_LOGGED_IN);
-    assertThat(result.getProfilePicture()).isEqualTo(profilePicture);
+    assertThat(result.getProfileImage()).isEqualTo(profileImage);
   }
 }

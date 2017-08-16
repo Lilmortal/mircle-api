@@ -1,6 +1,7 @@
 package nz.co.mircle.v1.api.user.model;
 
 import io.swagger.annotations.ApiModelProperty;
+import nz.co.mircle.v1.api.profileImage.model.ProfileImage;
 
 import java.time.LocalDateTime;
 import javax.persistence.*;

@@ -1,4 +1,4 @@
-package nz.co.mircle.socialMedia.services;
+package nz.co.mircle.v1.api.socialMedia.services;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.when;

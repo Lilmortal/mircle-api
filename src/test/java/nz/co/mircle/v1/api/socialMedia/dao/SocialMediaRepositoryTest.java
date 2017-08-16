@@ -1,4 +1,4 @@
-package nz.co.mircle.socialMedia.dao;
+package nz.co.mircle.v1.api.socialMedia.dao;
 
 import static org.assertj.core.api.Assertions.assertThat;
 

@@ -1,4 +1,4 @@
-package nz.co.mircle.permission.controller;
+package nz.co.mircle.v1.api.permission.controller;
 
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;

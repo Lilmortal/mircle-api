@@ -1,4 +1,4 @@
-package nz.co.mircle.permission.dao;
+package nz.co.mircle.v1.api.permission.dao;
 
 import static org.assertj.core.api.Java6Assertions.assertThat;
 

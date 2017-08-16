@@ -1,13 +1,17 @@
 package nz.co.mircle.v1.api.user.controller;
 
+import com.amazonaws.AmazonServiceException;
+import com.amazonaws.auth.AWSStaticCredentialsProvider;
+import com.amazonaws.auth.BasicAWSCredentials;
+import com.amazonaws.regions.Regions;
+import com.amazonaws.services.s3.AmazonS3;
+import com.amazonaws.services.s3.AmazonS3Client;
+import com.amazonaws.services.s3.model.S3Object;
+import com.amazonaws.services.s3.model.S3ObjectInputStream;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
-
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-
 import nz.co.mircle.v1.api.AbstractController;
 import nz.co.mircle.v1.api.user.model.User;
 import nz.co.mircle.v1.api.user.services.UserService;
@@ -17,6 +21,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.io.BufferedReader;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 /** Here are a lists of user API. */
 @RestController
@@ -50,12 +61,11 @@ public class UserController extends AbstractController {
       @ApiResponse(code = 404, message = "The resource you were trying to reach is not found")
     }
   )
-  @RequestMapping(value = "/create", method = RequestMethod.POST)
+  @RequestMapping(method = RequestMethod.POST)
   public ResponseEntity createUser(@RequestBody User user) {
     LOG.info("Creating a new user...");
 
     try {
-      DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
       LocalDateTime currentDateTime = LocalDateTime.now();
       user.setCreatedOn(currentDateTime);
       user.setLastLoggedIn(currentDateTime);

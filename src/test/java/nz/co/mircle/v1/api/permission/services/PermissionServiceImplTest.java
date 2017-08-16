@@ -1,4 +1,4 @@
-package nz.co.mircle.permission.services;
+package nz.co.mircle.v1.api.permission.services;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.when;

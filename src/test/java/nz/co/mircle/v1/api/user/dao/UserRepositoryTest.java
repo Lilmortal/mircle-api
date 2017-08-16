@@ -2,10 +2,8 @@ package nz.co.mircle.v1.api.user.dao;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 
-import nz.co.mircle.v1.api.user.model.ProfileImage;
 import nz.co.mircle.v1.api.user.model.User;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -32,7 +30,7 @@ public class UserRepositoryTest {
 
   private static final String PHONE_NUMBER = "12345";
 
-  private static final LocalDate BIRTH_DATE = LocalDate.now();
+  private static final LocalDateTime BIRTH_DATE = LocalDateTime.now();
 
   private static final String OCCUPATION = "Engineer";
 

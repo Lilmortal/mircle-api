@@ -1,4 +1,4 @@
-package nz.co.mircle.socialMedia.controller;
+package nz.co.mircle.v1.api.socialMedia.controller;
 
 import static org.mockito.Mockito.doNothing;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;

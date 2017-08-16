@@ -1,4 +1,4 @@
-package nz.co.mircle.relationship.controller;
+package nz.co.mircle.v1.api.relationship.controller;
 
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.doNothing;

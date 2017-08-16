@@ -1,0 +1,65 @@
+package nz.co.mircle.v1.api.profileImage.controller;
+
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiResponse;
+import io.swagger.annotations.ApiResponses;
+import nz.co.mircle.v1.api.AbstractController;
+import nz.co.mircle.v1.api.profileImage.services.ProfileImageService;
+import nz.co.mircle.v1.api.user.controller.UserController;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RestController;
+
+/**
+ * Created by tanj1 on 16/08/2017.
+ */
+/** Here are a lists of profile image API. */
+@RestController
+@Api(value = "profile image", description = "Profile image API")
+@RequestMapping("/profileimage")
+public class ProfileImageController extends AbstractController {
+    private final Logger LOG = LoggerFactory.getLogger(UserController.class);
+
+    private ProfileImageService profileImageService;
+
+    @Autowired
+    public ProfileImageController(ProfileImageService profileImageService) {
+        this.profileImageService = profileImageService;
+    }
+
+    @ApiOperation(value = "Get the default profile image", response = Iterable.class)
+    @ApiResponses(
+            value = {
+                    @ApiResponse(code = 200, message = "Successfully return the default profile image"),
+                    @ApiResponse(code = 201, message = "Successfully return the default profile image"),
+                    @ApiResponse(code = 401, message = "You are not authorized to get the profile image from AWS S3."),
+                    @ApiResponse(
+                            code = 403,
+                            message = "Accessing the resource you were trying to reach is forbidden"
+                    ),
+                    @ApiResponse(code = 404, message = "The resource you were trying to reach is not found")
+            }
+    )
+    @RequestMapping(value = "/default", method = RequestMethod.GET)
+    public ResponseEntity getDefaultImage() {
+        LOG.info("Getting default profile image...");
+        String defaultImage;
+
+        try {
+            defaultImage = profileImageService.getDefaultImage();
+        } catch (Exception e) {
+            LOG.error("Failed to get the default profile image");
+            LOG.error(e.getMessage());
+            return new ResponseEntity(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+
+        LOG.info("Default profile image successfully retrieved.");
+        return new ResponseEntity(defaultImage, HttpStatus.OK);
+    }
+}

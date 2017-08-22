@@ -1,79 +1,94 @@
 package nz.co.mircle.v1.api.user.dao;
 
-import static org.assertj.core.api.Assertions.assertThat;
-
 import java.time.LocalDateTime;
 
+import nz.co.mircle.v1.api.profileImage.model.ProfileImage;
 import nz.co.mircle.v1.api.user.model.User;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.junit4.SpringRunner;
 
-/** User repository test */
+import static io.restassured.RestAssured.when;
+import static org.assertj.core.api.Assertions.assertThat;
+
+/**
+ * User repository test
+ */
 @RunWith(SpringRunner.class)
 @DataJpaTest
 public class UserRepositoryTest {
-  private static final Long ID = Long.parseLong("1");
+    private static final Long ID = Long.parseLong("1");
 
-  private static final String EMAIL_ADDRESS = "test@test.com";
+    private static final String EMAIL_ADDRESS = "test@test.com";
 
-  private static final String PASSWORD = "password";
+    private static final String PASSWORD = "password";
 
-  private static final String FIRST_NAME = "First_name";
+    private static final String FIRST_NAME = "First_name";
 
-  private static final String SURNAME = "surname";
+    private static final String SURNAME = "surname";
 
-  private static final String GENDER = "M";
+    private static final String GENDER = "M";
 
-  private static final String PHONE_NUMBER = "12345";
+    private static final String PHONE_NUMBER = "12345";
 
-  private static final LocalDateTime BIRTH_DATE = LocalDateTime.now();
+    private static final LocalDateTime BIRTH_DATE = LocalDateTime.now();
 
-  private static final String OCCUPATION = "Engineer";
+    private static final String OCCUPATION = "Engineer";
 
-  private static final LocalDateTime CREATED_ON = LocalDateTime.now();
+    private static final LocalDateTime CREATED_ON = LocalDateTime.now();
 
-  private static final LocalDateTime LAST_LOGGED_IN = LocalDateTime.now();
+    private static final LocalDateTime LAST_LOGGED_IN = LocalDateTime.now();
 
-  @Autowired
-  private ProfileImage profileImage;
+    private static final String URI = "uri";
 
-  @Autowired private TestEntityManager entityManager;
+    @MockBean
+    private ProfileImage profileImage;
 
-  @Autowired private UserRepository userRepository;
+    @Autowired
+    private TestEntityManager entityManager;
 
-  @Test
-  public void givenIdReturnAUser() {
-    User user =
-        new User(
-                EMAIL_ADDRESS,
-                PASSWORD,
-                FIRST_NAME,
-                SURNAME,
-                GENDER,
-            PHONE_NUMBER,
-            BIRTH_DATE,
-                OCCUPATION,
-                CREATED_ON,
-            LAST_LOGGED_IN,
-                profileImage);
-    entityManager.persist(user);
-    entityManager.flush();
+    @Autowired
+    private UserRepository userRepository;
 
-    User result = userRepository.findById(ID);
-    assertThat(result.getEmailAddress()).isEqualTo(EMAIL_ADDRESS);
-    assertThat(result.getPassword()).isEqualTo(PASSWORD);
-    assertThat(result.getFirstName()).isEqualTo(FIRST_NAME);
-    assertThat(result.getSurname()).isEqualTo(SURNAME);
-    assertThat(result.getGender()).isEqualTo(GENDER);
-    assertThat(result.getPhoneNumber()).isEqualTo(PHONE_NUMBER);
-    assertThat(result.getBirthDate()).isEqualTo(BIRTH_DATE);
-    assertThat(result.getOccupation()).isEqualTo(OCCUPATION);
-    assertThat(result.getCreatedOn()).isEqualTo(CREATED_ON);
-    assertThat(result.getLastLoggedIn()).isEqualTo(LAST_LOGGED_IN);
-    assertThat(result.getProfileImage()).isEqualTo(profileImage);
-  }
+    @Before
+    public void setup() {
+        //when(profileImage.getUri()).thenReturn(URI);
+    }
+
+    @Test
+    public void givenIdReturnAUser() {
+        User user =
+                new User(
+                        EMAIL_ADDRESS,
+                        PASSWORD,
+                        FIRST_NAME,
+                        SURNAME,
+                        GENDER,
+                        PHONE_NUMBER,
+                        BIRTH_DATE,
+                        OCCUPATION,
+                        CREATED_ON,
+                        LAST_LOGGED_IN,
+                        profileImage);
+        entityManager.persist(user);
+        entityManager.flush();
+
+        User result = userRepository.findById(ID);
+        assertThat(result.getEmailAddress()).isEqualTo(EMAIL_ADDRESS);
+        assertThat(result.getPassword()).isEqualTo(PASSWORD);
+        assertThat(result.getFirstName()).isEqualTo(FIRST_NAME);
+        assertThat(result.getSurname()).isEqualTo(SURNAME);
+        assertThat(result.getGender()).isEqualTo(GENDER);
+        assertThat(result.getPhoneNumber()).isEqualTo(PHONE_NUMBER);
+        assertThat(result.getBirthDate()).isEqualTo(BIRTH_DATE);
+        assertThat(result.getOccupation()).isEqualTo(OCCUPATION);
+        assertThat(result.getCreatedOn()).isEqualTo(CREATED_ON);
+        assertThat(result.getLastLoggedIn()).isEqualTo(LAST_LOGGED_IN);
+        assertThat(result.getProfileImage()).isEqualTo(profileImage);
+    }
 }

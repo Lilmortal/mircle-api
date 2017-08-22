@@ -1,5 +1,7 @@
 package nz.co.mircle.v1.api.profileImage.controller;
 
+import com.amazonaws.AmazonServiceException;
+import com.amazonaws.services.s3.model.AmazonS3Exception;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
@@ -16,10 +18,16 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.io.FileNotFoundException;
+import java.net.URL;
+
 /**
  * Created by tanj1 on 16/08/2017.
  */
-/** Here are a lists of profile image API. */
+
+/**
+ * Here are a lists of profile image API.
+ */
 @RestController
 @Api(value = "profile image", description = "Profile image API")
 @RequestMapping("/profileimage")
@@ -49,11 +57,11 @@ public class ProfileImageController extends AbstractController {
     @RequestMapping(value = "/default", method = RequestMethod.GET)
     public ResponseEntity getDefaultImage() {
         LOG.info("Getting default profile image...");
-        String defaultImage;
+        URL defaultImage;
 
         try {
             defaultImage = profileImageService.getDefaultImage();
-        } catch (Exception e) {
+        } catch (AmazonServiceException e) {
             LOG.error("Failed to get the default profile image");
             LOG.error(e.getMessage());
             return new ResponseEntity(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
@@ -61,5 +69,39 @@ public class ProfileImageController extends AbstractController {
 
         LOG.info("Default profile image successfully retrieved.");
         return new ResponseEntity(defaultImage, HttpStatus.OK);
+    }
+
+    @ApiOperation(value = "Upload a profile image", response = Iterable.class)
+    @ApiResponses(
+            value = {
+                    @ApiResponse(code = 200, message = "Successfully upload a profile image"),
+                    @ApiResponse(code = 201, message = "Successfully upload a profile image"),
+                    @ApiResponse(code = 401, message = "You are not authorized to upload a profile image to AWS S3."),
+                    @ApiResponse(
+                            code = 403,
+                            message = "Accessing the resource you were trying to reach is forbidden"
+                    ),
+                    @ApiResponse(code = 404, message = "The resource you were trying to reach is not found")
+            }
+    )
+    @RequestMapping(value = "/upload", method = RequestMethod.POST)
+    public ResponseEntity uploadProfileImage(String profileImage, String id) {
+        LOG.info("Uploading profile image...");
+        String imageETag;
+
+        try {
+            imageETag = profileImageService.uploadProfileImage(profileImage, id);
+        } catch (AmazonServiceException e) {
+            LOG.error("Failed to upload the profile image");
+            LOG.error(e.getMessage());
+            return new ResponseEntity(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+        } catch (FileNotFoundException e) {
+            LOG.error("Profile image not found.");
+            LOG.error(e.getMessage());
+            return new ResponseEntity(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+
+        LOG.info("Profile image successfully uploaded.");
+        return new ResponseEntity(imageETag, HttpStatus.OK);
     }
 }

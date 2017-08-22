@@ -3,6 +3,7 @@ package nz.co.mircle.v1.api.profileImage.model;
 import io.swagger.annotations.ApiModelProperty;
 
 import javax.persistence.*;
+import java.net.URL;
 
 /**
  * Created by tanj1 on 16/08/2017.
@@ -17,29 +18,38 @@ public class ProfileImage {
 
     @Column(name = "uri")
     @ApiModelProperty(notes = "Profile picture uri link")
-    private String uri;
+    private URL uri;
+
+    @Column(name = "default")
+    @ApiModelProperty(notes = "Whether this profile picture is default or not")
+    private boolean isDefault;
 
     public ProfileImage() {
     }
 
-    public ProfileImage(String uri) {
+    public ProfileImage(URL uri, boolean isDefault) {
         this.uri = uri;
+        this.isDefault = isDefault;
     }
 
     public Long getId() {
         return id;
     }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public String getUri() {
+    public URL getUri() {
         return uri;
     }
 
-    public void setUri(String uri) {
+    public void setUri(URL uri) {
         this.uri = uri;
+    }
+
+    public boolean isDefault() {
+        return isDefault;
+    }
+
+    public void setIsDefault(boolean isDefault) {
+        this.isDefault = isDefault;
     }
 
     @Override
@@ -47,6 +57,7 @@ public class ProfileImage {
         return "ProfileImage{" +
                 "id=" + id +
                 ", uri='" + uri + '\'' +
+                ", isDefault=" + isDefault +
                 '}';
     }
 }

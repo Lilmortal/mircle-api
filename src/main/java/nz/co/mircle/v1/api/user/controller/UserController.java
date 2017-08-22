@@ -42,11 +42,6 @@ public class UserController extends AbstractController {
   public UserController(UserService userService) {
     this.userService = userService;
   }
-
-  @RequestMapping(value = "/test", method = RequestMethod.GET)
-  public ResponseEntity test(@RequestParam String param) {
-    return new ResponseEntity(param, HttpStatus.ACCEPTED);
-  }
   
   @ApiOperation(value = "Create a user", response = Iterable.class)
   @ApiResponses(

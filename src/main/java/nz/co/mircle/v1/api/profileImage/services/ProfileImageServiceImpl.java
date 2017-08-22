@@ -6,14 +6,12 @@ import com.amazonaws.auth.BasicAWSCredentials;
 import com.amazonaws.regions.Regions;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3Client;
-import com.amazonaws.services.s3.model.S3Object;
-import com.amazonaws.services.s3.model.S3ObjectInputStream;
+import com.amazonaws.services.s3.model.*;
+import com.amazonaws.util.IOUtils;
 import org.springframework.stereotype.Service;
 
-import java.io.BufferedReader;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStreamReader;
+import java.io.*;
+import java.net.URL;
 
 /**
  * Created by tanj1 on 16/08/2017.
@@ -24,34 +22,31 @@ public class ProfileImageServiceImpl implements ProfileImageService {
 
     private static final String AWS_SECRET_KEY = System.getenv("AWS_SECRET_KEY");
 
-    private static final String AWS_BUCKET_NAME = "Mircle";
+    private static final String AWS_BUCKET_NAME = "mircle";
+
+    private static final String AWS_DEFAULT_PROFILE_IMAGE_KEY = "default/profile_image.png";
 
     @Override
-    public String getDefaultImage() throws Exception {
+    public URL getDefaultImage() throws AmazonServiceException {
         BasicAWSCredentials credentials = new BasicAWSCredentials(AWS_ACCESS_KEY, AWS_SECRET_KEY);
         AWSStaticCredentialsProvider credentialsProvider = new AWSStaticCredentialsProvider(credentials);
 
-        String image;
         final AmazonS3 s3 = AmazonS3Client.builder().withRegion(Regions.AP_SOUTHEAST_2).withCredentials(credentialsProvider).build();
-        try {
-            S3Object o = s3.getObject(AWS_BUCKET_NAME, AWS_ACCESS_KEY);
-            S3ObjectInputStream s3is = o.getObjectContent();
+        URL imageUrl = s3.getUrl(AWS_BUCKET_NAME, AWS_DEFAULT_PROFILE_IMAGE_KEY);
+        return imageUrl;
+    }
 
-            BufferedReader reader = new BufferedReader(new
-                    InputStreamReader(s3is));
-            while (true) {
-                image = reader.readLine();
-                if (image == null) break;
-            }
+    @Override
+    public String uploadProfileImage(String image, String id) throws FileNotFoundException, AmazonServiceException {
+        BasicAWSCredentials credentials = new BasicAWSCredentials(AWS_ACCESS_KEY, AWS_SECRET_KEY);
+        AWSStaticCredentialsProvider credentialsProvider = new AWSStaticCredentialsProvider(credentials);
 
-            s3is.close();
-        } catch (AmazonServiceException e) {
-            throw new Exception(e.getErrorMessage());
-        } catch (FileNotFoundException e) {
-            throw new Exception(e.getMessage());
-        } catch (IOException e) {
-            throw new Exception(e.getMessage());
-        }
-        return image;
+        FileInputStream stream = new FileInputStream(image);
+        ObjectMetadata objectMetadata = new ObjectMetadata();
+        PutObjectRequest putObjectRequest = new PutObjectRequest(AWS_BUCKET_NAME, id, stream, objectMetadata);
+
+        final AmazonS3 s3 = AmazonS3Client.builder().withRegion(Regions.AP_SOUTHEAST_2).withCredentials(credentialsProvider).build();
+        PutObjectResult imageUrl = s3.putObject(putObjectRequest);
+        return imageUrl.getETag();
     }
 }

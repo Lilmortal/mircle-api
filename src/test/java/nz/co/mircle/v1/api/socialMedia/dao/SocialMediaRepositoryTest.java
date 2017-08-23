@@ -2,7 +2,6 @@ package nz.co.mircle.v1.api.socialMedia.dao;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import nz.co.mircle.v1.api.socialMedia.dao.SocialMediaRepository;
 import nz.co.mircle.v1.api.socialMedia.model.SocialMedia;
 import org.junit.Test;
 import org.junit.runner.RunWith;

@@ -44,8 +44,7 @@ dependencies {
     compile "com.google.code.gson:gson:${gsonVersion}"
     compile "com.h2database:h2:${h2DatabaseVersion}"
     compile "com.amazonaws:aws-java-sdk-s3:${awsVersion}"
-
-
+    compile "com.amazonaws:aws-java-sdk-lambda:${awsVersion}"
 
     testCompile "com.h2database:h2:${h2DatabaseVersion}"
     testCompile "junit:junit:${junitVersion}"

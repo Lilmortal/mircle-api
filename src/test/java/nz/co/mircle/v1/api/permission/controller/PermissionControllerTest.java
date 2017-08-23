@@ -5,7 +5,6 @@ import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import nz.co.mircle.v1.api.permission.controller.PermissionController;
 import nz.co.mircle.v1.api.permission.model.Permission;
 import nz.co.mircle.v1.api.permission.services.PermissionService;
 import nz.co.mircle.v1.api.socialMedia.model.SocialMedia;

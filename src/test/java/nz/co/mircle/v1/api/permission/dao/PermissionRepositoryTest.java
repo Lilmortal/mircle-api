@@ -2,7 +2,6 @@ package nz.co.mircle.v1.api.permission.dao;
 
 import static org.assertj.core.api.Java6Assertions.assertThat;
 
-import nz.co.mircle.v1.api.permission.dao.PermissionRepository;
 import nz.co.mircle.v1.api.permission.model.Permission;
 import nz.co.mircle.v1.api.socialMedia.model.SocialMedia;
 import org.junit.Test;

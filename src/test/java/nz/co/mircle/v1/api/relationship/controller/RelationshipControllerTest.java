@@ -8,7 +8,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import nz.co.mircle.v1.api.permission.model.Permission;
 import nz.co.mircle.v1.api.permission.services.PermissionService;
-import nz.co.mircle.v1.api.relationship.controller.RelationshipController;
 import nz.co.mircle.v1.api.relationship.model.Relationship;
 import nz.co.mircle.v1.api.relationship.services.RelationshipService;
 import nz.co.mircle.v1.api.socialMedia.model.SocialMedia;

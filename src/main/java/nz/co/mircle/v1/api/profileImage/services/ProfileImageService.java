@@ -13,6 +13,6 @@ import java.net.URL;
 public interface ProfileImageService {
   URL getDefaultImage() throws AmazonServiceException;
 
-  URL uploadProfileImage(MultipartFile uploadedFile)
+  URL uploadProfileImage(MultipartFile profileImage, Long id)
           throws IOException, AmazonServiceException;
 }

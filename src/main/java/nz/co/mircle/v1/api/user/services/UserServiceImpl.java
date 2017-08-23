@@ -20,12 +20,7 @@ public class UserServiceImpl implements UserService {
   @Autowired private UserRepository userRepository;
 
   @Override
-  public void createUser(User user) throws FileNotFoundException, MalformedURLException {
-    if (user.getProfileImage().isDefault()) {
-      URL defaultImageUri = profileImageService.getDefaultImage();
-
-      user.getProfileImage().setUri(defaultImageUri);
-    }
+  public void createUser(User user) {
     userRepository.save(user);
   }
 

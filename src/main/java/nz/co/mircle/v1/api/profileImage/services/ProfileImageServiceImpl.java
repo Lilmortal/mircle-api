@@ -53,18 +53,18 @@ public class ProfileImageServiceImpl implements ProfileImageService {
     }
 
     @Override
-    public URL uploadProfileImage(MultipartFile uploadedFile)
+    public URL uploadProfileImage(MultipartFile profileImage, Long id)
             throws IOException, AmazonServiceException {
-        //LOG.info(uploadedFile.getOriginalFilename() + " " + uploadedFile.getName() + " " + uploadedFile.getContentType() + " " + uploadedFile.getInputStream());
         BasicAWSCredentials credentials = new BasicAWSCredentials(AWS_ACCESS_KEY, AWS_SECRET_KEY);
         AWSStaticCredentialsProvider credentialsProvider =
                 new AWSStaticCredentialsProvider(credentials);
 
-        InputStream stream = uploadedFile.getInputStream();
-        ObjectMetadata objectMetadata = new ObjectMetadata();
-        objectMetadata.setContentLength(uploadedFile.getBytes().length);
 
-        String key = System.currentTimeMillis() + "/" + uploadedFile.getOriginalFilename();
+        InputStream stream = profileImage.getInputStream();
+        ObjectMetadata objectMetadata = new ObjectMetadata();
+        objectMetadata.setContentLength(profileImage.getBytes().length);
+
+        String key = id + "/" + profileImage.getOriginalFilename();
         PutObjectRequest putObjectRequest =
                 new PutObjectRequest(AWS_BUCKET_NAME, key, stream, objectMetadata);
 
@@ -74,6 +74,7 @@ public class ProfileImageServiceImpl implements ProfileImageService {
                         .withCredentials(credentialsProvider)
                         .build();
         s3.putObject(putObjectRequest);
+        s3.setObjectAcl(AWS_BUCKET_NAME, key, CannedAccessControlList.PublicRead);
 
         URL imageUrl = s3.getUrl(AWS_BUCKET_NAME, key);
         return imageUrl;

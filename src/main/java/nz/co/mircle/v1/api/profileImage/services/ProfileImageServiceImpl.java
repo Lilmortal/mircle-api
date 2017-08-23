@@ -13,6 +13,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 
 import nz.co.mircle.v1.api.profileImage.model.ProfileImage;
+import nz.co.mircle.v1.api.user.model.User;
 import nz.co.mircle.v1.api.user.services.UserServiceImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

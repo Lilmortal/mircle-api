@@ -2,6 +2,7 @@ package nz.co.mircle.v1.api.profileImage.services;
 
 import com.amazonaws.AmazonServiceException;
 import nz.co.mircle.v1.api.profileImage.model.ProfileImage;
+import nz.co.mircle.v1.api.user.model.User;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.FileNotFoundException;

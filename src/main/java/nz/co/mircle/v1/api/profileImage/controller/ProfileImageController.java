@@ -96,7 +96,7 @@ public class ProfileImageController extends AbstractController {
     try {
       user = userService.findUser(id);
       defaultImage = profileImageService.getDefaultImage();
-      user.getProfileImage().setUri(defaultImage);
+      user = userService.setUserProfileImage(user, defaultImage);
     } catch (AmazonServiceException e) {
       LOG.error("Failed to get the default profile image");
       LOG.error(e.getMessage());
@@ -124,20 +124,20 @@ public class ProfileImageController extends AbstractController {
           }
   )
   @RequestMapping(value = "/set", method = RequestMethod.POST)
-  public ResponseEntity setUserImageUri(@RequestParam("id") Long id, @RequestParam("uri") URL url) {
+  public ResponseEntity setUserImageUri(@RequestParam("id") Long id, @RequestParam("uri") URL uri) {
     LOG.info(String.format("Getting user with id %d...", id));
     User user;
 
     try {
       user = userService.findUser(id);
-      user.getProfileImage().setUri(url);
+      user = userService.setUserProfileImage(user, uri);
     } catch (AmazonServiceException e) {
       LOG.error("Failed to get the default profile image");
       LOG.error(e.getMessage());
       return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
-    LOG.info(String.format("%s %s successfully has its profile image set to %s.", user.getFirstName(), user.getSurname(), url));
+    LOG.info(String.format("%s %s successfully has its profile image set to %s.", user.getFirstName(), user.getSurname(), uri));
     return new ResponseEntity<>(user, HttpStatus.OK);
   }
 

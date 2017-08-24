@@ -52,7 +52,7 @@ public class UserController extends AbstractController {
       user.setLastLoggedIn(currentDateTime);
 
       userService.createUser(user);
-      LOG.info("User " + user.getId() + " created.");
+      LOG.info(String.format("User ID %d created.", user.getId()));
     } catch (Exception e) {
       LOG.error("Attempt to create a new user failed.");
       LOG.error(e.getMessage());
@@ -60,5 +60,64 @@ public class UserController extends AbstractController {
     }
 
     return new ResponseEntity<>(user.getId(), HttpStatus.CREATED);
+  }
+
+  @ApiOperation(value = "Getting a user by id", response = Iterable.class)
+  @ApiResponses(
+          value = {
+                  @ApiResponse(code = 200, message = "Successfully retrieved a user"),
+                  @ApiResponse(code = 201, message = "Successfully retrieved a user"),
+                  @ApiResponse(code = 401, message = "You are not authorized to retrieved a user."),
+                  @ApiResponse(
+                          code = 403,
+                          message = "Accessing the resource you were trying to reach is forbidden"
+                  ),
+                  @ApiResponse(code = 404, message = "The resource you were trying to reach is not found")
+          }
+  )
+  @RequestMapping(value = "/user/{id}", method = RequestMethod.GET)
+  public ResponseEntity getUserById(@PathVariable("id") Long id) {
+    LOG.info(String.format("Getting user ID %d...", id));
+
+    User user;
+    try {
+      user = userService.findUser(id);
+      LOG.info(String.format("User %d found.", user.getId()));
+    } catch (Exception e) {
+      LOG.error(String.format("Attempt to find a user with id %d failed.", id));
+      LOG.error(e.getMessage());
+      return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
+    return new ResponseEntity<>(user, HttpStatus.CREATED);
+  }
+
+  @ApiOperation(value = "Delete a user", response = Iterable.class)
+  @ApiResponses(
+          value = {
+                  @ApiResponse(code = 200, message = "Successfully deleted a user"),
+                  @ApiResponse(code = 201, message = "Successfully deleted a user"),
+                  @ApiResponse(code = 401, message = "You are not authorized to retrieved a user."),
+                  @ApiResponse(
+                          code = 403,
+                          message = "Accessing the resource you were trying to reach is forbidden"
+                  ),
+                  @ApiResponse(code = 404, message = "The resource you were trying to reach is not found")
+          }
+  )
+  @RequestMapping(value = "/user", method = RequestMethod.DELETE)
+  public ResponseEntity deleteUser(@PathVariable("id") Long id) {
+    LOG.info(String.format("Deleting user with id %s...", id));
+
+    try {
+      userService.deleteUser(id);
+      LOG.info(String.format("User %d deleted.", id));
+    } catch (Exception e) {
+      LOG.error(String.format("Attempt to delete user with id %d failed.", id));
+      LOG.error(e.getMessage());
+      return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
+    return new ResponseEntity<>(HttpStatus.CREATED);
   }
 }

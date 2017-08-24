@@ -16,4 +16,6 @@ public interface UserService {
   User findUser(String emailAddress);
 
   User setUserProfileImage(User user, URL profileImage) throws AmazonServiceException;
+
+  void deleteUser(Long id);
 }

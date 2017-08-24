@@ -141,11 +141,11 @@ public class ProfileImageController extends AbstractController {
     return new ResponseEntity<>(user, HttpStatus.OK);
   }
 
-  @ApiOperation(value = "Upload a profile image", response = Iterable.class)
+  @ApiOperation(value = "Upload a profile image to S3", response = Iterable.class)
   @ApiResponses(
     value = {
-      @ApiResponse(code = 200, message = "Successfully upload a profile image"),
-      @ApiResponse(code = 201, message = "Successfully upload a profile image"),
+      @ApiResponse(code = 200, message = "Successfully upload a profile image to S3"),
+      @ApiResponse(code = 201, message = "Successfully upload a profile image to S3"),
       @ApiResponse(
         code = 401,
         message = "You are not authorized to upload a profile image to AWS S3."
@@ -157,13 +157,13 @@ public class ProfileImageController extends AbstractController {
       @ApiResponse(code = 404, message = "The resource you were trying to reach is not found")
     }
   )
-  @RequestMapping(value = "/upload", method = RequestMethod.POST)
-  public ResponseEntity uploadProfileImage(@RequestParam("profileImage") MultipartFile profileImage, @RequestParam("id") Long id) {
-    LOG.info("Uploading profile image...");
+  @RequestMapping(value = "/s3upload", method = RequestMethod.POST)
+  public ResponseEntity uploadProfileImageToS3(@RequestParam("profileImage") MultipartFile profileImage, @RequestParam("id") Long id) {
+    LOG.info("Uploading profile image to AWS S3...");
     URL url;
 
     try {
-      url = profileImageService.uploadProfileImage(profileImage, id);
+      url = profileImageService.uploadProfileImageToS3(profileImage, id);
     } catch (AmazonServiceException e) {
       LOG.error("Failed to upload the profile image");
       LOG.error(e.getMessage());
@@ -182,7 +182,7 @@ public class ProfileImageController extends AbstractController {
       return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
-    LOG.info("Profile image successfully uploaded.");
+    LOG.info(String.format("Profile image successfully uploaded to %s.", url));
     return new ResponseEntity<>(url, HttpStatus.OK);
   }
 }

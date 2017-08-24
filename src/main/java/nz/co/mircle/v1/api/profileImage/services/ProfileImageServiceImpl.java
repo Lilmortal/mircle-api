@@ -54,7 +54,7 @@ public class ProfileImageServiceImpl implements ProfileImageService {
     }
 
     @Override
-    public URL uploadProfileImage(MultipartFile profileImage, Long id)
+    public URL uploadProfileImageToS3(MultipartFile profileImage, Long id)
             throws IOException, AmazonServiceException {
         BasicAWSCredentials credentials = new BasicAWSCredentials(AWS_ACCESS_KEY, AWS_SECRET_KEY);
         AWSStaticCredentialsProvider credentialsProvider =

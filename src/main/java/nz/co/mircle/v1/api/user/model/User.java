@@ -1,231 +1,202 @@
 package nz.co.mircle.v1.api.user.model;
 
 import io.swagger.annotations.ApiModelProperty;
+
 import java.time.LocalDateTime;
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
+
 import nz.co.mircle.v1.api.profileImage.model.ProfileImage;
 
-/** User entity. */
+/**
+ * User entity.
+ */
 @Entity
 @Table(name = "usr")
 public class User {
-  @Id
-  @GeneratedValue(strategy = GenerationType.AUTO)
-  @ApiModelProperty(notes = "The database generated profile ID")
-  private Long id;
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    @ApiModelProperty(notes = "The database generated profile ID")
+    private Long id;
 
-  @Column(name = "email_address")
-  @NotNull
-  @ApiModelProperty(notes = "User email address", required = true)
-  private String emailAddress;
+    @Column(name = "email_address")
+    @NotNull
+    @ApiModelProperty(notes = "User email address", required = true)
+    private String emailAddress;
 
-  @Column(name = "password")
-  @NotNull
-  @ApiModelProperty(notes = "User password", required = true)
-  private String password;
+    @Column(name = "password")
+    @NotNull
+    @ApiModelProperty(notes = "User password", required = true)
+    private String password;
 
-  @Column(name = "first_name")
-  @NotNull
-  @ApiModelProperty(notes = "User first name", required = true)
-  private String firstName;
+    @Column(name = "first_name")
+    @NotNull
+    @ApiModelProperty(notes = "User first name", required = true)
+    private String firstName;
 
-  @Column(name = "surname")
-  @NotNull
-  @ApiModelProperty(notes = "User surname", required = true)
-  private String surname;
+    @Column(name = "surname")
+    @NotNull
+    @ApiModelProperty(notes = "User surname", required = true)
+    private String surname;
 
-  @Column(name = "gender")
-  @NotNull
-  @ApiModelProperty(notes = "User gender", required = true)
-  private String gender;
+    @Column(name = "gender")
+    @NotNull
+    @ApiModelProperty(notes = "User gender", required = true)
+    private String gender;
 
-  @Column(name = "phone_number")
-  @NotNull
-  @ApiModelProperty(notes = "User phone number", required = true)
-  private String phoneNumber;
+    @Column(name = "phone_number")
+    @NotNull
+    @ApiModelProperty(notes = "User phone number", required = true)
+    private String phoneNumber;
 
-  @Column(name = "birth_date")
-  @NotNull
-  @ApiModelProperty(notes = "User birth date", required = true)
-  private LocalDateTime birthDate;
+    @Column(name = "birth_date")
+    @NotNull
+    @ApiModelProperty(notes = "User birth date", required = true)
+    private LocalDateTime birthDate;
 
-  @Column(name = "occupation")
-  @NotNull
-  @ApiModelProperty(notes = "User occupation", required = true)
-  private String occupation;
+    @Column(name = "occupation")
+    @NotNull
+    @ApiModelProperty(notes = "User occupation", required = true)
+    private String occupation;
 
-  @Column(name = "created_on")
-  @NotNull
-  @ApiModelProperty(notes = "User creation date", required = true)
-  private LocalDateTime createdOn;
+    @Column(name = "created_on")
+    @NotNull
+    @ApiModelProperty(notes = "User creation date", required = true)
+    private LocalDateTime createdOn;
 
-  @Column(name = "last_logged_in")
-  @NotNull
-  @ApiModelProperty(notes = "User last logged in", required = true)
-  private LocalDateTime lastLoggedIn;
+    @Column(name = "last_logged_in")
+    @NotNull
+    @ApiModelProperty(notes = "User last logged in", required = true)
+    private LocalDateTime lastLoggedIn;
 
-  @OneToOne(cascade = CascadeType.ALL)
-  private ProfileImage profileImage;
+    @Column(name = "is_logged_in")
+    @NotNull
+    @ApiModelProperty(notes = "Is user currently logged in", required = true)
+    private boolean isLoggedIn;
 
-  // no args constructor needed for hibernate
-  public User() {}
+    @OneToOne(cascade = CascadeType.ALL)
+    private ProfileImage profileImage;
 
-  public User(
-      String emailAddress,
-      String password,
-      String firstName,
-      String surname,
-      String gender,
-      String phoneNumber,
-      LocalDateTime birthDate,
-      String occupation,
-      LocalDateTime createdOn,
-      LocalDateTime lastLoggedIn,
-      ProfileImage profileImage) {
-    this.emailAddress = emailAddress;
-    this.password = password;
-    this.firstName = firstName;
-    this.surname = surname;
-    this.gender = gender;
-    this.phoneNumber = phoneNumber;
-    this.birthDate = birthDate;
-    this.occupation = occupation;
-    this.createdOn = createdOn;
-    this.lastLoggedIn = lastLoggedIn;
-    this.profileImage = profileImage;
-  }
+    // no args constructor needed for hibernate
+    public User() {
+    }
 
-  public Long getId() {
-    return id;
-  }
+    public User(String emailAddress, String password, String firstName, String surname, String gender, String phoneNumber, LocalDateTime birthDate, String occupation, LocalDateTime createdOn, LocalDateTime lastLoggedIn, boolean isLoggedIn, ProfileImage profileImage) {
+        this.emailAddress = emailAddress;
+        this.password = password;
+        this.firstName = firstName;
+        this.surname = surname;
+        this.gender = gender;
+        this.phoneNumber = phoneNumber;
+        this.birthDate = birthDate;
+        this.occupation = occupation;
+        this.createdOn = createdOn;
+        this.lastLoggedIn = lastLoggedIn;
+        this.isLoggedIn = isLoggedIn;
+        this.profileImage = profileImage;
+    }
 
-  public void setId(Long id) {
-    this.id = id;
-  }
+    public Long getId() {
+        return id;
+    }
 
-  public String getEmailAddress() {
-    return emailAddress;
-  }
+    public void setId(Long id) {
+        this.id = id;
+    }
 
-  public void setEmailAddress(String emailAddress) {
-    this.emailAddress = emailAddress;
-  }
+    public String getEmailAddress() {
+        return emailAddress;
+    }
 
-  public String getPassword() {
-    return password;
-  }
+    public void setEmailAddress(String emailAddress) {
+        this.emailAddress = emailAddress;
+    }
 
-  public void setPassword(String password) {
-    this.password = password;
-  }
+    public String getPassword() {
+        return password;
+    }
 
-  public String getFirstName() {
-    return firstName;
-  }
+    public void setPassword(String password) {
+        this.password = password;
+    }
 
-  public void setFirstName(String firstName) {
-    this.firstName = firstName;
-  }
+    public String getFirstName() {
+        return firstName;
+    }
 
-  public String getSurname() {
-    return surname;
-  }
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
+    }
 
-  public void setSurname(String surname) {
-    this.surname = surname;
-  }
+    public String getSurname() {
+        return surname;
+    }
 
-  public String getGender() {
-    return gender;
-  }
+    public void setSurname(String surname) {
+        this.surname = surname;
+    }
 
-  public void setGender(String gender) {
-    this.gender = gender;
-  }
+    public String getGender() {
+        return gender;
+    }
 
-  public String getPhoneNumber() {
-    return phoneNumber;
-  }
+    public void setGender(String gender) {
+        this.gender = gender;
+    }
 
-  public void setPhoneNumber(String phoneNumber) {
-    this.phoneNumber = phoneNumber;
-  }
+    public String getPhoneNumber() {
+        return phoneNumber;
+    }
 
-  public LocalDateTime getBirthDate() {
-    return birthDate;
-  }
+    public void setPhoneNumber(String phoneNumber) {
+        this.phoneNumber = phoneNumber;
+    }
 
-  public void setBirthDate(LocalDateTime birthDate) {
-    this.birthDate = birthDate;
-  }
+    public LocalDateTime getBirthDate() {
+        return birthDate;
+    }
 
-  public String getOccupation() {
-    return occupation;
-  }
+    public void setBirthDate(LocalDateTime birthDate) {
+        this.birthDate = birthDate;
+    }
 
-  public void setOccupation(String occupation) {
-    this.occupation = occupation;
-  }
+    public String getOccupation() {
+        return occupation;
+    }
 
-  public LocalDateTime getCreatedOn() {
-    return createdOn;
-  }
+    public void setOccupation(String occupation) {
+        this.occupation = occupation;
+    }
 
-  public void setCreatedOn(LocalDateTime createdOn) {
-    this.createdOn = createdOn;
-  }
+    public LocalDateTime getCreatedOn() {
+        return createdOn;
+    }
 
-  public LocalDateTime getLastLoggedIn() {
-    return lastLoggedIn;
-  }
+    public void setCreatedOn(LocalDateTime createdOn) {
+        this.createdOn = createdOn;
+    }
 
-  public void setLastLoggedIn(LocalDateTime lastLoggedIn) {
-    this.lastLoggedIn = lastLoggedIn;
-  }
+    public LocalDateTime getLastLoggedIn() {
+        return lastLoggedIn;
+    }
 
-  public ProfileImage getProfileImage() {
-    return profileImage;
-  }
+    public void setLastLoggedIn(LocalDateTime lastLoggedIn) {
+        this.lastLoggedIn = lastLoggedIn;
+    }
 
-  public void setProfileImage(ProfileImage profileImage) {
-    this.profileImage = profileImage;
-  }
+    public boolean getIsLoggedIn() {
+        return isLoggedIn;
+    }
 
-  @Override
-  public String toString() {
-    return "User{"
-        + "id="
-        + id
-        + ", emailAddress='"
-        + emailAddress
-        + '\''
-        + ", password='"
-        + password
-        + '\''
-        + ", firstName='"
-        + firstName
-        + '\''
-        + ", surname='"
-        + surname
-        + '\''
-        + ", gender='"
-        + gender
-        + '\''
-        + ", phoneNumber='"
-        + phoneNumber
-        + '\''
-        + ", birthDate="
-        + birthDate
-        + ", occupation='"
-        + occupation
-        + '\''
-        + ", createdOn="
-        + createdOn
-        + ", lastLoggedIn="
-        + lastLoggedIn
-        + ", profileImage="
-        + profileImage
-        + '}';
-  }
+    public void setIsLoggedIn(boolean isLoggedIn) {
+        this.isLoggedIn = isLoggedIn;
+    }
+
+    public ProfileImage getProfileImage() {
+        return profileImage;
+    }
+
+    public void setProfileImage(ProfileImage profileImage) {
+        this.profileImage = profileImage;
+    }
 }

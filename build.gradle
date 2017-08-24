@@ -15,6 +15,7 @@ repositories {
 ext {
     springJdbcVersion = '3.1.0.RELEASE'
     springDataJpaVersion = '1.4.7.RELEASE'
+    springSecurityVersion = '5.0.0.M3'
     postgresqlDriverVersion = '42.1.1'
     swaggerVersion = '2.7.0'
     jacksonVersion = '2.8.8'
@@ -37,6 +38,7 @@ dependencies {
     compile "org.springframework.boot:spring-boot-starter-web"
     //compile "org.springframework.boot:spring-boot-starter-jdbc:${springJdbcVersion}"
     compile "org.springframework.boot:spring-boot-starter-data-jpa:${springDataJpaVersion}"
+    compile "org.springframework.security:spring-security-core:${springSecurityVersion}"
     compile "io.springfox:springfox-swagger-ui:${swaggerVersion}"
     compile "io.springfox:springfox-swagger2:${swaggerVersion}"
     compile "com.fasterxml.jackson.datatype:jackson-datatype-jsr310:${jacksonVersion}"

@@ -47,10 +47,6 @@ public class UserController extends AbstractController {
     LOG.info("Creating a new user...");
 
     try {
-      LocalDateTime currentDateTime = LocalDateTime.now();
-      user.setCreatedOn(currentDateTime);
-      user.setLastLoggedIn(currentDateTime);
-
       userService.createUser(user);
       LOG.info(String.format("User ID %d created.", user.getId()));
     } catch (Exception e) {

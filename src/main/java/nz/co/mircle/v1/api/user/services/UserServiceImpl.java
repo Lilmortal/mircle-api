@@ -24,6 +24,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 /** List of user services implementation that are used to call the repository. */
@@ -35,12 +36,17 @@ public class UserServiceImpl implements UserService {
 
   @Autowired private UserRepository userRepository;
 
+
   @Override
   public void createUser(User user) {
     LocalDateTime currentDateTime = LocalDateTime.now();
     user.setCreatedOn(currentDateTime);
     user.setLastLoggedIn(currentDateTime);
     user.setIsLoggedIn(false);
+    BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+    String hashedPassword = passwordEncoder.encode(user.getPassword());
+    user.setPassword(hashedPassword);
+
     userRepository.save(user);
   }
 
@@ -56,10 +62,17 @@ public class UserServiceImpl implements UserService {
 
   @Override
   public User login(UserDTO userDto) throws Exception {
-    if (doesEmailExist(userDto.getEmailAddress())) {
+    User user = findUser(userDto.getEmailAddress());
+    if (user == null) {
       throw new Exception(String.format("Email address %s already exist.", userDto.getEmailAddress()));
     }
-    return null;
+    BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+    String hashedPassword = passwordEncoder.encode(user.getPassword());
+    LOG.info(user.getPassword() + " " + hashedPassword);
+    if (!user.getPassword().equals(hashedPassword)) {
+      throw new Exception("Password does not match");
+    }
+    return user;
   }
 
   @Override
@@ -72,13 +85,5 @@ public class UserServiceImpl implements UserService {
   @Override
   public void deleteUser(Long id) {
     userRepository.deleteById(id);
-  }
-
-  public boolean doesEmailExist(String emailAddress) {
-    User user = findUser(emailAddress);
-    if (user == null) {
-      return false;
-    }
-    return true;
   }
 }

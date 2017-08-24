@@ -15,7 +15,7 @@ repositories {
 ext {
     springJdbcVersion = '3.1.0.RELEASE'
     springDataJpaVersion = '1.4.7.RELEASE'
-    springSecurityVersion = '5.0.0.M3'
+    springSecurityVersion = '4.2.3.RELEASE'
     postgresqlDriverVersion = '42.1.1'
     swaggerVersion = '2.7.0'
     jacksonVersion = '2.8.8'

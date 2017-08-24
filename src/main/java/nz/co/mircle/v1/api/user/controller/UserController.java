@@ -7,6 +7,7 @@ import io.swagger.annotations.ApiResponses;
 import java.time.LocalDateTime;
 import nz.co.mircle.v1.api.AbstractController;
 import nz.co.mircle.v1.api.user.model.User;
+import nz.co.mircle.v1.api.user.model.UserDTO;
 import nz.co.mircle.v1.api.user.services.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -81,6 +82,36 @@ public class UserController extends AbstractController {
       LOG.info(String.format("User %d found.", user.getId()));
     } catch (Exception e) {
       LOG.error(String.format("Attempt to find a user with id %d failed.", id));
+      LOG.error(e.getMessage());
+      return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
+    return new ResponseEntity<>(user, HttpStatus.CREATED);
+  }
+
+  @ApiOperation(value = "Getting a user by id", response = Iterable.class)
+  @ApiResponses(
+          value = {
+                  @ApiResponse(code = 200, message = "Successfully retrieved a user"),
+                  @ApiResponse(code = 201, message = "Successfully retrieved a user"),
+                  @ApiResponse(code = 401, message = "You are not authorized to retrieved a user."),
+                  @ApiResponse(
+                          code = 403,
+                          message = "Accessing the resource you were trying to reach is forbidden"
+                  ),
+                  @ApiResponse(code = 404, message = "The resource you were trying to reach is not found")
+          }
+  )
+  @RequestMapping(value = "/user", method = RequestMethod.POST)
+  public ResponseEntity getUserByEmailAddressAndPassword(@RequestBody UserDTO userDTO) {
+    LOG.info(String.format("Determine if %s is a valid user and has the correct password...", userDTO.getEmailAddress()));
+
+    User user;
+    try {
+      user = userService.login(userDTO);
+      LOG.info(String.format("User %d found.", user.getId()));
+    } catch (Exception e) {
+      LOG.error(String.format("Attempt to find user with email address %s failed.", userDTO.getEmailAddress()));
       LOG.error(e.getMessage());
       return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
     }

@@ -30,7 +30,7 @@ import org.springframework.web.multipart.MultipartFile;
 @Api(value = "profile image", description = "Profile image API")
 @RequestMapping("/profileimage")
 public class ProfileImageController extends AbstractController {
-  private final Logger LOG = LoggerFactory.getLogger(UserController.class);
+  private final Logger LOG = LoggerFactory.getLogger(getClass());
 
   @Autowired
   private UserService userService;

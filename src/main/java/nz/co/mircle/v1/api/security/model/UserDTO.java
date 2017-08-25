@@ -1,4 +1,4 @@
-package nz.co.mircle.v1.api.user.model;
+package nz.co.mircle.v1.api.security.model;
 
 /**
  * Created by tanj1 on 24/08/2017.

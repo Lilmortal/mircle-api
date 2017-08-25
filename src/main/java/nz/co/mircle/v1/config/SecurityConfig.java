@@ -43,9 +43,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         auth.authenticationProvider(authProvider());
     }
 
-    // Disable CSRF as this is being used by a non-browser a.k.a mobile
     @Override
     protected void configure(HttpSecurity http) throws Exception {
+        // Disable CSRF as this is being used by a non-browser a.k.a mobile
         http.csrf().disable();
     }
 }

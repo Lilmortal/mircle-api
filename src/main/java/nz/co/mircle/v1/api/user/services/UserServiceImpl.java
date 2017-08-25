@@ -48,12 +48,14 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User findUser(Long id) {
-        return userRepository.findById(id);
+        User user = userRepository.findById(id);
+        return user;
     }
 
     @Override
     public User findUser(String emailAddress) {
-        return userRepository.findByEmailAddress(emailAddress);
+        User user = userRepository.findByEmailAddress(emailAddress);
+        return user;
     }
 
     @Override

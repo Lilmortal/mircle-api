@@ -34,7 +34,6 @@ public class AuthenticationServiceImpl implements AuthenticationService {
             throw new EmailAddressNotFoundException(String.format("Email address %s does not exist.", userDto.getEmailAddress()));
         }
 
-
         if (!encoder.matches(userDto.getPassword(), user.getPassword())) {
             throw new InvalidPasswordException("Password does not match");
         }

@@ -1,6 +1,7 @@
 package nz.co.mircle.v1.api.user.services;
 
 import java.net.URL;
+import java.time.Clock;
 import java.time.LocalDateTime;
 
 import com.amazonaws.AmazonServiceException;
@@ -36,7 +37,7 @@ public class UserServiceImpl implements UserService {
             throw new EmailAddressExistException(String.format("Email address %s already exist.", user.getEmailAddress()));
         }
 
-        LocalDateTime currentDateTime = LocalDateTime.now();
+        LocalDateTime currentDateTime = LocalDateTime.now(Clock.systemUTC());
         user.setCreatedOn(currentDateTime);
         user.setLastLoggedIn(currentDateTime);
         user.setIsLoggedIn(false);

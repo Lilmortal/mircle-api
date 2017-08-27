@@ -45,6 +45,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
+        http.headers().frameOptions().disable();
         // Disable CSRF as this is being used by a non-browser a.k.a mobile
         http.csrf().disable();
     }

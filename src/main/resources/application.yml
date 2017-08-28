@@ -2,6 +2,19 @@ spring:
   jackson:
     serialization:
       write_dates_as_timestamps: false
+
+security:
+  basic:
+    enabled: false
+  oauth2:
+    client:
+      #client-id: ${OAUTH2_CLIENT_ID}
+      #client-secret: ${OAUTH2_CLIENT_SECRET}
+      scope: read, write
+      access-token-uri: http://localhost:8080/auth/oauth/token
+      user-authorization-uri: http://localhost:8080/auth/oauth/authorize
+    resource:
+      user-info-uri: http://localhost:8080/auth/user/me
 ---
 
 spring:

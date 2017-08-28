@@ -19,7 +19,8 @@ ext {
     h2DatabaseVersion = '1.4.195'
     gsonVersion = '2.8.1'
     googleJavaFormatVersion = '1.3'
-    awsVersion ='1.11.177'
+    awsVersion = '1.11.177'
+    oauthVersion = '2.2.0.RELEASE'
 
     junitVersion = '4.12'
     wiremockVersion = '2.1.12'
@@ -36,6 +37,7 @@ dependencies {
     //compile "org.springframework.boot:spring-boot-starter-jdbc"
     compile "org.springframework.boot:spring-boot-starter-data-jpa"
     compile "org.springframework.boot:spring-boot-starter-security"
+    compile "org.springframework.security.oauth:spring-security-oauth2:${oauthVersion}"
     compile "io.springfox:springfox-swagger-ui:${swaggerVersion}"
     compile "io.springfox:springfox-swagger2:${swaggerVersion}"
     compile "com.fasterxml.jackson.datatype:jackson-datatype-jsr310:${jacksonVersion}"

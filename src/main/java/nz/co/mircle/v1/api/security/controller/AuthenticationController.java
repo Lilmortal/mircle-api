@@ -12,6 +12,7 @@ import nz.co.mircle.v1.api.user.services.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.security.oauth2.client.EnableOAuth2Sso;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -19,10 +20,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.security.Principal;
+
 /**
  * Created by tanj1 on 25/08/2017.
  */
 @RestController
+@EnableOAuth2Sso
 @Api(value = "authentication", description = "Authentication API")
 @RequestMapping("/login")
 public class AuthenticationController {
@@ -62,5 +66,10 @@ public class AuthenticationController {
         }
 
         return new ResponseEntity<>(user, HttpStatus.OK);
+    }
+
+    @RequestMapping(value = "/user", method = RequestMethod.GET)
+    public Principal user(Principal principal) {
+        return principal;
     }
 }

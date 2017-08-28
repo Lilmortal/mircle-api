@@ -92,6 +92,40 @@ public class ProfileImageController extends AbstractController {
                     @ApiResponse(code = 404, message = "The resource you were trying to reach is not found")
             }
     )
+    @RequestMapping(value = "/default/set", method = RequestMethod.POST)
+    public ResponseEntity setProfileImageToDefault(@RequestParam("id") Long id) {
+        LOG.info(String.format("Getting user with id %d...", id));
+
+        try {
+            User user = userService.findUser(id);
+            URL defaultImage = profileImageService.getDefaultImage();
+            userService.setUserProfileImage(user, defaultImage);
+            LOG.info(String.format("%s %s successfully has its profile image set to default.", user.getFirstName(), user.getSurname()));
+        } catch (AmazonServiceException e) {
+            LOG.error("Failed to get the default profile image");
+            LOG.error(e.getMessage());
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @ApiOperation(value = "Set the user profile image to be default", response = Iterable.class)
+    @ApiResponses(
+            value = {
+                    @ApiResponse(code = 200, message = "Successfully set the user profile image to be default"),
+                    @ApiResponse(code = 201, message = "Successfully set the user profile image to be default"),
+                    @ApiResponse(
+                            code = 401,
+                            message = "You are not authorized to get the profile image from AWS S3."
+                    ),
+                    @ApiResponse(
+                            code = 403,
+                            message = "Accessing the resource you were trying to reach is forbidden"
+                    ),
+                    @ApiResponse(code = 404, message = "The resource you were trying to reach is not found")
+            }
+    )
     @RequestMapping(value = "/set", method = RequestMethod.POST)
     public ResponseEntity setUserImageUri(@RequestParam("id") Long id, @RequestParam("uri") URL uri, Principal principal) {
         LOG.info(String.format("Getting user with id %d...", id));

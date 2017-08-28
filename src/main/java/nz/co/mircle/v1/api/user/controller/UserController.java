@@ -107,14 +107,14 @@ public class UserController extends AbstractController {
                   @ApiResponse(code = 404, message = "The resource you were trying to reach is not found")
           }
   )
-  @RequestMapping(value = "/{id}/friend", method = RequestMethod.POST)
-  public ResponseEntity addFriend(@PathVariable("id") Long id, Principal principal) {
+  @RequestMapping(value = "/{id}/friend/{friendId}", method = RequestMethod.POST)
+  public ResponseEntity addFriend(@PathVariable("id") Long id, @PathVariable Long friendId, Principal principal) {
     LOG.info(String.format("Adding user ID %d friend ID...", id));
 
     User currentUser = userService.findUser(principal.getName());
     try {
       if (currentUser.getId() == id) {
-        userService.addFriend(id);
+        userService.addFriend(id, friendId);
         LOG.info("User %d friends found.");
       } else {
         return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
@@ -142,7 +142,7 @@ public class UserController extends AbstractController {
           }
   )
   @RequestMapping(value = "/{id}/friends", method = RequestMethod.GET)
-  public ResponseEntity findFriendsById(@PathVariable("id") Long id) {
+  public ResponseEntity findFriends(@PathVariable("id") Long id) {
     LOG.info(String.format("Getting user ID %d friends...", id));
 
     List<User> friends;
@@ -156,6 +156,35 @@ public class UserController extends AbstractController {
     }
 
     return new ResponseEntity<>(friends, HttpStatus.CREATED);
+  }
+
+  @ApiOperation(value = "Getting a user by id", response = Iterable.class)
+  @ApiResponses(
+          value = {
+                  @ApiResponse(code = 200, message = "Successfully retrieved a user"),
+                  @ApiResponse(code = 201, message = "Successfully retrieved a user"),
+                  @ApiResponse(code = 401, message = "You are not authorized to retrieved a user."),
+                  @ApiResponse(
+                          code = 403,
+                          message = "Accessing the resource you were trying to reach is forbidden"
+                  ),
+                  @ApiResponse(code = 404, message = "The resource you were trying to reach is not found")
+          }
+  )
+  @RequestMapping(value = "/{id}/friend/{friendId}", method = RequestMethod.DELETE)
+  public ResponseEntity deleteFriend(@PathVariable("id") Long id, @PathVariable("friendId") Long friendId) {
+    LOG.info(String.format("Getting user ID %d friends...", id));
+
+    try {
+      userService.deleteFriend(id, friendId);
+      LOG.info("User %d friends found.");
+    } catch (Exception e) {
+      LOG.error(String.format("Attempt to find a user with id %d friends failed.", id));
+      LOG.error(e.getMessage());
+      return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
+    return new ResponseEntity<>(HttpStatus.OK);
   }
 
   @ApiOperation(value = "Delete a user", response = Iterable.class)

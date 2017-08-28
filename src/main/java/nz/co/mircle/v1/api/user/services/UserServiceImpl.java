@@ -63,21 +63,31 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     }
 
     @Override
-    public User addFriend(Long id) {
-        return null;
+    public void addFriend(Long id, Long friendId) {
+        User user = userRepository.findById(id);
+        User friend = userRepository.findById(friendId);
+        user.getFriends().add(friend);
+        userRepository.save(user);
     }
 
     @Override
     public List<User> findFriends(Long id) {
-        List<User> friends = userRepository.findByFriendId(id);
-        return friends;
+        User user = userRepository.findById(id);
+        return user.getFriends();
     }
 
     @Override
-    public User setUserProfileImage(User user, URL profileImage) throws AmazonServiceException {
+    public void deleteFriend(Long id, Long friendId) {
+        User user = userRepository.findById(id);
+        User friend = userRepository.findById(friendId);
+        user.getFriends().remove(friend);
+        userRepository.save(user);
+    }
+
+    @Override
+    public void setUserProfileImage(User user, URL profileImage) throws AmazonServiceException {
         user.getProfileImage().setUri(profileImage);
         userRepository.save(user);
-        return user;
     }
 
     @Override

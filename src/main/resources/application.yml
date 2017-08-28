@@ -15,6 +15,9 @@ security:
       user-authorization-uri: http://localhost:8080/auth/oauth/authorize
     resource:
       user-info-uri: http://localhost:8080/auth/user/me
+  user:
+    name: user
+    password: user
 ---
 
 spring:

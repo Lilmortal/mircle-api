@@ -27,10 +27,8 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 /**
- * Created by tanj1 on 16/08/2017.
+ * Here are a lists of profile image API.
  */
-
-/** Here are a lists of profile image API. */
 @RestController
 @Api(value = "profile image", description = "Profile image API")
 @RequestMapping("/profileimage")
@@ -131,13 +129,9 @@ public class ProfileImageController extends AbstractController {
         LOG.info(String.format("Getting user with id %d...", id));
 
         try {
-            User currentUser = userService.findUser(principal.getName());
-            if (currentUser.getId() == id) {
-                userService.setUserProfileImage(currentUser, uri);
-                LOG.info(String.format("%s %s successfully has its profile image set to %s.", currentUser.getFirstName(), currentUser.getSurname(), uri));
-            } else {
-                return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
-            }
+            User user = userService.findUser(id);
+            userService.setUserProfileImage(user, uri);
+            LOG.info(String.format("%s %s successfully has its profile image set to %s.", user.getFirstName(), user.getSurname(), uri));
         } catch (AmazonServiceException e) {
             LOG.error("Failed to get the default profile image");
             LOG.error(e.getMessage());
@@ -169,13 +163,8 @@ public class ProfileImageController extends AbstractController {
         URL url;
 
         try {
-            User currentUser = userService.findUser(principal.getName());
-            if (currentUser.getId() == id) {
-                url = profileImageService.uploadProfileImageToS3(profileImage, id);
-                LOG.info(String.format("Profile image successfully uploaded to %s.", url));
-            } else {
-                return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
-            }
+            url = profileImageService.uploadProfileImageToS3(profileImage, id);
+            LOG.info(String.format("Profile image successfully uploaded to %s.", url));
         } catch (AmazonServiceException e) {
             LOG.error("Failed to upload the profile image");
             LOG.error(e.getMessage());

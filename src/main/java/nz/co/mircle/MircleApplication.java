@@ -24,17 +24,17 @@ public class MircleApplication extends SpringBootServletInitializer {
         SpringApplication.run(MircleApplication.class, args);
     }
 
-    @Bean
-    public BCryptPasswordEncoder bCryptPasswordEncoder() {
-        return new BCryptPasswordEncoder();
-    }
-
-    public void authenticationManager(AuthenticationManagerBuilder builder, UserRepository userRepository) throws Exception {
-        builder.userDetailsService(new UserDetailsService() {
-            @Override
-            public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-                return userRepository.findByEmailAddress(username);
-            }
-        });
-    }
+//    @Bean
+//    public BCryptPasswordEncoder bCryptPasswordEncoder() {
+//        return new BCryptPasswordEncoder();
+//    }
+//
+//    public void authenticationManager(AuthenticationManagerBuilder builder, UserRepository userRepository) throws Exception {
+//        builder.userDetailsService(new UserDetailsService() {
+//            @Override
+//            public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+//                return userRepository.findByEmailAddress(username);
+//            }
+//        });
+//    }
 }

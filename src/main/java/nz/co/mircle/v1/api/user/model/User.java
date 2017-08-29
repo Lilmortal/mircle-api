@@ -9,6 +9,7 @@ import java.util.List;
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 
+import nz.co.mircle.v1.api.feeds.model.Feed;
 import nz.co.mircle.v1.api.profileImage.model.ProfileImage;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -18,7 +19,7 @@ import org.springframework.security.core.userdetails.UserDetails;
  */
 @Entity
 @Table(name = "usr")
-public class User implements UserDetails {
+public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @ApiModelProperty(notes = "The database generated profile ID")
@@ -79,10 +80,6 @@ public class User implements UserDetails {
     @ApiModelProperty(notes = "Is user currently logged in", required = true)
     private boolean loggedIn;
 
-    @Column(name = "enabled")
-    @NotNull
-    private boolean enabled;
-
     @OneToOne(cascade = CascadeType.ALL)
     private ProfileImage profileImage;
 
@@ -91,14 +88,17 @@ public class User implements UserDetails {
     @ApiModelProperty(notes = "Friend", required = true)
     private User friend;
 
-    @OneToMany(mappedBy="friend", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "friend", fetch = FetchType.LAZY)
     private List<User> friends;
+
+    @OneToMany(mappedBy = "id", fetch = FetchType.LAZY)
+    private List<Feed> feeds;
 
     // no args constructor needed for hibernate
     public User() {
     }
 
-    public User(String emailAddress, String password, String firstName, String surname, String gender, String phoneNumber, LocalDateTime birthDate, String occupation, LocalDateTime createdOn, LocalDateTime lastLoggedIn, boolean loggedIn, boolean enabled, ProfileImage profileImage, List<User> friends) {
+    public User(String emailAddress, String password, String firstName, String surname, String gender, String phoneNumber, LocalDateTime birthDate, String occupation, LocalDateTime createdOn, LocalDateTime lastLoggedIn, boolean loggedIn, ProfileImage profileImage, User friend, List<User> friends, List<Feed> feeds) {
         this.emailAddress = emailAddress;
         this.password = password;
         this.firstName = firstName;
@@ -110,45 +110,10 @@ public class User implements UserDetails {
         this.createdOn = createdOn;
         this.lastLoggedIn = lastLoggedIn;
         this.loggedIn = loggedIn;
-        this.enabled = enabled;
         this.profileImage = profileImage;
+        this.friend = friend;
         this.friends = friends;
-    }
-
-    @Override
-    public Collection<? extends GrantedAuthority> getAuthorities() {
-        List<GrantedAuthority> authorities = new ArrayList<>();
-        return authorities;
-    }
-
-    @Override
-    public String getPassword() {
-        return password;
-    }
-
-    @Override
-    public String getUsername() {
-        return emailAddress;
-    }
-
-    @Override
-    public boolean isAccountNonExpired() {
-        return true;
-    }
-
-    @Override
-    public boolean isAccountNonLocked() {
-        return true;
-    }
-
-    @Override
-    public boolean isCredentialsNonExpired() {
-        return true;
-    }
-
-    @Override
-    public boolean isEnabled() {
-        return enabled;
+        this.feeds = feeds;
     }
 
     public Long getId() {
@@ -165,6 +130,10 @@ public class User implements UserDetails {
 
     public void setEmailAddress(String emailAddress) {
         this.emailAddress = emailAddress;
+    }
+
+    public String getPassword() {
+        return password;
     }
 
     public void setPassword(String password) {
@@ -243,10 +212,6 @@ public class User implements UserDetails {
         this.loggedIn = loggedIn;
     }
 
-    public void setEnabled(boolean enabled) {
-        this.enabled = enabled;
-    }
-
     public ProfileImage getProfileImage() {
         return profileImage;
     }
@@ -269,5 +234,13 @@ public class User implements UserDetails {
 
     public void setFriends(List<User> friends) {
         this.friends = friends;
+    }
+
+    public List<Feed> getFeeds() {
+        return feeds;
+    }
+
+    public void setFeeds(List<Feed> feeds) {
+        this.feeds = feeds;
     }
 }

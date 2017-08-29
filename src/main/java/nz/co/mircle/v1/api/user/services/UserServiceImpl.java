@@ -24,7 +24,7 @@ import org.springframework.stereotype.Service;
  * List of user services implementation that are used to call the repository.
  */
 @Service
-public class UserServiceImpl implements UserService, UserDetailsService {
+public class UserServiceImpl implements UserService {
     @Autowired
     private ProfileImageService profileImageService;
 
@@ -93,10 +93,5 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     @Override
     public void deleteUser(Long id) {
         userRepository.deleteById(id);
-    }
-
-    @Override
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        return userRepository.findByEmailAddress(username);
     }
 }

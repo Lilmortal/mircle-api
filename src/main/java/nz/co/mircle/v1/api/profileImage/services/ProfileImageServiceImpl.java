@@ -18,6 +18,7 @@ import nz.co.mircle.v1.api.user.services.UserServiceImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -38,44 +39,49 @@ public class ProfileImageServiceImpl implements ProfileImageService {
     @Value("${AWS_SECRET_KEY}")
     String AWS_SECRET_KEY;
 
-    @Override
-    public URL getDefaultImage() throws AmazonServiceException {
+    @Bean
+    public AmazonS3 s3() {
         BasicAWSCredentials credentials = new BasicAWSCredentials(AWS_ACCESS_KEY, AWS_SECRET_KEY);
         AWSStaticCredentialsProvider credentialsProvider =
                 new AWSStaticCredentialsProvider(credentials);
-
         final AmazonS3 s3 =
                 AmazonS3Client.builder()
                         .withRegion(Regions.AP_SOUTHEAST_2)
                         .withCredentials(credentialsProvider)
                         .build();
+        return s3;
+    }
+
+    @Override
+    public URL getDefaultImage() throws AmazonServiceException {
+        AmazonS3 s3 = s3();
         URL imageUrl = s3.getUrl(AWS_BUCKET_NAME, AWS_DEFAULT_PROFILE_IMAGE_KEY);
         return imageUrl;
     }
 
     @Override
-    public URL uploadProfileImageToS3(MultipartFile profileImage, Long id)
+    public URL uploadProfileImageToS3(MultipartFile profileImage, String emailAddress)
             throws IOException, AmazonServiceException {
-        BasicAWSCredentials credentials = new BasicAWSCredentials(AWS_ACCESS_KEY, AWS_SECRET_KEY);
-        AWSStaticCredentialsProvider credentialsProvider =
-                new AWSStaticCredentialsProvider(credentials);
-
+        AmazonS3 s3 = s3();
 
         InputStream stream = profileImage.getInputStream();
         ObjectMetadata objectMetadata = new ObjectMetadata();
         objectMetadata.setContentLength(profileImage.getBytes().length);
 
-        String key = id + "/" + profileImage.getOriginalFilename();
+        String key = emailAddress + "/" + profileImage.getOriginalFilename();
         PutObjectRequest putObjectRequest =
                 new PutObjectRequest(AWS_BUCKET_NAME, key, stream, objectMetadata);
 
-        final AmazonS3 s3 =
-                AmazonS3Client.builder()
-                        .withRegion(Regions.AP_SOUTHEAST_2)
-                        .withCredentials(credentialsProvider)
-                        .build();
         s3.putObject(putObjectRequest);
         s3.setObjectAcl(AWS_BUCKET_NAME, key, CannedAccessControlList.PublicRead);
+
+        URL imageUrl = s3.getUrl(AWS_BUCKET_NAME, key);
+        return imageUrl;
+    }
+
+    @Override
+    public URL getUserProfileImageLink(String key) {
+        AmazonS3 s3 = s3();
 
         URL imageUrl = s3.getUrl(AWS_BUCKET_NAME, key);
         return imageUrl;

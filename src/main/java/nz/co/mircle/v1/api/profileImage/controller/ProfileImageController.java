@@ -57,7 +57,7 @@ public class ProfileImageController extends AbstractController {
                     @ApiResponse(code = 404, message = "The resource you were trying to reach is not found")
             }
     )
-    @RequestMapping(value = "/default/get", method = RequestMethod.GET)
+    @RequestMapping(value = "/default", method = RequestMethod.GET)
     public ResponseEntity getDefaultImage() {
         LOG.info("Getting default profile image...");
         URL defaultImage;
@@ -72,73 +72,6 @@ public class ProfileImageController extends AbstractController {
 
         LOG.info("Default profile image successfully retrieved.");
         return new ResponseEntity<>(defaultImage, HttpStatus.OK);
-    }
-
-    @ApiOperation(value = "Set the user profile image to be default", response = Iterable.class)
-    @ApiResponses(
-            value = {
-                    @ApiResponse(code = 200, message = "Successfully set the user profile image to be default"),
-                    @ApiResponse(code = 201, message = "Successfully set the user profile image to be default"),
-                    @ApiResponse(
-                            code = 401,
-                            message = "You are not authorized to get the profile image from AWS S3."
-                    ),
-                    @ApiResponse(
-                            code = 403,
-                            message = "Accessing the resource you were trying to reach is forbidden"
-                    ),
-                    @ApiResponse(code = 404, message = "The resource you were trying to reach is not found")
-            }
-    )
-    @RequestMapping(value = "/default/set", method = RequestMethod.POST)
-    public ResponseEntity setProfileImageToDefault(@RequestParam("id") Long id) {
-        LOG.info(String.format("Getting user with id %d...", id));
-
-        try {
-            User user = userService.findUser(id);
-            URL defaultImage = profileImageService.getDefaultImage();
-            userService.setUserProfileImage(user, defaultImage);
-            LOG.info(String.format("%s %s successfully has its profile image set to default.", user.getFirstName(), user.getSurname()));
-        } catch (AmazonServiceException e) {
-            LOG.error("Failed to get the default profile image");
-            LOG.error(e.getMessage());
-            return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-
-        return new ResponseEntity<>(HttpStatus.OK);
-    }
-
-    @ApiOperation(value = "Set the user profile image to be default", response = Iterable.class)
-    @ApiResponses(
-            value = {
-                    @ApiResponse(code = 200, message = "Successfully set the user profile image to be default"),
-                    @ApiResponse(code = 201, message = "Successfully set the user profile image to be default"),
-                    @ApiResponse(
-                            code = 401,
-                            message = "You are not authorized to get the profile image from AWS S3."
-                    ),
-                    @ApiResponse(
-                            code = 403,
-                            message = "Accessing the resource you were trying to reach is forbidden"
-                    ),
-                    @ApiResponse(code = 404, message = "The resource you were trying to reach is not found")
-            }
-    )
-    @RequestMapping(value = "/set", method = RequestMethod.POST)
-    public ResponseEntity setUserImageUri(@RequestParam("id") Long id, @RequestParam("uri") URL uri, Principal principal) {
-        LOG.info(String.format("Getting user with id %d...", id));
-
-        try {
-            User user = userService.findUser(id);
-            userService.setUserProfileImage(user, uri);
-            LOG.info(String.format("%s %s successfully has its profile image set to %s.", user.getFirstName(), user.getSurname(), uri));
-        } catch (AmazonServiceException e) {
-            LOG.error("Failed to get the default profile image");
-            LOG.error(e.getMessage());
-            return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-
-        return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @ApiOperation(value = "Upload a profile image to S3", response = Iterable.class)
@@ -158,13 +91,12 @@ public class ProfileImageController extends AbstractController {
             }
     )
     @RequestMapping(value = "/s3upload", method = RequestMethod.POST)
-    public ResponseEntity uploadProfileImageToS3(@RequestParam("profileImage") MultipartFile profileImage, @RequestParam("id") Long id, Principal principal) {
+    public ResponseEntity uploadProfileImageToS3(@RequestParam("profileImage") MultipartFile profileImage, @RequestParam("emailAddress") String emailAddress) {
         LOG.info("Uploading profile image to AWS S3...");
-        URL url;
 
         try {
-            url = profileImageService.uploadProfileImageToS3(profileImage, id);
-            LOG.info(String.format("Profile image successfully uploaded to %s.", url));
+            profileImageService.uploadProfileImageToS3(profileImage, emailAddress);
+            LOG.info(String.format("Profile image successfully uploaded."));
         } catch (AmazonServiceException e) {
             LOG.error("Failed to upload the profile image");
             LOG.error(e.getMessage());
@@ -183,6 +115,6 @@ public class ProfileImageController extends AbstractController {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
 
-        return new ResponseEntity<>(url, HttpStatus.OK);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 }

@@ -25,6 +25,8 @@ import org.springframework.stereotype.Service;
  */
 @Service
 public class UserServiceImpl implements UserService {
+    private final Logger LOG = LoggerFactory.getLogger(getClass());
+
     @Autowired
     private ProfileImageService profileImageService;
 
@@ -66,21 +68,22 @@ public class UserServiceImpl implements UserService {
     public void addFriend(Long id, Long friendId) {
         User user = userRepository.findById(id);
         User friend = userRepository.findById(friendId);
-        user.getFriends().add(friend);
+        //user.getFriends().add(friend);
         userRepository.save(user);
     }
 
     @Override
     public List<User> findFriends(Long id) {
         User user = userRepository.findById(id);
-        return user.getFriends();
+        //return user.getFriends();
+        return null;
     }
 
     @Override
     public void deleteFriend(Long id, Long friendId) {
         User user = userRepository.findById(id);
         User friend = userRepository.findById(friendId);
-        user.getFriends().remove(friend);
+        //user.getFriends().remove(friend);
         userRepository.save(user);
     }
 

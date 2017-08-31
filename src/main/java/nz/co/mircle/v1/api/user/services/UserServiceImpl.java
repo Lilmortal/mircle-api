@@ -8,16 +8,12 @@ import java.util.List;
 import com.amazonaws.AmazonServiceException;
 import nz.co.mircle.v1.api.profileImage.model.ProfileImage;
 import nz.co.mircle.v1.api.profileImage.services.ProfileImageService;
-import nz.co.mircle.v1.api.security.exception.EmailAddressExistException;
+import nz.co.mircle.v1.api.user.exception.EmailAddressExistException;
 import nz.co.mircle.v1.api.user.dao.UserRepository;
 import nz.co.mircle.v1.api.user.model.User;
-import nz.co.mircle.v1.api.security.model.UserDTO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -64,11 +60,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User findUser(String emailAddress) {
-        Iterable<User> users = userRepository.findAll();
-
-        users.forEach(user -> LOG.info("EMAIL: " + emailAddress + " " + String.valueOf(user.getEmailAddress().equals(emailAddress))));
         User user = userRepository.findByEmailAddress(emailAddress);
-        //User user = userRepository.findById(Long.valueOf("1"));
         return user;
     }
 

@@ -1,16 +1,12 @@
 package nz.co.mircle.v1.api.security.services;
 
-import nz.co.mircle.v1.api.security.exception.EmailAddressNotFoundException;
-import nz.co.mircle.v1.api.security.exception.InvalidPasswordException;
+import nz.co.mircle.v1.api.security.exception.InvalidAuthenticationException;
 import nz.co.mircle.v1.api.security.model.UserDTO;
 import nz.co.mircle.v1.api.user.model.User;
 import nz.co.mircle.v1.api.user.services.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -28,14 +24,10 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     private UserService userService;
 
     @Override
-    public User login(UserDTO userDto) throws EmailAddressNotFoundException, InvalidPasswordException {
+    public User login(UserDTO userDto) throws InvalidAuthenticationException {
         User user = userService.findUser(userDto.getEmailAddress());
-        if (user == null) {
-            throw new EmailAddressNotFoundException(String.format("Email address %s does not exist.", userDto.getEmailAddress()));
-        }
-
-        if (!encoder.matches(userDto.getPassword(), user.getPassword())) {
-            throw new InvalidPasswordException("Password does not match");
+        if (user == null || !encoder.matches(userDto.getPassword(), user.getPassword())) {
+            throw new InvalidAuthenticationException("Invalid username or password.");
         }
         return user;
     }

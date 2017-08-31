@@ -6,11 +6,11 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import nz.co.mircle.v1.api.AbstractController;
-import nz.co.mircle.v1.api.profileImage.model.ProfileImage;
 import nz.co.mircle.v1.api.profileImage.services.ProfileImageService;
-import nz.co.mircle.v1.api.security.exception.EmailAddressExistException;
+import nz.co.mircle.v1.api.user.exception.EmailAddressExistException;
 import nz.co.mircle.v1.api.user.model.User;
 import nz.co.mircle.v1.api.user.services.UserService;
+import nz.co.mircle.v1.lib.failedResponse.model.FailedResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -63,12 +63,9 @@ public class UserController extends AbstractController {
             userService.createUser(user);
             LOG.info(String.format("User ID %d created.", user.getId()));
         } catch (EmailAddressExistException e) {
-            LOG.error(e.getMessage());
-            return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
-        } catch (Exception e) {
             LOG.error("Attempt to create a new user failed.");
             LOG.error(e.getMessage());
-            return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>(new FailedResponse(e.getMessage()), HttpStatus.INTERNAL_SERVER_ERROR);
         }
 
         return new ResponseEntity<>(user.getId(), HttpStatus.CREATED);
@@ -98,7 +95,7 @@ public class UserController extends AbstractController {
         } catch (Exception e) {
             LOG.error(String.format("Attempt to find a user with id %d failed.", id));
             LOG.error(e.getMessage());
-            return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>(new FailedResponse(e.getMessage()), HttpStatus.INTERNAL_SERVER_ERROR);
         }
 
         return new ResponseEntity<>(user, HttpStatus.CREATED);
@@ -136,14 +133,11 @@ public class UserController extends AbstractController {
         } catch (AmazonServiceException e) {
             LOG.error("Failed to get the default profile image");
             LOG.error(e.getMessage());
-            return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>(new FailedResponse(e.getMessage()), HttpStatus.INTERNAL_SERVER_ERROR);
         } catch (IOException e) {
             LOG.error("Failed to get the default profile image");
             LOG.error(e.getMessage());
-            return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
-        } catch (NullPointerException e) {
-            LOG.error(String.format("%s could not be found on the database.", emailAddress));
-            throw e;
+            return new ResponseEntity<>(new FailedResponse(e.getMessage()), HttpStatus.INTERNAL_SERVER_ERROR);
         }
 
         return new ResponseEntity<>(HttpStatus.OK);
@@ -175,7 +169,7 @@ public class UserController extends AbstractController {
         } catch (Exception e) {
             LOG.error(String.format("Attempt to find a user with id %d failed.", id));
             LOG.error(e.getMessage());
-            return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>(new FailedResponse(e.getMessage()), HttpStatus.INTERNAL_SERVER_ERROR);
         }
 
         return new ResponseEntity<>(HttpStatus.OK);
@@ -209,7 +203,7 @@ public class UserController extends AbstractController {
         } catch (Exception e) {
             LOG.error(String.format("Attempt to find a user with id %d friends failed.", id));
             LOG.error(e.getMessage());
-            return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>(new FailedResponse(e.getMessage()), HttpStatus.INTERNAL_SERVER_ERROR);
         }
 
         return new ResponseEntity<>(HttpStatus.OK);
@@ -239,7 +233,7 @@ public class UserController extends AbstractController {
         } catch (Exception e) {
             LOG.error(String.format("Attempt to find a user with id %d friends failed.", id));
             LOG.error(e.getMessage());
-            return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>(new FailedResponse(e.getMessage()), HttpStatus.INTERNAL_SERVER_ERROR);
         }
 
         return new ResponseEntity<>(friends, HttpStatus.CREATED);
@@ -268,7 +262,7 @@ public class UserController extends AbstractController {
         } catch (Exception e) {
             LOG.error(String.format("Attempt to find a user with id %d friends failed.", id));
             LOG.error(e.getMessage());
-            return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>(new FailedResponse(e.getMessage()), HttpStatus.INTERNAL_SERVER_ERROR);
         }
 
         return new ResponseEntity<>(HttpStatus.OK);
@@ -302,7 +296,7 @@ public class UserController extends AbstractController {
         } catch (Exception e) {
             LOG.error(String.format("Attempt to delete user with id %d failed.", id));
             LOG.error(e.getMessage());
-            return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>(new FailedResponse(e.getMessage()), HttpStatus.INTERNAL_SERVER_ERROR);
         }
 
         return new ResponseEntity<>(HttpStatus.CREATED);

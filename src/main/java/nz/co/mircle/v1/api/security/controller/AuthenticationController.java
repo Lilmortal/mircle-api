@@ -4,11 +4,12 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
-import nz.co.mircle.v1.api.security.exception.EmailAddressExistException;
+import nz.co.mircle.v1.api.security.exception.InvalidAuthenticationException;
+import nz.co.mircle.v1.api.user.exception.EmailAddressExistException;
 import nz.co.mircle.v1.api.security.model.UserDTO;
 import nz.co.mircle.v1.api.security.services.AuthenticationService;
 import nz.co.mircle.v1.api.user.model.User;
-import nz.co.mircle.v1.api.user.services.UserService;
+import nz.co.mircle.v1.lib.failedResponse.model.FailedResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -56,13 +57,10 @@ public class AuthenticationController {
         try {
             user = authenticationService.login(userDTO);
             LOG.info(String.format("User ID %d login.", user.getId()));
-        } catch (EmailAddressExistException e) {
-            LOG.error(e.getMessage());
-            return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
-        } catch (Exception e) {
+        } catch (InvalidAuthenticationException e) {
             LOG.error("Attempt to create a new user failed.");
             LOG.error(e.getMessage());
-            return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>(new FailedResponse(e.getMessage()), HttpStatus.INTERNAL_SERVER_ERROR);
         }
 
         return new ResponseEntity<>(user, HttpStatus.OK);

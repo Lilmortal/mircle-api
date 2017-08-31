@@ -10,7 +10,6 @@ import java.util.List;
 
 /** CRUD operations on the user table. */
 @Repository
-@Transactional
 public interface UserRepository extends CrudRepository<User, Long> {
   User findById(Long id);
 

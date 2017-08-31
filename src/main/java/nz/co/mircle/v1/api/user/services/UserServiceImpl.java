@@ -6,6 +6,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 import com.amazonaws.AmazonServiceException;
+import nz.co.mircle.v1.api.profileImage.model.ProfileImage;
 import nz.co.mircle.v1.api.profileImage.services.ProfileImageService;
 import nz.co.mircle.v1.api.security.exception.EmailAddressExistException;
 import nz.co.mircle.v1.api.user.dao.UserRepository;
@@ -20,10 +21,13 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
+
 /**
  * List of user services implementation that are used to call the repository.
  */
 @Service
+@Transactional
 public class UserServiceImpl implements UserService {
     private final Logger LOG = LoggerFactory.getLogger(getClass());
 
@@ -60,7 +64,11 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User findUser(String emailAddress) {
+        Iterable<User> users = userRepository.findAll();
+
+        users.forEach(user -> LOG.info("EMAIL: " + emailAddress + " " + String.valueOf(user.getEmailAddress().equals(emailAddress))));
         User user = userRepository.findByEmailAddress(emailAddress);
+        //User user = userRepository.findById(Long.valueOf("1"));
         return user;
     }
 
@@ -88,8 +96,13 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void setUserProfileImage(User user, URL profileImage) throws AmazonServiceException {
-        user.getProfileImage().setUri(profileImage);
+    public void setUserProfileImage(User user, URL profileImageUrl) throws AmazonServiceException {
+        if (user.getProfileImage() == null) {
+            ProfileImage newProfileImage = new ProfileImage();
+            user.setProfileImage(newProfileImage);
+        }
+
+        user.getProfileImage().setUri(profileImageUrl);
         userRepository.save(user);
     }
 

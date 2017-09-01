@@ -41,7 +41,7 @@ spring:
 logging:
   level:
     org.springframework.web: DEBUG
-    hibernate: TRACE
+    hibernate: ERROR
 ---
 
 spring:

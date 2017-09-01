@@ -1,11 +1,11 @@
 package nz.co.mircle.v1.api.user.services;
 
 import com.amazonaws.AmazonServiceException;
-import nz.co.mircle.v1.api.security.exception.EmailAddressExistException;
+import nz.co.mircle.v1.api.user.exception.EmailAddressExistException;
 import nz.co.mircle.v1.api.user.model.User;
-import nz.co.mircle.v1.api.security.model.UserDTO;
 
 import java.net.URL;
+import java.util.List;
 
 /** Lists of services that can be used to call the user repository. */
 public interface UserService {
@@ -15,7 +15,13 @@ public interface UserService {
 
   User findUser(String emailAddress);
 
-  User setUserProfileImage(User user, URL profileImage) throws AmazonServiceException;
+  void addFriend(Long id, Long friendId);
+
+  List<User> findFriends(Long id);
+
+  void deleteFriend(Long id, Long friendId);
+
+  void setUserProfileImage(User user, URL profileImage) throws AmazonServiceException;
 
   void deleteUser(Long id);
 }

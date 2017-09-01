@@ -3,25 +3,30 @@ package nz.co.mircle.v1.api.user.services;
 import java.net.URL;
 import java.time.Clock;
 import java.time.LocalDateTime;
+import java.util.List;
 
 import com.amazonaws.AmazonServiceException;
+import nz.co.mircle.v1.api.profileImage.model.ProfileImage;
 import nz.co.mircle.v1.api.profileImage.services.ProfileImageService;
-import nz.co.mircle.v1.api.security.exception.EmailAddressExistException;
+import nz.co.mircle.v1.api.user.exception.EmailAddressExistException;
 import nz.co.mircle.v1.api.user.dao.UserRepository;
 import nz.co.mircle.v1.api.user.model.User;
-import nz.co.mircle.v1.api.security.model.UserDTO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+
+import javax.transaction.Transactional;
 
 /**
  * List of user services implementation that are used to call the repository.
  */
 @Service
+@Transactional
 public class UserServiceImpl implements UserService {
+    private final Logger LOG = LoggerFactory.getLogger(getClass());
+
     @Autowired
     private ProfileImageService profileImageService;
 
@@ -40,7 +45,7 @@ public class UserServiceImpl implements UserService {
         LocalDateTime currentDateTime = LocalDateTime.now(Clock.systemUTC());
         user.setCreatedOn(currentDateTime);
         user.setLastLoggedIn(currentDateTime);
-        user.setIsLoggedIn(false);
+        user.setLoggedIn(false);
         String hashedPassword = passwordEncoder.encode(user.getPassword());
         user.setPassword(hashedPassword);
 
@@ -49,7 +54,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User findUser(Long id) {
-        User user = userRepository.findById(id);
+        User user = userRepository.findOne(id);
         return user;
     }
 
@@ -60,10 +65,37 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User setUserProfileImage(User user, URL profileImage) throws AmazonServiceException {
-        user.getProfileImage().setUri(profileImage);
+    public void addFriend(Long id, Long friendId) {
+        User user = userRepository.findById(id);
+        User friend = userRepository.findById(friendId);
+        //user.getFriends().add(friend);
         userRepository.save(user);
-        return user;
+    }
+
+    @Override
+    public List<User> findFriends(Long id) {
+        User user = userRepository.findById(id);
+        //return user.getFriends();
+        return null;
+    }
+
+    @Override
+    public void deleteFriend(Long id, Long friendId) {
+        User user = userRepository.findById(id);
+        User friend = userRepository.findById(friendId);
+        //user.getFriends().remove(friend);
+        userRepository.save(user);
+    }
+
+    @Override
+    public void setUserProfileImage(User user, URL profileImageUrl) throws AmazonServiceException {
+        if (user.getProfileImage() == null) {
+            ProfileImage newProfileImage = new ProfileImage();
+            user.setProfileImage(newProfileImage);
+        }
+
+        user.getProfileImage().setUri(profileImageUrl);
+        userRepository.save(user);
     }
 
     @Override

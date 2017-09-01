@@ -3,10 +3,16 @@ package nz.co.mircle.v1.api.user.model;
 import io.swagger.annotations.ApiModelProperty;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 
+import nz.co.mircle.v1.api.feeds.model.Feed;
 import nz.co.mircle.v1.api.profileImage.model.ProfileImage;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 
 /**
  * User entity.
@@ -72,16 +78,27 @@ public class User {
     @Column(name = "is_logged_in")
     @NotNull
     @ApiModelProperty(notes = "Is user currently logged in", required = true)
-    private boolean isLoggedIn;
+    private boolean loggedIn;
 
     @OneToOne(cascade = CascadeType.ALL)
     private ProfileImage profileImage;
+
+    /*@ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JoinColumn(name = "friend_id")
+    @ApiModelProperty(notes = "Friend", required = true)
+    private User friend;
+
+    @OneToMany(mappedBy = "friend", fetch = FetchType.LAZY)
+    private List<User> friends;
+
+    @OneToMany(mappedBy = "id", fetch = FetchType.LAZY)
+    private List<Feed> feeds;*/
 
     // no args constructor needed for hibernate
     public User() {
     }
 
-    public User(String emailAddress, String password, String firstName, String surname, String gender, String phoneNumber, LocalDateTime birthDate, String occupation, LocalDateTime createdOn, LocalDateTime lastLoggedIn, boolean isLoggedIn, ProfileImage profileImage) {
+    public User(String emailAddress, String password, String firstName, String surname, String gender, String phoneNumber, LocalDateTime birthDate, String occupation, LocalDateTime createdOn, LocalDateTime lastLoggedIn, boolean loggedIn, ProfileImage profileImage) {
         this.emailAddress = emailAddress;
         this.password = password;
         this.firstName = firstName;
@@ -92,7 +109,7 @@ public class User {
         this.occupation = occupation;
         this.createdOn = createdOn;
         this.lastLoggedIn = lastLoggedIn;
-        this.isLoggedIn = isLoggedIn;
+        this.loggedIn = loggedIn;
         this.profileImage = profileImage;
     }
 
@@ -184,12 +201,12 @@ public class User {
         this.lastLoggedIn = lastLoggedIn;
     }
 
-    public boolean getIsLoggedIn() {
-        return isLoggedIn;
+    public boolean isLoggedIn() {
+        return loggedIn;
     }
 
-    public void setIsLoggedIn(boolean isLoggedIn) {
-        this.isLoggedIn = isLoggedIn;
+    public void setLoggedIn(boolean loggedIn) {
+        this.loggedIn = loggedIn;
     }
 
     public ProfileImage getProfileImage() {

@@ -14,6 +14,8 @@ import java.net.URL;
 public interface ProfileImageService {
   URL getDefaultImage() throws AmazonServiceException;
 
-  URL uploadProfileImageToS3(MultipartFile profileImage, Long id)
+  URL uploadProfileImageToS3(MultipartFile profileImage, String emailAddress)
           throws IOException, AmazonServiceException;
+
+  URL getUserProfileImageLink(String key);
 }

@@ -1,11 +1,10 @@
 package nz.co.mircle.v1.api.user.services;
 
 import com.amazonaws.AmazonServiceException;
-import nz.co.mircle.v1.api.user.exception.EmailAddressExistException;
-import nz.co.mircle.v1.api.user.model.User;
-
 import java.net.URL;
 import java.util.List;
+import nz.co.mircle.v1.api.user.exception.EmailAddressExistException;
+import nz.co.mircle.v1.api.user.model.User;
 
 /** Lists of services that can be used to call the user repository. */
 public interface UserService {

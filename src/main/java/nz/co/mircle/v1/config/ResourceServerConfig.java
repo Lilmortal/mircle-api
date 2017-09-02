@@ -16,40 +16,49 @@ import org.springframework.security.oauth2.provider.token.store.JwtTokenStore;
 @Configuration
 @EnableResourceServer
 public class ResourceServerConfig extends ResourceServerConfigurerAdapter {
-    @Override
-    public void configure(ResourceServerSecurityConfigurer config) {
-        config.tokenServices(tokenServices());
-    }
+  @Override
+  public void configure(ResourceServerSecurityConfigurer config) {
+    config.tokenServices(tokenServices());
+  }
 
-    @Bean
-    public TokenStore tokenStore() {
-        return new JwtTokenStore(accessTokenConverter());
-    }
+  @Bean
+  public TokenStore tokenStore() {
+    return new JwtTokenStore(accessTokenConverter());
+  }
 
-    @Bean
-    public JwtAccessTokenConverter accessTokenConverter() {
-        JwtAccessTokenConverter converter = new JwtAccessTokenConverter();
-        converter.setSigningKey("123");
-        return converter;
-    }
+  @Bean
+  public JwtAccessTokenConverter accessTokenConverter() {
+    JwtAccessTokenConverter converter = new JwtAccessTokenConverter();
+    converter.setSigningKey("123");
+    return converter;
+  }
 
-    @Bean
-    @Primary
-    public DefaultTokenServices tokenServices() {
-        DefaultTokenServices defaultTokenServices = new DefaultTokenServices();
-        defaultTokenServices.setTokenStore(tokenStore());
-        return defaultTokenServices;
-    }
+  @Bean
+  @Primary
+  public DefaultTokenServices tokenServices() {
+    DefaultTokenServices defaultTokenServices = new DefaultTokenServices();
+    defaultTokenServices.setTokenStore(tokenStore());
+    return defaultTokenServices;
+  }
 
-    @Override
-    public void configure(HttpSecurity http) throws Exception {
-        http.csrf().disable()
+  @Override
+  public void configure(HttpSecurity http) throws Exception {
+    http.csrf()
+        .disable()
         // Because we disable CSRF we need to add this to show h2 page
-        .headers().frameOptions().disable()
-        .and().sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-        .and().authorizeRequests()
-                .antMatchers("/login", "/h2").permitAll()
-                .antMatchers("/").authenticated()
-                .antMatchers("/admin").hasAuthority(Role.ADMIN.name());
-    }
+        .headers()
+        .frameOptions()
+        .disable()
+        .and()
+        .sessionManagement()
+        .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+        .and()
+        .authorizeRequests()
+        .antMatchers("/login", "/h2")
+        .permitAll()
+        .antMatchers("/")
+        .authenticated()
+        .antMatchers("/admin")
+        .hasAuthority(Role.ADMIN.name());
+  }
 }

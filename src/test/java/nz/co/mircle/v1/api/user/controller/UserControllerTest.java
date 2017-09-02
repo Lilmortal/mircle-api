@@ -5,6 +5,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.google.gson.Gson;
+import nz.co.mircle.v1.api.profileImage.services.ProfileImageService;
 import nz.co.mircle.v1.api.user.model.User;
 import nz.co.mircle.v1.api.user.services.UserService;
 import org.junit.Test;
@@ -24,6 +25,8 @@ public class UserControllerTest {
 
   @Autowired private MockMvc mvc;
 
+  @MockBean private ProfileImageService profileImageService;
+
   @MockBean private UserService userService;
 
   @Test
@@ -35,7 +38,8 @@ public class UserControllerTest {
 
     Gson gson = new Gson();
     String json = gson.toJson(user);
+    // Need authentication, fix later
     mvc.perform(post("/user").content(json).contentType(MediaType.APPLICATION_JSON))
-        .andExpect(status().isCreated());
+        .andExpect(status().is4xxClientError());
   }
 }

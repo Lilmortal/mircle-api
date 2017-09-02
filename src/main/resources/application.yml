@@ -14,7 +14,7 @@ security:
       access-token-uri: http://localhost:8080/auth/oauth/token
       user-authorization-uri: http://localhost:8080/auth/oauth/authorize
     resource:
-      user-info-uri: http://localhost:8080/auth/user/me
+      user-info-uri: http://localhost:8080/login/auth
   user:
     name: user
     password: user
@@ -27,7 +27,6 @@ spring:
       enabled: true
       path: /h2
   jpa:
-    # database: POSTGRESQL
     show-sql: true
     hibernate:
       ddl-auto: create
@@ -40,7 +39,7 @@ spring:
     password:
 logging:
   level:
-    org.springframework.web: DEBUG
+    org.springframework.web: INFO
     hibernate: ERROR
 ---
 
@@ -58,6 +57,7 @@ spring:
     url: jdbc:${DATABASE_URL}
     username: ${POSTGRESQL_USERNAME}
     password: ${POSTGRESQL_PASSWORD}
+    driverClassName: org.postgresql.Driver
   server:
     port: 80
 logging:

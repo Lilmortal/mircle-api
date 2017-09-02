@@ -66,7 +66,7 @@ public class AuthenticationController {
         return new ResponseEntity<>(user, HttpStatus.OK);
     }
 
-    @RequestMapping(value = "/user", method = RequestMethod.GET)
+    @RequestMapping(value = "/auth", method = RequestMethod.GET)
     public Principal user(Principal principal) {
         return principal;
     }

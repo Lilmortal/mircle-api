@@ -10,16 +10,15 @@ import nz.co.mircle.v1.api.security.model.UserDTO;
 import nz.co.mircle.v1.api.security.services.AuthenticationService;
 import nz.co.mircle.v1.api.user.model.User;
 import nz.co.mircle.v1.lib.failedResponse.model.FailedResponse;
+import nz.co.mircle.v1.security.JwtGenerator;
+import nz.co.mircle.v1.security.model.JwtUser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.security.oauth2.client.EnableOAuth2Sso;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 /** Created by tanj1 on 25/08/2017. */
 @RestController
@@ -30,6 +29,9 @@ public class AuthenticationController {
   private final Logger LOG = LoggerFactory.getLogger(getClass());
 
   @Autowired private AuthenticationService authenticationService;
+
+  @Autowired
+  private JwtGenerator jwtGenerator;
 
   @ApiOperation(value = "Login", response = Iterable.class)
   @ApiResponses(
@@ -44,7 +46,7 @@ public class AuthenticationController {
       @ApiResponse(code = 404, message = "The resource you were trying to reach is not found")
     }
   )
-  @RequestMapping(method = RequestMethod.POST)
+  @PostMapping
   public ResponseEntity login(@RequestBody UserDTO userDTO) {
     LOG.info(
         String.format("Attempting to login with email address %s...", userDTO.getEmailAddress()));
@@ -63,8 +65,8 @@ public class AuthenticationController {
     return new ResponseEntity<>(user, HttpStatus.OK);
   }
 
-  @RequestMapping(value = "/auth", method = RequestMethod.GET)
-  public Principal user(Principal principal) {
-    return principal;
+  @PostMapping("/token")
+  public String generateToken(@RequestBody final JwtUser jwtUser) {
+    return jwtGenerator.generate(jwtUser);
   }
 }

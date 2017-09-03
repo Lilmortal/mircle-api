@@ -55,7 +55,7 @@ public class UserController extends AbstractController {
       @ApiResponse(code = 404, message = "The resource you were trying to reach is not found")
     }
   )
-  @RequestMapping(method = RequestMethod.POST)
+  @PostMapping
   public ResponseEntity createUser(@RequestBody User user) {
     LOG.info("Creating a new user...");
     try {
@@ -84,7 +84,7 @@ public class UserController extends AbstractController {
       @ApiResponse(code = 404, message = "The resource you were trying to reach is not found")
     }
   )
-  @RequestMapping(value = "/{id}", method = RequestMethod.GET)
+  @GetMapping("/{id}")
   public ResponseEntity getUserById(@PathVariable("id") Long id) {
     LOG.info(String.format("Getting user ID %d...", id));
 
@@ -118,7 +118,7 @@ public class UserController extends AbstractController {
       @ApiResponse(code = 404, message = "The resource you were trying to reach is not found")
     }
   )
-  @RequestMapping(value = "/profileimage", method = RequestMethod.POST)
+  @PostMapping("/profileimage")
   public ResponseEntity setUserProfileImage(
       @RequestParam(value = "profileImage", required = false) MultipartFile profileImage,
       @RequestParam("emailAddress") String emailAddress) {
@@ -164,7 +164,7 @@ public class UserController extends AbstractController {
       @ApiResponse(code = 404, message = "The resource you were trying to reach is not found")
     }
   )
-  @RequestMapping(value = "/{id}/profileimage", method = RequestMethod.DELETE)
+  @DeleteMapping("/{id}/profileimage")
   public ResponseEntity removeUserProfileImage(@PathVariable("id") Long id) {
     LOG.info(String.format("Getting user ID %d...", id));
 
@@ -199,7 +199,7 @@ public class UserController extends AbstractController {
       @ApiResponse(code = 404, message = "The resource you were trying to reach is not found")
     }
   )
-  @RequestMapping(value = "/{id}/friend/{friendId}", method = RequestMethod.POST)
+  @PostMapping("/{id}/friend/{friendId}")
   public ResponseEntity addFriend(
       @PathVariable("id") Long id, @PathVariable Long friendId, Principal principal) {
     LOG.info(String.format("Adding user ID %d friend ID...", id));
@@ -235,7 +235,7 @@ public class UserController extends AbstractController {
       @ApiResponse(code = 404, message = "The resource you were trying to reach is not found")
     }
   )
-  @RequestMapping(value = "/{id}/friends", method = RequestMethod.GET)
+  @GetMapping("/{id}/friends")
   public ResponseEntity findFriends(@PathVariable("id") Long id) {
     LOG.info(String.format("Getting user ID %d friends...", id));
 
@@ -266,7 +266,7 @@ public class UserController extends AbstractController {
       @ApiResponse(code = 404, message = "The resource you were trying to reach is not found")
     }
   )
-  @RequestMapping(value = "/{id}/friend/{friendId}", method = RequestMethod.DELETE)
+  @DeleteMapping("/{id}/friend/{friendId}")
   public ResponseEntity deleteFriend(
       @PathVariable("id") Long id, @PathVariable("friendId") Long friendId) {
     LOG.info(String.format("Getting user ID %d friends...", id));
@@ -297,7 +297,7 @@ public class UserController extends AbstractController {
       @ApiResponse(code = 404, message = "The resource you were trying to reach is not found")
     }
   )
-  @RequestMapping(method = RequestMethod.DELETE)
+  @DeleteMapping
   public ResponseEntity deleteUser(@PathVariable("id") Long id, Principal principal) {
     LOG.info(String.format("Deleting user with id %s...", id));
 

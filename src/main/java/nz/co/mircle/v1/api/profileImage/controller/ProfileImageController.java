@@ -48,7 +48,7 @@ public class ProfileImageController extends AbstractController {
       @ApiResponse(code = 404, message = "The resource you were trying to reach is not found")
     }
   )
-  @RequestMapping(value = "/default", method = RequestMethod.GET)
+  @GetMapping("/default")
   public ResponseEntity getDefaultImage() {
     LOG.info("Getting default profile image...");
     URL defaultImage;
@@ -82,7 +82,7 @@ public class ProfileImageController extends AbstractController {
       @ApiResponse(code = 404, message = "The resource you were trying to reach is not found")
     }
   )
-  @RequestMapping(value = "/s3upload", method = RequestMethod.POST)
+  @PostMapping("/s3upload")
   public ResponseEntity uploadProfileImageToS3(
       @RequestParam("profileImage") MultipartFile profileImage,
       @RequestParam("emailAddress") String emailAddress) {

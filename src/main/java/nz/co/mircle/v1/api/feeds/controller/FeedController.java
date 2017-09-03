@@ -37,7 +37,7 @@ public class FeedController {
       @ApiResponse(code = 404, message = "The resource you were trying to reach is not found")
     }
   )
-  @RequestMapping(method = RequestMethod.POST)
+  @PostMapping
   public ResponseEntity addFeed(@RequestBody Feed feed) {
     LOG.info("Adding feed...");
 
@@ -67,7 +67,7 @@ public class FeedController {
       @ApiResponse(code = 404, message = "The resource you were trying to reach is not found")
     }
   )
-  @RequestMapping(value = "/{id}", method = RequestMethod.GET)
+  @GetMapping("/{id}")
   public ResponseEntity getFeeds(@RequestParam Long id) {
     LOG.info(String.format("Getting feed from user ID %d..."), id);
 

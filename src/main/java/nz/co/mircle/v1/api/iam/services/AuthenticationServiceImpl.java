@@ -34,7 +34,7 @@ public class AuthenticationServiceImpl implements AuthenticationService, UserDet
 
   @Override
   public User login(UserDTO userDto) throws InvalidAuthenticationException {
-    User user = userService.findUser(userDto.getEmailAddress());
+    User user = userService.findUser(userDto.getUsername());
     if (user == null || !encoder.matches(userDto.getPassword(), user.getPassword())) {
       throw new InvalidAuthenticationException("Invalid username or password.");
     }
@@ -48,6 +48,8 @@ public class AuthenticationServiceImpl implements AuthenticationService, UserDet
               String.format("Email address %s already exist.", user.getEmailAddress()));
     }
 
+    // This is needed because UsernamePasswordTokenAuthentication only accepts the keyword "username"
+    user.setUsername(user.getEmailAddress());
     LocalDateTime currentDateTime = LocalDateTime.now(Clock.systemUTC());
     user.setCreatedOn(currentDateTime);
     user.setLastLoggedIn(currentDateTime);

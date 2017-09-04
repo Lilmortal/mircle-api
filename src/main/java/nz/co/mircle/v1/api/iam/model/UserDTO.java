@@ -2,23 +2,23 @@ package nz.co.mircle.v1.api.iam.model;
 
 /** Created by tanj1 on 24/08/2017. */
 public class UserDTO {
-  private String emailAddress;
+  private String username;
 
   private String password;
 
   public UserDTO() {}
 
-  public UserDTO(String emailAddress, String password) {
-    this.emailAddress = emailAddress;
+  public UserDTO(String username, String password) {
+    this.username = username;
     this.password = password;
   }
 
-  public String getEmailAddress() {
-    return emailAddress;
+  public String getUsername() {
+    return username;
   }
 
-  public void setEmailAddress(String emailAddress) {
-    this.emailAddress = emailAddress;
+  public void setUsername(String username) {
+    this.username = username;
   }
 
   public String getPassword() {

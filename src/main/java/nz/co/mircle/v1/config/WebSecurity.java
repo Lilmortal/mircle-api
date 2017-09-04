@@ -2,6 +2,7 @@ package nz.co.mircle.v1.config;
 
 import nz.co.mircle.v1.config.filter.JWTAuthenticationFilter;
 import nz.co.mircle.v1.config.filter.JWTAuthorizationFilter;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
@@ -26,8 +27,12 @@ public class WebSecurity extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        http.cors().and().csrf().disable().authorizeRequests()
+        http.cors().and().csrf().disable()
+                .headers().frameOptions().disable()
+                .and()
+                .authorizeRequests()
                 .antMatchers(HttpMethod.POST, SecurityConstants.SIGN_UP_URL).permitAll()
+                .antMatchers("/**/h2/**", "/v2/api-docs", "/swagger-ui.html", "/swagger-resources/**", "/webjars/**").permitAll()
                 .anyRequest().authenticated()
                 .and()
                 .addFilter(new JWTAuthenticationFilter(authenticationManager()))

@@ -99,7 +99,6 @@ public class User {
 
     public User(
             String emailAddress,
-            String username,
             String password,
             String firstName,
             String surname,

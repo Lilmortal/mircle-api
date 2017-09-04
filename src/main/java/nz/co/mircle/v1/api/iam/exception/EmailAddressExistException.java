@@ -1,4 +1,4 @@
-package nz.co.mircle.v1.api.user.exception;
+package nz.co.mircle.v1.api.iam.exception;
 
 import org.springframework.security.core.AuthenticationException;
 

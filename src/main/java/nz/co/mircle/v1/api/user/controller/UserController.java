@@ -9,9 +9,8 @@ import java.io.IOException;
 import java.net.URL;
 import java.security.Principal;
 import java.util.List;
-import nz.co.mircle.v1.api.AbstractController;
+
 import nz.co.mircle.v1.api.profileImage.services.ProfileImageService;
-import nz.co.mircle.v1.api.user.exception.EmailAddressExistException;
 import nz.co.mircle.v1.api.user.model.User;
 import nz.co.mircle.v1.api.user.services.UserService;
 import nz.co.mircle.v1.lib.failedResponse.model.FailedResponse;
@@ -20,7 +19,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.oauth2.config.annotation.web.configuration.EnableResourceServer;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -39,35 +37,6 @@ public class UserController {
   public UserController(UserService userService, ProfileImageService profileImageService) {
     this.userService = userService;
     this.profileImageService = profileImageService;
-  }
-
-  @ApiOperation(value = "Create a user", response = Iterable.class)
-  @ApiResponses(
-    value = {
-      @ApiResponse(code = 200, message = "Successfully created a user"),
-      @ApiResponse(code = 201, message = "Successfully created a user"),
-      @ApiResponse(code = 401, message = "You are not authorized to create a user."),
-      @ApiResponse(
-        code = 403,
-        message = "Accessing the resource you were trying to reach is forbidden"
-      ),
-      @ApiResponse(code = 404, message = "The resource you were trying to reach is not found")
-    }
-  )
-  @PostMapping
-  public ResponseEntity createUser(@RequestBody User user) {
-    LOG.info("Creating a new user...");
-    try {
-      userService.createUser(user);
-      LOG.info(String.format("User ID %d created.", user.getId()));
-    } catch (EmailAddressExistException e) {
-      LOG.error("Attempt to create a new user failed.");
-      LOG.error(e.getMessage());
-      return new ResponseEntity<>(
-          new FailedResponse(e.getMessage()), HttpStatus.INTERNAL_SERVER_ERROR);
-    }
-
-    return new ResponseEntity<>(user.getId(), HttpStatus.CREATED);
   }
 
   @ApiOperation(value = "Getting a user by id", response = Iterable.class)

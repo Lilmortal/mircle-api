@@ -2,12 +2,12 @@ spring:
   jackson:
     serialization:
       write_dates_as_timestamps: false
-  resources:
-    chain:
-      enabled: true
-  data:
-    rest:
-      basePath: /api/v1
+#  resources:
+#    chain:
+#      enabled: true
+#  data:
+#    rest:
+#      basePath: /api/v1
 
 #security:
 #  basic:
@@ -28,6 +28,12 @@ spring:
 management:
   security:
     enabled: false
+
+org:
+  springframework:
+    boot:
+      autoconfigure:
+        security: INFO
 ---
 
 spring:

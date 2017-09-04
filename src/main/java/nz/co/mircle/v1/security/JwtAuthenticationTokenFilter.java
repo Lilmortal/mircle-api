@@ -20,22 +20,20 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 public class JwtAuthenticationTokenFilter extends AbstractAuthenticationProcessingFilter {
-
-
     protected JwtAuthenticationTokenFilter() {
         // This restricts all the URL mentioned here to require a token
-        super("/login");
+        super("/**");
     }
 
     @Override
     public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response) throws AuthenticationException, IOException, ServletException {
-        String header = request.getHeader("Authorisation");
+        String header = request.getHeader("Authorization");
 
-        if (header == null || !header.startsWith("Token")) {
+        if (header == null || !header.startsWith("Bearer")) {
             throw new RuntimeException("JWT token is missing.");
         }
 
-        String authenticationToken = header.substring(6);
+        String authenticationToken = header.substring(7);
 
         JwtAuthenticationToken token = new JwtAuthenticationToken(authenticationToken);
         return getAuthenticationManager().authenticate(token);

@@ -19,7 +19,6 @@ import org.springframework.stereotype.Service;
 
 /** List of user services implementation that are used to call the repository. */
 @Service
-@Transactional
 public class UserServiceImpl implements UserService {
   private final Logger LOG = LoggerFactory.getLogger(getClass());
 

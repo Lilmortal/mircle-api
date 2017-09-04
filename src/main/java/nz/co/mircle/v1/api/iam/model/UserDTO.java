@@ -1,4 +1,4 @@
-package nz.co.mircle.v1.api.security.model;
+package nz.co.mircle.v1.api.iam.model;
 
 /** Created by tanj1 on 24/08/2017. */
 public class UserDTO {

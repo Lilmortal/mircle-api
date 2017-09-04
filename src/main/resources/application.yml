@@ -25,15 +25,13 @@ spring:
 #    name: user
 #    password: user
 
-management:
-  security:
-    enabled: false
+#management:
+#  security:
+#    enabled: false
 
-org:
-  springframework:
-    boot:
-      autoconfigure:
-        security: INFO
+security:
+  user:
+    password: password
 ---
 
 spring:

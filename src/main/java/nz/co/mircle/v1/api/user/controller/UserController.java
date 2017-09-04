@@ -26,10 +26,9 @@ import org.springframework.web.multipart.MultipartFile;
 
 /** Here are a lists of user API. */
 @RestController
-@EnableResourceServer
 @Api(value = "user", description = "User API")
 @RequestMapping("/user")
-public class UserController extends AbstractController {
+public class UserController {
   private final Logger LOG = LoggerFactory.getLogger(getClass());
 
   private UserService userService;

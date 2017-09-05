@@ -119,10 +119,10 @@ public class AuthenticationController {
                     @ApiResponse(code = 404, message = "The resource you were trying to reach is not found")
             }
     )
-    @PostMapping("/register/profileimage")
+    @PostMapping("/register/email/{emailAddress}/profileimage")
     public ResponseEntity registerUserProfileImage(
             @RequestParam(value = "profileImage", required = false) MultipartFile profileImage,
-            @RequestParam("emailAddress") String emailAddress) {
+            @PathVariable("emailAddress") String emailAddress) {
         LOG.info(String.format("Getting %s...", emailAddress));
         try {
             User user = userService.findUser(emailAddress);

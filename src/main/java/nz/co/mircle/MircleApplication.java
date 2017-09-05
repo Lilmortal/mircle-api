@@ -1,5 +1,11 @@
 package nz.co.mircle;
 
+import com.amazonaws.auth.AWSStaticCredentialsProvider;
+import com.amazonaws.auth.BasicAWSCredentials;
+import com.amazonaws.regions.Regions;
+import com.amazonaws.services.s3.AmazonS3;
+import com.amazonaws.services.s3.AmazonS3Client;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.web.support.SpringBootServletInitializer;
@@ -17,17 +23,27 @@ public class MircleApplication extends SpringBootServletInitializer {
         SpringApplication.run(MircleApplication.class, args);
     }
 
+    @Value("${AWS_ACCESS_KEY}")
+    String AWS_ACCESS_KEY;
+
+    @Value("${AWS_SECRET_KEY}")
+    String AWS_SECRET_KEY;
+
     @Bean
     public BCryptPasswordEncoder bCryptPasswordEncoder() {
         return new BCryptPasswordEncoder();
     }
-    //
-    //    public void authenticationManager(AuthenticationManagerBuilder builder, UserRepository userRepository) throws Exception {
-    //        builder.userDetailsService(new UserDetailsService() {
-    //            @Override
-    //            public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-    //                return userRepository.findByEmailAddress(username);
-    //            }
-    //        });
-    //    }
+
+    @Bean
+    public AmazonS3 s3() {
+        BasicAWSCredentials credentials = new BasicAWSCredentials(AWS_ACCESS_KEY, AWS_SECRET_KEY);
+        AWSStaticCredentialsProvider credentialsProvider =
+                new AWSStaticCredentialsProvider(credentials);
+        final AmazonS3 s3 =
+                AmazonS3Client.builder()
+                        .withRegion(Regions.AP_SOUTHEAST_2)
+                        .withCredentials(credentialsProvider)
+                        .build();
+        return s3;
+    }
 }

@@ -6,8 +6,6 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 
-import nz.co.mircle.v1.api.iam.exception.InvalidAuthenticationException;
-import nz.co.mircle.v1.api.iam.model.UserDTO;
 import nz.co.mircle.v1.api.iam.services.AuthenticationService;
 import nz.co.mircle.v1.api.iam.exception.EmailAddressExistException;
 import nz.co.mircle.v1.api.profileImage.services.ProfileImageService;
@@ -33,53 +31,25 @@ import java.net.URL;
 public class AuthenticationController {
     private final Logger LOG = LoggerFactory.getLogger(getClass());
 
-    @Autowired
     private AuthenticationService authenticationService;
 
-    @Autowired
     private UserService userService;
 
-    @Autowired
     private ProfileImageService profileImageService;
 
-//    @ApiOperation(value = "Login", response = Iterable.class)
-//    @ApiResponses(
-//            value = {
-//                    @ApiResponse(code = 200, message = "Successfully login"),
-//                    @ApiResponse(code = 201, message = "Successfully login"),
-//                    @ApiResponse(code = 401, message = "You are not authorized to login."),
-//                    @ApiResponse(
-//                            code = 403,
-//                            message = "Accessing the resource you were trying to reach is forbidden"
-//                    ),
-//                    @ApiResponse(code = 404, message = "The resource you were trying to reach is not found")
-//            }
-//    )
-//    @PostMapping("/login")
-//    public ResponseEntity login(@RequestBody UserDTO userDTO) {
-//        LOG.info(
-//                String.format("Attempting to login with email address %s...", userDTO.getUsername()));
-//
-//        User user;
-//        try {
-//            user = authenticationService.login(userDTO);
-//            LOG.info(String.format("User ID %d login.", user.getId()));
-//        } catch (InvalidAuthenticationException e) {
-//            LOG.error("Attempt to create a new user failed.");
-//            LOG.error(e.getMessage());
-//            return new ResponseEntity<>(
-//                    new FailedResponse(e.getMessage()), HttpStatus.INTERNAL_SERVER_ERROR);
-//        }
-//
-//        return new ResponseEntity<>(user, HttpStatus.OK);
-//    }
+    @Autowired
+    public AuthenticationController(AuthenticationService authenticationService, UserService userService, ProfileImageService profileImageService) {
+        this.authenticationService = authenticationService;
+        this.userService = userService;
+        this.profileImageService = profileImageService;
+    }
 
-    @ApiOperation(value = "Create a user", response = Iterable.class)
+    @ApiOperation(value = "Register a user", response = Iterable.class)
     @ApiResponses(
             value = {
-                    @ApiResponse(code = 200, message = "Successfully created a user"),
-                    @ApiResponse(code = 201, message = "Successfully created a user"),
-                    @ApiResponse(code = 401, message = "You are not authorized to create a user."),
+                    @ApiResponse(code = 200, message = "Successfully registered a user"),
+                    @ApiResponse(code = 201, message = "Successfully registered a user"),
+                    @ApiResponse(code = 401, message = "You are not authorized to register a user."),
                     @ApiResponse(
                             code = 403,
                             message = "Accessing the resource you were trying to reach is forbidden"
@@ -89,12 +59,12 @@ public class AuthenticationController {
     )
     @PostMapping("/register")
     public ResponseEntity createUser(@RequestBody User user) {
-        LOG.info("Creating a new user...");
+        LOG.info("Registering a new user...");
         try {
             authenticationService.createUser(user);
-            LOG.info(String.format("User ID %d created.", user.getId()));
+            LOG.info(String.format("User ID %d registered.", user.getId()));
         } catch (EmailAddressExistException e) {
-            LOG.error("Attempt to create a new user failed.");
+            LOG.error(String.format("Email address %s already exist.", user.getEmailAddress()));
             LOG.error(e.getMessage());
             return new ResponseEntity<>(
                     new FailedResponse(e.getMessage()), HttpStatus.INTERNAL_SERVER_ERROR);
@@ -103,14 +73,14 @@ public class AuthenticationController {
         return new ResponseEntity<>(user.getId(), HttpStatus.CREATED);
     }
 
-    @ApiOperation(value = "Set the user profile image to be default", response = Iterable.class)
+    @ApiOperation(value = "Register the user profile image", response = Iterable.class)
     @ApiResponses(
             value = {
-                    @ApiResponse(code = 200, message = "Successfully set the user profile image to be default"),
-                    @ApiResponse(code = 201, message = "Successfully set the user profile image to be default"),
+                    @ApiResponse(code = 200, message = "Successfully registered user profile image"),
+                    @ApiResponse(code = 201, message = "Successfully registered user profile image"),
                     @ApiResponse(
                             code = 401,
-                            message = "You are not authorized to get the profile image from AWS S3."
+                            message = "You are not authorized to register the user profile image."
                     ),
                     @ApiResponse(
                             code = 403,
@@ -119,11 +89,11 @@ public class AuthenticationController {
                     @ApiResponse(code = 404, message = "The resource you were trying to reach is not found")
             }
     )
-    @PostMapping("/register/email/{emailAddress}/profileimage")
+    @PatchMapping("/register/email/{emailAddress}/profileimage")
     public ResponseEntity registerUserProfileImage(
             @RequestParam(value = "profileImage", required = false) MultipartFile profileImage,
             @PathVariable("emailAddress") String emailAddress) {
-        LOG.info(String.format("Getting %s...", emailAddress));
+        LOG.info(String.format("Retrieving %s from the database to register its profile image...", emailAddress));
         try {
             User user = userService.findUser(emailAddress);
             if (user.getProfileImage() != null) {
@@ -142,12 +112,12 @@ public class AuthenticationController {
                             "%s %s successfully has its profile image set to %s.",
                             user.getFirstName(), user.getSurname(), profileImageUrl));
         } catch (AmazonServiceException e) {
-            LOG.error("Failed to get the default profile image");
+            LOG.error("Failed to register the user profile image; there is an issue with Amazon.");
             LOG.error(e.getMessage());
             return new ResponseEntity<>(
                     new FailedResponse(e.getMessage()), HttpStatus.INTERNAL_SERVER_ERROR);
         } catch (IOException e) {
-            LOG.error("Failed to get the default profile image");
+            LOG.error("Failed to register the user profile image.");
             LOG.error(e.getMessage());
             return new ResponseEntity<>(new FailedResponse(e.getMessage()), HttpStatus.INTERNAL_SERVER_ERROR);
         }

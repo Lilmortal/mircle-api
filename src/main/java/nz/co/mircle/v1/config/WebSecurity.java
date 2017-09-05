@@ -14,7 +14,6 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
-import static nz.co.mircle.v1.config.SecurityConstants.LOGIN_URL;
 import static nz.co.mircle.v1.config.SecurityConstants.REGISTER_URL;
 
 @EnableWebSecurity
@@ -34,7 +33,6 @@ public class WebSecurity extends WebSecurityConfigurerAdapter {
                 .and()
                 .authorizeRequests()
                 .antMatchers(HttpMethod.POST, REGISTER_URL).permitAll()
-                .antMatchers(HttpMethod.POST, LOGIN_URL).permitAll()
                 .antMatchers("/**/h2/**", "/v2/api-docs", "/swagger-ui.html", "/swagger-resources/**", "/webjars/**").permitAll()
                 .anyRequest().authenticated()
                 .and()

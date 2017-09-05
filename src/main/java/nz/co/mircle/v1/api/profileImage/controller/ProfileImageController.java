@@ -28,9 +28,15 @@ import org.springframework.web.multipart.MultipartFile;
 public class ProfileImageController extends AbstractController {
   private final Logger LOG = LoggerFactory.getLogger(getClass());
 
-  @Autowired private UserService userService;
+  private UserService userService;
 
-  @Autowired private ProfileImageService profileImageService;
+  private ProfileImageService profileImageService;
+
+  @Autowired
+  public ProfileImageController(UserService userService, ProfileImageService profileImageService) {
+    this.userService = userService;
+    this.profileImageService = profileImageService;
+  }
 
   @ApiOperation(value = "Get the default profile image", response = Iterable.class)
   @ApiResponses(
@@ -82,10 +88,10 @@ public class ProfileImageController extends AbstractController {
       @ApiResponse(code = 404, message = "The resource you were trying to reach is not found")
     }
   )
-  @PostMapping("/s3upload")
+  @PostMapping("/email/{emailAddress}/upload/s3")
   public ResponseEntity uploadProfileImageToS3(
       @RequestParam("profileImage") MultipartFile profileImage,
-      @RequestParam("emailAddress") String emailAddress) {
+      @PathVariable("emailAddress") String emailAddress) {
     LOG.info("Uploading profile image to AWS S3...");
 
     try {

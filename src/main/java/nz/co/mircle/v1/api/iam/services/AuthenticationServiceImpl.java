@@ -1,7 +1,5 @@
 package nz.co.mircle.v1.api.iam.services;
 
-import nz.co.mircle.v1.api.iam.exception.InvalidAuthenticationException;
-import nz.co.mircle.v1.api.iam.model.UserDTO;
 import nz.co.mircle.v1.api.iam.exception.EmailAddressExistException;
 import nz.co.mircle.v1.api.user.dao.UserRepository;
 import nz.co.mircle.v1.api.user.model.User;
@@ -25,20 +23,17 @@ import static java.util.Collections.emptyList;
 public class AuthenticationServiceImpl implements AuthenticationService, UserDetailsService {
   private final Logger LOG = LoggerFactory.getLogger(getClass());
 
-  @Autowired private BCryptPasswordEncoder encoder;
+  private BCryptPasswordEncoder encoder;
 
-  @Autowired private UserService userService;
+  private UserService userService;
 
-  @Autowired
   private UserRepository userRepository;
 
-  @Override
-  public User login(UserDTO userDto) throws InvalidAuthenticationException {
-    User user = userService.findUser(userDto.getUsername());
-    if (user == null || !encoder.matches(userDto.getPassword(), user.getPassword())) {
-      throw new InvalidAuthenticationException("Invalid username or password.");
-    }
-    return user;
+  @Autowired
+  public AuthenticationServiceImpl(BCryptPasswordEncoder encoder, UserService userService, UserRepository userRepository) {
+    this.encoder = encoder;
+    this.userService = userService;
+    this.userRepository = userRepository;
   }
 
   @Override

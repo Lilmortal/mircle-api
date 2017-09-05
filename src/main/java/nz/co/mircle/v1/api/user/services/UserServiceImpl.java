@@ -35,6 +35,22 @@ public class UserServiceImpl implements UserService {
   }
 
   @Override
+  public void deleteUser(Long id) {
+    userRepository.deleteById(id);
+  }
+
+  @Override
+  public void setUserProfileImage(User user, URL profileImageUrl) throws AmazonServiceException {
+    if (user.getProfileImage() == null) {
+      ProfileImage newProfileImage = new ProfileImage();
+      user.setProfileImage(newProfileImage);
+    }
+
+    user.getProfileImage().setUri(profileImageUrl);
+    userRepository.save(user);
+  }
+
+  @Override
   public void addFriend(Long id, Long friendId) {
     User user = userRepository.findById(id);
     User friend = userRepository.findById(friendId);
@@ -55,21 +71,5 @@ public class UserServiceImpl implements UserService {
     User friend = userRepository.findById(friendId);
     //user.getFriends().remove(friend);
     userRepository.save(user);
-  }
-
-  @Override
-  public void setUserProfileImage(User user, URL profileImageUrl) throws AmazonServiceException {
-    if (user.getProfileImage() == null) {
-      ProfileImage newProfileImage = new ProfileImage();
-      user.setProfileImage(newProfileImage);
-    }
-
-    user.getProfileImage().setUri(profileImageUrl);
-    userRepository.save(user);
-  }
-
-  @Override
-  public void deleteUser(Long id) {
-    userRepository.deleteById(id);
   }
 }

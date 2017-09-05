@@ -111,7 +111,6 @@ public class User {
             boolean loggedIn,
             ProfileImage profileImage) {
         this.emailAddress = emailAddress;
-        this.username = username;
         this.password = password;
         this.firstName = firstName;
         this.surname = surname;

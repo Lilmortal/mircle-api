@@ -42,7 +42,7 @@ public class UserController {
         this.profileImageService = profileImageService;
     }
 
-    @ApiOperation(value = "Getting a user by id", response = Iterable.class)
+    @ApiOperation(value = "Retrieving a user by id", response = Iterable.class)
     @ApiResponses(
             value = {
                     @ApiResponse(code = 200, message = "Successfully retrieved a user"),
@@ -73,7 +73,7 @@ public class UserController {
         return new ResponseEntity<>(user, HttpStatus.OK);
     }
 
-    @ApiOperation(value = "Getting a user by id", response = Iterable.class)
+    @ApiOperation(value = "Getting a user by email address", response = Iterable.class)
     @ApiResponses(
             value = {
                     @ApiResponse(code = 200, message = "Successfully retrieved a user"),
@@ -93,7 +93,7 @@ public class UserController {
         User user;
         try {
             user = userService.findUser(emailAddress);
-            LOG.info(String.format("User %d found.", user.getId()));
+            LOG.info(String.format("%s found.", emailAddress));
         } catch (Exception e) {
             LOG.error(String.format("Attempt to find %s failed.", emailAddress));
             LOG.error(e.getMessage());
@@ -104,14 +104,44 @@ public class UserController {
         return new ResponseEntity<>(user, HttpStatus.OK);
     }
 
-    @ApiOperation(value = "Set the user profile image to be default", response = Iterable.class)
+    @ApiOperation(value = "Delete a user", response = Iterable.class)
     @ApiResponses(
             value = {
-                    @ApiResponse(code = 200, message = "Successfully set the user profile image to be default"),
-                    @ApiResponse(code = 201, message = "Successfully set the user profile image to be default"),
+                    @ApiResponse(code = 200, message = "Successfully deleted a user"),
+                    @ApiResponse(code = 201, message = "Successfully deleted a user"),
+                    @ApiResponse(code = 401, message = "You are not authorized to retrieved a user."),
+                    @ApiResponse(
+                            code = 403,
+                            message = "Accessing the resource you were trying to reach is forbidden"
+                    ),
+                    @ApiResponse(code = 404, message = "The resource you were trying to reach is not found")
+            }
+    )
+    @DeleteMapping("/{id}")
+    public ResponseEntity deleteUser(@PathVariable("id") Long id) {
+        LOG.info(String.format("Deleting user with id %s...", id));
+
+        try {
+            userService.deleteUser(id);
+            LOG.info(String.format("User %d deleted.", id));
+        } catch (Exception e) {
+            LOG.error(String.format("Attempt to delete user with id %d failed.", id));
+            LOG.error(e.getMessage());
+            return new ResponseEntity<>(
+                    new FailedResponse(e.getMessage()), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+
+        return new ResponseEntity<>(HttpStatus.CREATED);
+    }
+
+    @ApiOperation(value = "Update the user profile image", response = Iterable.class)
+    @ApiResponses(
+            value = {
+                    @ApiResponse(code = 200, message = "Successfully updated the user profile image"),
+                    @ApiResponse(code = 201, message = "Successfully updated the user profile image"),
                     @ApiResponse(
                             code = 401,
-                            message = "You are not authorized to get the profile image from AWS S3."
+                            message = "You are not authorized to update the user profile image."
                     ),
                     @ApiResponse(
                             code = 403,
@@ -120,7 +150,8 @@ public class UserController {
                     @ApiResponse(code = 404, message = "The resource you were trying to reach is not found")
             }
     )
-    @PostMapping("/email/{emailAddress}")
+    // Query param, search via ID or email address
+    @PatchMapping("/profileimage")
     public ResponseEntity setUserProfileImage(
             @RequestParam(value = "profileImage", required = false) MultipartFile profileImage,
             @PathVariable("emailAddress") String emailAddress) {
@@ -139,12 +170,12 @@ public class UserController {
                             "%s %s successfully has its profile image set to %s.",
                             user.getFirstName(), user.getSurname(), profileImageUrl));
         } catch (AmazonServiceException e) {
-            LOG.error("Failed to get the default profile image");
+            LOG.error("Failed to update the user profile image; there is an issue with Amazon.");
             LOG.error(e.getMessage());
             return new ResponseEntity<>(
                     new FailedResponse(e.getMessage()), HttpStatus.INTERNAL_SERVER_ERROR);
         } catch (IOException e) {
-            LOG.error("Failed to get the default profile image");
+            LOG.error("Failed to update the user profile image.");
             LOG.error(e.getMessage());
             return new ResponseEntity<>(
                     new FailedResponse(e.getMessage()), HttpStatus.INTERNAL_SERVER_ERROR);
@@ -153,12 +184,12 @@ public class UserController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    @ApiOperation(value = "Getting a user by id", response = Iterable.class)
+    @ApiOperation(value = "Remove user profile image", response = Iterable.class)
     @ApiResponses(
             value = {
-                    @ApiResponse(code = 200, message = "Successfully retrieved a user"),
-                    @ApiResponse(code = 201, message = "Successfully retrieved a user"),
-                    @ApiResponse(code = 401, message = "You are not authorized to retrieved a user."),
+                    @ApiResponse(code = 200, message = "Successfully removed user profile image"),
+                    @ApiResponse(code = 201, message = "Successfully removed user profile image"),
+                    @ApiResponse(code = 401, message = "You are not authorized to removed the user profile image."),
                     @ApiResponse(
                             code = 403,
                             message = "Accessing the resource you were trying to reach is forbidden"
@@ -203,17 +234,12 @@ public class UserController {
     )
     @PostMapping("/{id}/friend/{friendId}")
     public ResponseEntity addFriend(
-            @PathVariable("id") Long id, @PathVariable Long friendId, Principal principal) {
+            @PathVariable("id") Long id, @PathVariable Long friendId) {
         LOG.info(String.format("Adding user ID %d friend ID...", id));
 
-        User currentUser = userService.findUser(principal.getName());
         try {
-            if (currentUser.getId() == id) {
-                userService.addFriend(id, friendId);
-                LOG.info("User %d friends found.");
-            } else {
-                return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
-            }
+            userService.addFriend(id, friendId);
+            //LOG.info(String.format("%s %s is now on %s %s friends list."), id);
         } catch (Exception e) {
             LOG.error(String.format("Attempt to find a user with id %d friends failed.", id));
             LOG.error(e.getMessage());
@@ -284,40 +310,5 @@ public class UserController {
         }
 
         return new ResponseEntity<>(HttpStatus.OK);
-    }
-
-    @ApiOperation(value = "Delete a user", response = Iterable.class)
-    @ApiResponses(
-            value = {
-                    @ApiResponse(code = 200, message = "Successfully deleted a user"),
-                    @ApiResponse(code = 201, message = "Successfully deleted a user"),
-                    @ApiResponse(code = 401, message = "You are not authorized to retrieved a user."),
-                    @ApiResponse(
-                            code = 403,
-                            message = "Accessing the resource you were trying to reach is forbidden"
-                    ),
-                    @ApiResponse(code = 404, message = "The resource you were trying to reach is not found")
-            }
-    )
-    @DeleteMapping
-    public ResponseEntity deleteUser(@PathVariable("id") Long id, Principal principal) {
-        LOG.info(String.format("Deleting user with id %s...", id));
-
-        User currentUser = userService.findUser(principal.getName());
-        try {
-            if (currentUser.getId() == id) {
-                userService.deleteUser(id);
-                LOG.info(String.format("User %d deleted.", id));
-            } else {
-                return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
-            }
-        } catch (Exception e) {
-            LOG.error(String.format("Attempt to delete user with id %d failed.", id));
-            LOG.error(e.getMessage());
-            return new ResponseEntity<>(
-                    new FailedResponse(e.getMessage()), HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-
-        return new ResponseEntity<>(HttpStatus.CREATED);
     }
 }

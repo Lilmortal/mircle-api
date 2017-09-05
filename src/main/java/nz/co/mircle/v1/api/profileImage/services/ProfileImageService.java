@@ -12,5 +12,5 @@ public interface ProfileImageService {
   URL uploadProfileImageToS3(MultipartFile profileImage, String emailAddress)
       throws IOException, AmazonServiceException;
 
-  URL getUserProfileImageLink(String key);
+  URL getUserProfileImageUrl(String key);
 }

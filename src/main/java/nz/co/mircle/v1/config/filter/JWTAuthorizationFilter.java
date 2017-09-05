@@ -20,6 +20,7 @@ public class JWTAuthorizationFilter extends BasicAuthenticationFilter {
         super(authManager);
     }
 
+    // Validate the token being sent back is valid, if it is valid, approve the request.
     @Override
     protected void doFilterInternal(HttpServletRequest req,
                                     HttpServletResponse res,

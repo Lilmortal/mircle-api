@@ -12,6 +12,7 @@ import nz.co.mircle.v1.api.profileImage.services.ProfileImageService;
 import nz.co.mircle.v1.api.user.model.User;
 import nz.co.mircle.v1.api.user.services.UserService;
 import nz.co.mircle.v1.lib.failedResponse.model.FailedResponse;
+import org.apache.http.protocol.HTTP;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -89,13 +90,24 @@ public class AuthenticationController {
                     @ApiResponse(code = 404, message = "The resource you were trying to reach is not found")
             }
     )
-    @PatchMapping("/register/email/{emailAddress}/profileimage")
+    @PatchMapping("/register//profileimage")
     public ResponseEntity registerUserProfileImage(
             @RequestParam(value = "profileImage", required = false) MultipartFile profileImage,
-            @PathVariable("emailAddress") String emailAddress) {
-        LOG.info(String.format("Retrieving %s from the database to register its profile image...", emailAddress));
+            @RequestParam(value = "id", required = false) Long id,
+            @RequestParam(value = "emailAddress", required = false) String emailAddress
+    ) {
         try {
-            User user = userService.findUser(emailAddress);
+            User user;
+            if (id != null) {
+                LOG.info(String.format("Retrieving User ID $d from the database to register its profile image...", id));
+                user = userService.findUser(id);
+            } else if (emailAddress != null) {
+                LOG.info(String.format("Retrieving %s from the database to register its profile image...", emailAddress));
+                user = userService.findUser(emailAddress);
+            } else {
+                return new ResponseEntity<>("Missing User ID or email address.", HttpStatus.INTERNAL_SERVER_ERROR);
+            }
+
             if (user.getProfileImage() != null) {
                 return new ResponseEntity<>(new FailedResponse("The user already has it's profile image set or it does not exist."), HttpStatus.INTERNAL_SERVER_ERROR);
             }
@@ -104,7 +116,7 @@ public class AuthenticationController {
             if (profileImage == null) {
                 profileImageUrl = profileImageService.getDefaultImage();
             } else {
-                profileImageUrl = profileImageService.uploadProfileImageToS3(profileImage, emailAddress);
+                profileImageUrl = profileImageService.uploadProfileImageToS3(profileImage, user.getEmailAddress());
             }
             userService.setUserProfileImage(user, profileImageUrl);
             LOG.info(

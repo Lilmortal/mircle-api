@@ -24,7 +24,7 @@ import org.springframework.web.multipart.MultipartFile;
  */
 @Service
 public class ProfileImageServiceImpl implements ProfileImageService {
-    private final Logger LOG = LoggerFactory.getLogger(ProfileImageServiceImpl.class);
+    private final Logger LOG = LoggerFactory.getLogger(getClass());
 
     private static final String AWS_BUCKET_NAME = "mircle";
 
@@ -57,7 +57,7 @@ public class ProfileImageServiceImpl implements ProfileImageService {
         s3.putObject(putObjectRequest);
         s3.setObjectAcl(AWS_BUCKET_NAME, key, CannedAccessControlList.PublicRead);
 
-        URL imageUrl = s3.getUrl(AWS_BUCKET_NAME, key);
+        URL imageUrl = getUserProfileImageUrl(key);
         return imageUrl;
     }
 
@@ -65,5 +65,12 @@ public class ProfileImageServiceImpl implements ProfileImageService {
     public URL getUserProfileImageUrl(String key) {
         URL imageUrl = s3.getUrl(AWS_BUCKET_NAME, key);
         return imageUrl;
+    }
+
+    @Override
+    public void deleteProfileImage(URL key) {
+        // test this
+        LOG.info(key.getFile(), key.getPath(), key.toString());
+        s3.deleteObject(AWS_BUCKET_NAME, key.getPath());
     }
 }

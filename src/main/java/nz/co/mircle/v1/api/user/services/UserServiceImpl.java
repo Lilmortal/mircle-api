@@ -35,11 +35,6 @@ public class UserServiceImpl implements UserService {
   }
 
   @Override
-  public void deleteUser(Long id) {
-    userRepository.deleteById(id);
-  }
-
-  @Override
   public void setUserProfileImage(User user, URL profileImageUrl) throws AmazonServiceException {
     if (user.getProfileImage() == null) {
       ProfileImage newProfileImage = new ProfileImage();
@@ -48,6 +43,11 @@ public class UserServiceImpl implements UserService {
 
     user.getProfileImage().setUri(profileImageUrl);
     userRepository.save(user);
+  }
+
+  @Override
+  public void deleteUser(Long id) {
+    userRepository.deleteById(id);
   }
 
   @Override

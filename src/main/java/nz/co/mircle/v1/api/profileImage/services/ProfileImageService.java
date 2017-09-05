@@ -9,8 +9,10 @@ import org.springframework.web.multipart.MultipartFile;
 public interface ProfileImageService {
   URL getDefaultImage() throws AmazonServiceException;
 
+  URL getUserProfileImageUrl(String key);
+
   URL uploadProfileImageToS3(MultipartFile profileImage, String emailAddress)
       throws IOException, AmazonServiceException;
 
-  URL getUserProfileImageUrl(String key);
+  void deleteProfileImage(URL key);
 }

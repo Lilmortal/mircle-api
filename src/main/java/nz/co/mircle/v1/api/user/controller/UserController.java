@@ -122,7 +122,8 @@ public class UserController {
         LOG.info(String.format("Deleting user with id %s...", id));
 
         try {
-            userService.deleteUser(id);
+            User user = userService.findUser(id);
+            userService.deleteUser(user);
             LOG.info(String.format("User %d deleted.", id));
         } catch (Exception e) {
             LOG.error(String.format("Attempt to delete user with id %d failed.", id));
@@ -131,7 +132,38 @@ public class UserController {
                     new FailedResponse(e.getMessage()), HttpStatus.INTERNAL_SERVER_ERROR);
         }
 
-        return new ResponseEntity<>(HttpStatus.CREATED);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @ApiOperation(value = "Delete a user", response = Iterable.class)
+    @ApiResponses(
+            value = {
+                    @ApiResponse(code = 200, message = "Successfully deleted a user"),
+                    @ApiResponse(code = 201, message = "Successfully deleted a user"),
+                    @ApiResponse(code = 401, message = "You are not authorized to retrieved a user."),
+                    @ApiResponse(
+                            code = 403,
+                            message = "Accessing the resource you were trying to reach is forbidden"
+                    ),
+                    @ApiResponse(code = 404, message = "The resource you were trying to reach is not found")
+            }
+    )
+    @DeleteMapping("/email/{emailAddress:.+}")
+    public ResponseEntity deleteUserByEmailAddress(@PathVariable("emailAddress") String emailAddress) {
+        LOG.info(String.format("Deleting %s...", emailAddress));
+
+        try {
+            User user = userService.findUser(emailAddress);
+            userService.deleteUser(user);
+            LOG.info(String.format("%s deleted.", emailAddress));
+        } catch (Exception e) {
+            LOG.error(String.format("Attempt to delete %s failed.", emailAddress));
+            LOG.error(e.getMessage());
+            return new ResponseEntity<>(
+                    new FailedResponse(e.getMessage()), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @ApiOperation(value = "Update the user profile image", response = Iterable.class)

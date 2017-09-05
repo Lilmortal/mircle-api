@@ -14,6 +14,4 @@ public interface UserRepository extends CrudRepository<User, Long> {
   User findByEmailAddress(String emailAddress);
 
   //List<User> findByFriendId(Long id);
-
-  void deleteById(Long id);
 }

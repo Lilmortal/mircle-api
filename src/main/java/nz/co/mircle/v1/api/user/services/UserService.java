@@ -12,9 +12,9 @@ public interface UserService {
 
   User findUser(String emailAddress);
 
-  void deleteUser(Long id);
-
   void setUserProfileImage(User user, URL profileImage) throws AmazonServiceException;
+
+  void deleteUser(User user);
 
   void addFriend(Long id, Long friendId);
 

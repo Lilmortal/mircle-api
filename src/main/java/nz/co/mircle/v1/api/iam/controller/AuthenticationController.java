@@ -90,7 +90,7 @@ public class AuthenticationController {
                     @ApiResponse(code = 404, message = "The resource you were trying to reach is not found")
             }
     )
-    @PatchMapping("/register//profileimage")
+    @PatchMapping("/register/profileimage")
     public ResponseEntity registerUserProfileImage(
             @RequestParam(value = "profileImage", required = false) MultipartFile profileImage,
             @RequestParam(value = "id", required = false) Long id,

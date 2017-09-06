@@ -121,8 +121,56 @@ public class UserController {
                     @ApiResponse(code = 404, message = "The resource you were trying to reach is not found")
             }
     )
+    @PatchMapping("/password")
+    public ResponseEntity updateUserPassword(
+            @RequestParam(value = "id", required = false) Long id,
+            @RequestParam(value = "emailAddress", required = false) String emailAddress,
+            @RequestParam(value = "oldPassword") String oldPassword,
+            @RequestParam("newPassword") String newPassword) {
+        try {
+            User user;
+            if (id != null) {
+                LOG.info(String.format("Getting user ID %d...", id));
+                user = userService.findUser(emailAddress);
+            } else if (!StringUtils.isBlank(emailAddress)) {
+                LOG.info(String.format("Getting %s...", emailAddress));
+                user = userService.findUser(emailAddress);
+            } else {
+                return new ResponseEntity<>("Missing user ID or email address", HttpStatus.INTERNAL_SERVER_ERROR);
+            }
+
+            LOG.info(String.format("Updating %s %s password...", user.getFirstName(), user.getSurname()));
+
+            userService.changePassword(user, oldPassword, newPassword);
+            LOG.info(
+                    String.format(
+                            "%s %s password successfully updated.",
+                            user.getFirstName(), user.getSurname()));
+        } catch (Exception e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @ApiOperation(value = "Update the user profile image", response = Iterable.class)
+    @ApiResponses(
+            value = {
+                    @ApiResponse(code = 200, message = "Successfully updated the user profile image"),
+                    @ApiResponse(code = 201, message = "Successfully updated the user profile image"),
+                    @ApiResponse(
+                            code = 401,
+                            message = "You are not authorized to update the user profile image."
+                    ),
+                    @ApiResponse(
+                            code = 403,
+                            message = "Accessing the resource you were trying to reach is forbidden"
+                    ),
+                    @ApiResponse(code = 404, message = "The resource you were trying to reach is not found")
+            }
+    )
     @PatchMapping("/profileimage")
-    public ResponseEntity setUserProfileImage(
+    public ResponseEntity updateUserProfileImage(
             @RequestParam(value = "profileImage") MultipartFile profileImage,
             @RequestParam(value = "id", required = false) Long id,
             @RequestParam(value = "emailAddress", required = false) String emailAddress) {
@@ -138,14 +186,8 @@ public class UserController {
                 return new ResponseEntity<>("Missing user ID or email address", HttpStatus.INTERNAL_SERVER_ERROR);
             }
 
-            URL profileImageUrl;
-            if (profileImage == null) {
-                LOG.info(String.format("Setting %s %s profile image to be the default profile image...", user.getFirstName(), user.getSurname()));
-                profileImageUrl = profileImageService.getDefaultImage();
-            } else {
-                LOG.info(String.format("Setting %s %s profile image...", user.getFirstName(), user.getSurname()));
-                profileImageUrl = profileImageService.uploadProfileImageToS3(profileImage, emailAddress);
-            }
+            LOG.info(String.format("Setting %s %s profile image...", user.getFirstName(), user.getSurname()));
+            URL profileImageUrl = profileImageService.uploadProfileImageToS3(profileImage, emailAddress);
 
             userService.setUserProfileImage(user, profileImageUrl);
             LOG.info(

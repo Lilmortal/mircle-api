@@ -11,6 +11,7 @@ import nz.co.mircle.v1.api.user.model.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 /** List of user services implementation that are used to call the repository. */
@@ -18,9 +19,18 @@ import org.springframework.stereotype.Service;
 public class UserServiceImpl implements UserService {
   private final Logger LOG = LoggerFactory.getLogger(getClass());
 
-  @Autowired private ProfileImageService profileImageService;
+  private ProfileImageService profileImageService;
 
-  @Autowired private UserRepository userRepository;
+  private UserRepository userRepository;
+
+  private BCryptPasswordEncoder encoder;
+
+  @Autowired
+  public UserServiceImpl(ProfileImageService profileImageService, UserRepository userRepository, BCryptPasswordEncoder encoder) {
+    this.profileImageService = profileImageService;
+    this.userRepository = userRepository;
+    this.encoder = encoder;
+  }
 
   @Override
   public User findUser(Long id) {
@@ -42,6 +52,15 @@ public class UserServiceImpl implements UserService {
     }
 
     user.getProfileImage().setUri(profileImageUrl);
+    userRepository.save(user);
+  }
+
+  @Override
+  public void changePassword(User user, String oldPassword, String newPassword) {
+    if (!encoder.matches(oldPassword, user.getPassword())) {
+      throw new RuntimeException("New password is not the same as the old password.");
+    }
+    user.setPassword(encoder.encode(newPassword));
     userRepository.save(user);
   }
 

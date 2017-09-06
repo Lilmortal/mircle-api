@@ -14,6 +14,8 @@ public interface UserService {
 
   void setUserProfileImage(User user, URL profileImage) throws AmazonServiceException;
 
+  void changePassword(User user, String oldPassword, String newPassword);
+
   void deleteUser(User user);
 
   void addFriend(Long id, Long friendId);

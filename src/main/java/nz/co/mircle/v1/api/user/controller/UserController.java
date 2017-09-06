@@ -15,6 +15,7 @@ import nz.co.mircle.v1.api.profileImage.services.ProfileImageService;
 import nz.co.mircle.v1.api.user.model.User;
 import nz.co.mircle.v1.api.user.services.UserService;
 import nz.co.mircle.v1.lib.failedResponse.model.FailedResponse;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -104,68 +105,6 @@ public class UserController {
         return new ResponseEntity<>(user, HttpStatus.OK);
     }
 
-    @ApiOperation(value = "Delete a user", response = Iterable.class)
-    @ApiResponses(
-            value = {
-                    @ApiResponse(code = 200, message = "Successfully deleted a user"),
-                    @ApiResponse(code = 201, message = "Successfully deleted a user"),
-                    @ApiResponse(code = 401, message = "You are not authorized to retrieved a user."),
-                    @ApiResponse(
-                            code = 403,
-                            message = "Accessing the resource you were trying to reach is forbidden"
-                    ),
-                    @ApiResponse(code = 404, message = "The resource you were trying to reach is not found")
-            }
-    )
-    @DeleteMapping("/{id}")
-    public ResponseEntity deleteUser(@PathVariable("id") Long id) {
-        LOG.info(String.format("Deleting user with id %s...", id));
-
-        try {
-            User user = userService.findUser(id);
-            userService.deleteUser(user);
-            LOG.info(String.format("User %d deleted.", id));
-        } catch (Exception e) {
-            LOG.error(String.format("Attempt to delete user with id %d failed.", id));
-            LOG.error(e.getMessage());
-            return new ResponseEntity<>(
-                    new FailedResponse(e.getMessage()), HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-
-        return new ResponseEntity<>(HttpStatus.OK);
-    }
-
-    @ApiOperation(value = "Delete a user", response = Iterable.class)
-    @ApiResponses(
-            value = {
-                    @ApiResponse(code = 200, message = "Successfully deleted a user"),
-                    @ApiResponse(code = 201, message = "Successfully deleted a user"),
-                    @ApiResponse(code = 401, message = "You are not authorized to retrieved a user."),
-                    @ApiResponse(
-                            code = 403,
-                            message = "Accessing the resource you were trying to reach is forbidden"
-                    ),
-                    @ApiResponse(code = 404, message = "The resource you were trying to reach is not found")
-            }
-    )
-    @DeleteMapping("/email/{emailAddress:.+}")
-    public ResponseEntity deleteUserByEmailAddress(@PathVariable("emailAddress") String emailAddress) {
-        LOG.info(String.format("Deleting %s...", emailAddress));
-
-        try {
-            User user = userService.findUser(emailAddress);
-            userService.deleteUser(user);
-            LOG.info(String.format("%s deleted.", emailAddress));
-        } catch (Exception e) {
-            LOG.error(String.format("Attempt to delete %s failed.", emailAddress));
-            LOG.error(e.getMessage());
-            return new ResponseEntity<>(
-                    new FailedResponse(e.getMessage()), HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-
-        return new ResponseEntity<>(HttpStatus.OK);
-    }
-
     @ApiOperation(value = "Update the user profile image", response = Iterable.class)
     @ApiResponses(
             value = {
@@ -182,7 +121,6 @@ public class UserController {
                     @ApiResponse(code = 404, message = "The resource you were trying to reach is not found")
             }
     )
-    // Query param, search via ID or email address
     @PatchMapping("/profileimage")
     public ResponseEntity setUserProfileImage(
             @RequestParam(value = "profileImage") MultipartFile profileImage,
@@ -193,7 +131,7 @@ public class UserController {
             if (id != null) {
                 LOG.info(String.format("Getting user ID %d...", id));
                 user = userService.findUser(emailAddress);
-            } else if (emailAddress != null) {
+            } else if (!StringUtils.isBlank(emailAddress)) {
                 LOG.info(String.format("Getting %s...", emailAddress));
                 user = userService.findUser(emailAddress);
             } else {
@@ -251,7 +189,7 @@ public class UserController {
             if (id != null) {
                 LOG.info(String.format("Getting user ID %d...", id));
                 user = userService.findUser(id);
-            } else if (emailAddress != null) {
+            } else if (!StringUtils.isBlank(emailAddress)) {
                 LOG.info(String.format("Getting %s...", emailAddress));
                 user = userService.findUser(emailAddress);
             } else {
@@ -267,6 +205,68 @@ public class UserController {
                             "%s %s profile image successfully removed.", user.getFirstName(), user.getSurname()));
         } catch (Exception e) {
             LOG.error(String.format("Attempt to find a user with id %d failed.", id));
+            LOG.error(e.getMessage());
+            return new ResponseEntity<>(
+                    new FailedResponse(e.getMessage()), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @ApiOperation(value = "Delete a user", response = Iterable.class)
+    @ApiResponses(
+            value = {
+                    @ApiResponse(code = 200, message = "Successfully deleted a user"),
+                    @ApiResponse(code = 201, message = "Successfully deleted a user"),
+                    @ApiResponse(code = 401, message = "You are not authorized to retrieved a user."),
+                    @ApiResponse(
+                            code = 403,
+                            message = "Accessing the resource you were trying to reach is forbidden"
+                    ),
+                    @ApiResponse(code = 404, message = "The resource you were trying to reach is not found")
+            }
+    )
+    @DeleteMapping("/{id}")
+    public ResponseEntity deleteUser(@PathVariable("id") Long id) {
+        LOG.info(String.format("Deleting user with id %s...", id));
+
+        try {
+            User user = userService.findUser(id);
+            userService.deleteUser(user);
+            LOG.info(String.format("User %d deleted.", id));
+        } catch (Exception e) {
+            LOG.error(String.format("Attempt to delete user with id %d failed.", id));
+            LOG.error(e.getMessage());
+            return new ResponseEntity<>(
+                    new FailedResponse(e.getMessage()), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @ApiOperation(value = "Delete a user", response = Iterable.class)
+    @ApiResponses(
+            value = {
+                    @ApiResponse(code = 200, message = "Successfully deleted a user"),
+                    @ApiResponse(code = 201, message = "Successfully deleted a user"),
+                    @ApiResponse(code = 401, message = "You are not authorized to retrieved a user."),
+                    @ApiResponse(
+                            code = 403,
+                            message = "Accessing the resource you were trying to reach is forbidden"
+                    ),
+                    @ApiResponse(code = 404, message = "The resource you were trying to reach is not found")
+            }
+    )
+    @DeleteMapping("/email/{emailAddress:.+}")
+    public ResponseEntity deleteUserByEmailAddress(@PathVariable("emailAddress") String emailAddress) {
+        LOG.info(String.format("Deleting %s...", emailAddress));
+
+        try {
+            User user = userService.findUser(emailAddress);
+            userService.deleteUser(user);
+            LOG.info(String.format("%s deleted.", emailAddress));
+        } catch (Exception e) {
+            LOG.error(String.format("Attempt to delete %s failed.", emailAddress));
             LOG.error(e.getMessage());
             return new ResponseEntity<>(
                     new FailedResponse(e.getMessage()), HttpStatus.INTERNAL_SERVER_ERROR);

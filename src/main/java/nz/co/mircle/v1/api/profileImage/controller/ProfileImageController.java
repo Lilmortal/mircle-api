@@ -16,6 +16,7 @@ import nz.co.mircle.v1.api.profileImage.services.ProfileImageService;
 import nz.co.mircle.v1.api.user.model.User;
 import nz.co.mircle.v1.api.user.services.UserService;
 import nz.co.mircle.v1.lib.failedResponse.model.FailedResponse;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -104,7 +105,7 @@ public class ProfileImageController extends AbstractController {
                 User user = userService.findUser(id);
                 LOG.info(String.format("Uploading %s profile image to AWS S3 ...", user.getEmailAddress()));
                 profileImageService.uploadProfileImageToS3(profileImage, user.getEmailAddress());
-            } else if (emailAddress != null) {
+            } else if (!StringUtils.isBlank(emailAddress)) {
                 LOG.info(String.format("Uploading %s profile image to AWS S3 ...", emailAddress));
                 profileImageService.uploadProfileImageToS3(profileImage, emailAddress);
             } else {

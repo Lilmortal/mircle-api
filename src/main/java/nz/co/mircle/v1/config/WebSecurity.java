@@ -32,7 +32,7 @@ public class WebSecurity extends WebSecurityConfigurerAdapter {
                 .headers().frameOptions().disable()
                 .and()
                 .authorizeRequests()
-                .antMatchers(HttpMethod.POST, REGISTER_URL).permitAll()
+                .antMatchers(REGISTER_URL).permitAll()
                 .antMatchers("/**/h2/**", "/v2/api-docs", "/swagger-ui.html", "/swagger-resources/**", "/webjars/**").permitAll()
                 .anyRequest().authenticated()
                 .and()

@@ -12,6 +12,7 @@ import nz.co.mircle.v1.api.profileImage.services.ProfileImageService;
 import nz.co.mircle.v1.api.user.model.User;
 import nz.co.mircle.v1.api.user.services.UserService;
 import nz.co.mircle.v1.lib.failedResponse.model.FailedResponse;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.http.protocol.HTTP;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -28,7 +29,8 @@ import java.net.URL;
  * Created by tanj1 on 25/08/2017.
  */
 @RestController
-@Api(value = "authentication", description = "Authentication API")
+@Api(value = "Registration", description = "Authentication API")
+@RequestMapping("/register")
 public class AuthenticationController {
     private final Logger LOG = LoggerFactory.getLogger(getClass());
 
@@ -58,7 +60,7 @@ public class AuthenticationController {
                     @ApiResponse(code = 404, message = "The resource you were trying to reach is not found")
             }
     )
-    @PostMapping("/register")
+    @PostMapping
     public ResponseEntity createUser(@RequestBody User user) {
         LOG.info("Registering a new user...");
         try {
@@ -90,7 +92,7 @@ public class AuthenticationController {
                     @ApiResponse(code = 404, message = "The resource you were trying to reach is not found")
             }
     )
-    @PatchMapping("/register/profileimage")
+    @PatchMapping("/profileimage")
     public ResponseEntity registerUserProfileImage(
             @RequestParam(value = "profileImage", required = false) MultipartFile profileImage,
             @RequestParam(value = "id", required = false) Long id,
@@ -99,9 +101,9 @@ public class AuthenticationController {
         try {
             User user;
             if (id != null) {
-                LOG.info(String.format("Retrieving User ID $d from the database to register its profile image...", id));
+                LOG.info(String.format("Retrieving User ID %d from the database to register its profile image...", id));
                 user = userService.findUser(id);
-            } else if (emailAddress != null) {
+            } else if (!StringUtils.isBlank(emailAddress)) {
                 LOG.info(String.format("Retrieving %s from the database to register its profile image...", emailAddress));
                 user = userService.findUser(emailAddress);
             } else {

@@ -2,6 +2,7 @@ package nz.co.mircle.v1.api.profileImage.services;
 
 import com.amazonaws.AmazonServiceException;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.net.URL;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -14,5 +15,5 @@ public interface ProfileImageService {
   URL uploadProfileImageToS3(MultipartFile profileImage, String emailAddress)
       throws IOException, AmazonServiceException;
 
-  void deleteProfileImage(URL key);
+  void deleteProfileImage(URL key) throws UnsupportedEncodingException;
 }

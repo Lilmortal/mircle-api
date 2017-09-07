@@ -10,6 +10,7 @@ import com.amazonaws.services.s3.model.*;
 
 import java.io.*;
 import java.net.URL;
+import java.net.URLDecoder;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -68,9 +69,9 @@ public class ProfileImageServiceImpl implements ProfileImageService {
     }
 
     @Override
-    public void deleteProfileImage(URL key) {
+    public void deleteProfileImage(URL key) throws UnsupportedEncodingException {
         // test this
-        LOG.info(key.getFile(), key.getPath(), key.toString());
-        s3.deleteObject(AWS_BUCKET_NAME, key.getPath());
+        String decodedKey = URLDecoder.decode(key.getPath(), "UTF-8");
+        s3.deleteObject(AWS_BUCKET_NAME, decodedKey.substring(1));
     }
 }

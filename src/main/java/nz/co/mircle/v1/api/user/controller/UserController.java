@@ -166,14 +166,14 @@ public class UserController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    @ApiOperation(value = "Update the user profile image", response = Iterable.class)
+    @ApiOperation(value = "Update the user password", response = Iterable.class)
     @ApiResponses(
             value = {
-                    @ApiResponse(code = 200, message = "Successfully updated the user profile image"),
-                    @ApiResponse(code = 201, message = "Successfully updated the user profile image"),
+                    @ApiResponse(code = 200, message = "Successfully updated the user password"),
+                    @ApiResponse(code = 201, message = "Successfully updated the user password"),
                     @ApiResponse(
                             code = 401,
-                            message = "You are not authorized to update the user profile image."
+                            message = "You are not authorized to update the user password."
                     ),
                     @ApiResponse(
                             code = 403,
@@ -232,7 +232,7 @@ public class UserController {
     )
     @PatchMapping("/profileimage")
     public ResponseEntity updateUserProfileImage(
-            @RequestParam(value = "profileImage") MultipartFile profileImage,
+            @RequestParam(value = "profileImage", required = false) MultipartFile profileImage,
             @RequestParam(value = "id", required = false) Long id,
             @RequestParam(value = "emailAddress", required = false) String emailAddress) {
         try {
@@ -248,13 +248,21 @@ public class UserController {
             }
 
             LOG.info(String.format("Setting %s %s profile image...", user.getFirstName(), user.getSurname()));
-            URL profileImageUrl = profileImageService.uploadProfileImageToS3(profileImage, emailAddress);
 
-            userService.setUserProfileImage(user, profileImageUrl);
+            URL defaultImage = profileImageService.getDefaultImage();
+            if (profileImage != null) {
+                if (!user.getProfileImage().getUri().equals(defaultImage)) {
+                    profileImageService.deleteProfileImage(user.getProfileImage().getUri());
+                }
+                URL profileImageUrl = profileImageService.uploadProfileImageToS3(profileImage, emailAddress);
+                userService.setUserProfileImage(user, profileImageUrl);
+            } else {
+                userService.setUserProfileImage(user, defaultImage);
+            }
             LOG.info(
                     String.format(
                             "%s %s successfully has its profile image set to %s.",
-                            user.getFirstName(), user.getSurname(), profileImageUrl));
+                            user.getFirstName(), user.getSurname(), user.getProfileImage().getUri()));
         } catch (AmazonServiceException e) {
             LOG.error("Failed to update the user profile image; there is an issue with Amazon.");
             LOG.error(e.getMessage());

@@ -45,6 +45,11 @@ public class UserServiceImpl implements UserService {
   }
 
   @Override
+  public void saveUser(User user) {
+    userRepository.save(user);
+  }
+
+  @Override
   public void setUserProfileImage(User user, URL profileImageUrl) throws AmazonServiceException {
     if (user.getProfileImage() == null) {
       ProfileImage newProfileImage = new ProfileImage();

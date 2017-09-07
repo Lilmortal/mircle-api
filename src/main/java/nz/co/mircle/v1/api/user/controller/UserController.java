@@ -121,6 +121,38 @@ public class UserController {
                     @ApiResponse(code = 404, message = "The resource you were trying to reach is not found")
             }
     )
+    @PutMapping
+    public ResponseEntity updateUser(@RequestParam("user") User user) {
+        try {
+            LOG.info(String.format("Updating %s details...", user.getEmailAddress()));
+            userService.saveUser(user);
+            LOG.info(
+                    String.format(
+                            "%s %s password successfully updated.",
+                            user.getFirstName(), user.getSurname()));
+        } catch (Exception e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @ApiOperation(value = "Update the user profile image", response = Iterable.class)
+    @ApiResponses(
+            value = {
+                    @ApiResponse(code = 200, message = "Successfully updated the user profile image"),
+                    @ApiResponse(code = 201, message = "Successfully updated the user profile image"),
+                    @ApiResponse(
+                            code = 401,
+                            message = "You are not authorized to update the user profile image."
+                    ),
+                    @ApiResponse(
+                            code = 403,
+                            message = "Accessing the resource you were trying to reach is forbidden"
+                    ),
+                    @ApiResponse(code = 404, message = "The resource you were trying to reach is not found")
+            }
+    )
     @PatchMapping("/password")
     public ResponseEntity updateUserPassword(
             @RequestParam(value = "id", required = false) Long id,

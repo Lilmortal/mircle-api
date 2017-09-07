@@ -12,6 +12,8 @@ public interface UserService {
 
   User findUser(String emailAddress);
 
+  void saveUser(User user);
+
   void setUserProfileImage(User user, URL profileImage) throws AmazonServiceException;
 
   void changePassword(User user, String oldPassword, String newPassword);

@@ -9,6 +9,9 @@ import io.swagger.annotations.ApiResponses;
 import java.io.IOException;
 import java.net.URL;
 import java.security.Principal;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 import nz.co.mircle.v1.api.profileImage.services.ProfileImageService;
@@ -121,16 +124,42 @@ public class UserController {
                     @ApiResponse(code = 404, message = "The resource you were trying to reach is not found")
             }
     )
-    @PutMapping
-    public ResponseEntity updateUser(@RequestParam("user") User user) {
+    @PatchMapping
+    public ResponseEntity updateUser(@RequestParam("emailAddress") String emailAddress,
+                                     @RequestParam(value = "gender", required = false) String gender,
+                                     @RequestParam(value = "phoneNumber", required = false) String phoneNumber,
+                                     @RequestParam(value = "birthDate", required = false) String birthDate,
+                                     @RequestParam(value = "occupation", required = false) String occupation) {
         try {
-            LOG.info(String.format("Updating %s details...", user.getEmailAddress()));
+            LOG.info(String.format("Updating %s details...", emailAddress));
+            User user = userService.findUser(emailAddress);
+
+            if (!StringUtils.isBlank(gender)) {
+                user.setGender(gender);
+            }
+
+            if (!StringUtils.isBlank(phoneNumber)) {
+                user.setPhoneNumber(phoneNumber);
+            }
+
+            if (!StringUtils.isBlank(birthDate)) {
+                // Dont know why dd/MM/yyyy passed from JS does not convert to LocalDateTime here. This is temp for now.
+                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+                LocalDateTime dateTime = LocalDate.parse(birthDate, formatter).atStartOfDay();
+                user.setBirthDate(dateTime);
+            }
+
+            if (!StringUtils.isBlank(occupation)) {
+                user.setOccupation(occupation);
+            }
+
             userService.saveUser(user);
             LOG.info(
                     String.format(
-                            "%s %s password successfully updated.",
+                            "%s %s successfully updated.",
                             user.getFirstName(), user.getSurname()));
         } catch (Exception e) {
+            LOG.error(e.getMessage());
             return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
 

@@ -7,6 +7,7 @@ import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.net.URL;
 import java.security.Principal;
 import java.time.LocalDate;
@@ -268,59 +269,17 @@ public class UserController {
             LOG.error(e.getMessage());
             return new ResponseEntity<>(
                     new FailedResponse(e.getMessage()), HttpStatus.INTERNAL_SERVER_ERROR);
+        } catch (UnsupportedEncodingException e) {
+            LOG.error("Attempting to delete profile image from S3 failed; it failed to decode the key.");
+            LOG.error(e.getMessage());
+            return new ResponseEntity<>(
+                    new FailedResponse(e.getMessage()), HttpStatus.INTERNAL_SERVER_ERROR);
         } catch (IOException e) {
             LOG.error("Failed to update the user profile image.");
             LOG.error(e.getMessage());
             return new ResponseEntity<>(
                     new FailedResponse(e.getMessage()), HttpStatus.INTERNAL_SERVER_ERROR);
         }
-
-        return new ResponseEntity<>(HttpStatus.OK);
-    }
-
-    @ApiOperation(value = "Remove user profile image", response = Iterable.class)
-    @ApiResponses(
-            value = {
-                    @ApiResponse(code = 200, message = "Successfully removed user profile image"),
-                    @ApiResponse(code = 201, message = "Successfully removed user profile image"),
-                    @ApiResponse(code = 401, message = "You are not authorized to removed the user profile image."),
-                    @ApiResponse(
-                            code = 403,
-                            message = "Accessing the resource you were trying to reach is forbidden"
-                    ),
-                    @ApiResponse(code = 404, message = "The resource you were trying to reach is not found")
-            }
-    )
-    @DeleteMapping("/profileimage")
-    public ResponseEntity removeUserProfileImage(@RequestParam(value = "id", required = false) Long id,
-                                                 @RequestParam(value = "emailAddress", required = false) String emailAddress) {
-
-        try {
-            User user;
-            if (id != null) {
-                LOG.info(String.format("Getting user ID %d...", id));
-                user = userService.findUser(id);
-            } else if (!StringUtils.isBlank(emailAddress)) {
-                LOG.info(String.format("Getting %s...", emailAddress));
-                user = userService.findUser(emailAddress);
-            } else {
-                return new ResponseEntity<>("Missing user ID or email address", HttpStatus.INTERNAL_SERVER_ERROR);
-            }
-
-            profileImageService.deleteProfileImage(user.getProfileImage().getUri());
-
-            URL defaultImage = profileImageService.getDefaultImage();
-            userService.setUserProfileImage(user, defaultImage);
-            LOG.info(
-                    String.format(
-                            "%s %s profile image successfully removed.", user.getFirstName(), user.getSurname()));
-        } catch (Exception e) {
-            LOG.error(String.format("Attempt to find a user with id %d failed.", id));
-            LOG.error(e.getMessage());
-            return new ResponseEntity<>(
-                    new FailedResponse(e.getMessage()), HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-
         return new ResponseEntity<>(HttpStatus.OK);
     }
 

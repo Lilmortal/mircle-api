@@ -3,6 +3,7 @@ package nz.co.mircle.v1.config.filter;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
+import nz.co.mircle.EnvironmentVariablesConfig;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -21,9 +22,12 @@ import java.util.Date;
 import static nz.co.mircle.v1.config.SecurityConstants.*;
 
 public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilter {
+    private EnvironmentVariablesConfig environmentVariablesConfig;
+
     private AuthenticationManager authenticationManager;
 
-    public JWTAuthenticationFilter(AuthenticationManager authenticationManager) {
+    public JWTAuthenticationFilter(AuthenticationManager authenticationManager, EnvironmentVariablesConfig environmentVariablesConfig) {
+        this.environmentVariablesConfig = environmentVariablesConfig;
         this.authenticationManager = authenticationManager;
     }
 
@@ -56,7 +60,7 @@ public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilte
         String token = Jwts.builder()
                 .setSubject(((User) auth.getPrincipal()).getUsername())
                 .setExpiration(new Date(System.currentTimeMillis() + EXPIRATION_TIME))
-                .signWith(SignatureAlgorithm.HS512, SECRET)
+                .signWith(SignatureAlgorithm.HS512, environmentVariablesConfig.getJwtSecretKey())
                 .compact();
         res.addHeader(HEADER_STRING, TOKEN_PREFIX + token);
     }

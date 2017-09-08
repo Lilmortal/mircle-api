@@ -70,8 +70,8 @@ public class ProfileImageServiceImpl implements ProfileImageService {
 
     @Override
     public void deleteProfileImage(URL key) throws UnsupportedEncodingException {
-        // test this
         String decodedKey = URLDecoder.decode(key.getPath(), "UTF-8");
+        // The substring is needed to remove the "/" at the start of the key
         s3.deleteObject(AWS_BUCKET_NAME, decodedKey.substring(1));
     }
 }

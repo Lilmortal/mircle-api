@@ -1,7 +1,7 @@
 package nz.co.mircle.v1.config.filter;
 
 import io.jsonwebtoken.Jwts;
-import nz.co.mircle.v1.config.SecurityConstants;
+import nz.co.mircle.EnvironmentVariablesConfig;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -14,10 +14,15 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.ArrayList;
 
-public class JWTAuthorizationFilter extends BasicAuthenticationFilter {
+import static nz.co.mircle.v1.config.SecurityConstants.HEADER_STRING;
+import static nz.co.mircle.v1.config.SecurityConstants.TOKEN_PREFIX;
 
-    public JWTAuthorizationFilter(AuthenticationManager authManager) {
+public class JWTAuthorizationFilter extends BasicAuthenticationFilter {
+    private EnvironmentVariablesConfig environmentVariablesConfig;
+
+    public JWTAuthorizationFilter(AuthenticationManager authManager, EnvironmentVariablesConfig environmentVariablesConfig) {
         super(authManager);
+        this.environmentVariablesConfig = environmentVariablesConfig;
     }
 
     // Validate the token being sent back is valid, if it is valid, approve the request.
@@ -25,9 +30,9 @@ public class JWTAuthorizationFilter extends BasicAuthenticationFilter {
     protected void doFilterInternal(HttpServletRequest req,
                                     HttpServletResponse res,
                                     FilterChain chain) throws IOException, ServletException {
-        String header = req.getHeader(SecurityConstants.HEADER_STRING);
+        String header = req.getHeader(HEADER_STRING);
 
-        if (header == null || !header.startsWith(SecurityConstants.TOKEN_PREFIX)) {
+        if (header == null || !header.startsWith(TOKEN_PREFIX)) {
             chain.doFilter(req, res);
             return;
         }
@@ -39,12 +44,12 @@ public class JWTAuthorizationFilter extends BasicAuthenticationFilter {
     }
 
     private UsernamePasswordAuthenticationToken getAuthentication(HttpServletRequest request) {
-        String token = request.getHeader(SecurityConstants.HEADER_STRING);
+        String token = request.getHeader(HEADER_STRING);
         if (token != null) {
             // parse the token.
             String user = Jwts.parser()
-                    .setSigningKey(SecurityConstants.SECRET)
-                    .parseClaimsJws(token.replace(SecurityConstants.TOKEN_PREFIX, ""))
+                    .setSigningKey(environmentVariablesConfig.getJwtSecretKey())
+                    .parseClaimsJws(token.replace(TOKEN_PREFIX, ""))
                     .getBody()
                     .getSubject();
 

@@ -11,7 +11,6 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 
-import nz.co.mircle.v1.api.AbstractController;
 import nz.co.mircle.v1.api.profileImage.services.ProfileImageService;
 import nz.co.mircle.v1.api.user.model.User;
 import nz.co.mircle.v1.api.user.services.UserService;
@@ -31,7 +30,7 @@ import org.springframework.web.multipart.MultipartFile;
 @RestController
 @Api(value = "profile image", description = "Profile image API")
 @RequestMapping("/profileimage")
-public class ProfileImageController extends AbstractController {
+public class ProfileImageController {
     private final Logger LOG = LoggerFactory.getLogger(getClass());
 
     private UserService userService;

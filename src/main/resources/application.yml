@@ -2,12 +2,9 @@ spring:
   jackson:
     serialization:
       write_dates_as_timestamps: false
-#  resources:
-#    chain:
-#      enabled: true
-#  data:
-#    rest:
-#      basePath: /api/v1
+
+server:
+  contextPath: /api/v${API_VERSION}
 
 security:
   basic:

@@ -5,15 +5,12 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
-
-import nz.co.mircle.v1.api.iam.services.AuthenticationService;
 import nz.co.mircle.v1.api.iam.exception.EmailAddressExistException;
+import nz.co.mircle.v1.api.iam.services.AuthenticationService;
 import nz.co.mircle.v1.api.profileImage.services.ProfileImageService;
 import nz.co.mircle.v1.api.user.model.User;
 import nz.co.mircle.v1.api.user.services.UserService;
-import nz.co.mircle.v1.lib.failedResponse.model.FailedResponse;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.http.protocol.HTTP;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -47,6 +44,37 @@ public class AuthenticationController {
         this.profileImageService = profileImageService;
     }
 
+    @ApiOperation(value = "Validate if user exist", response = Iterable.class)
+    @ApiResponses(
+            value = {
+                    @ApiResponse(code = 200, message = "User exist"),
+                    @ApiResponse(code = 201, message = "User exist"),
+                    @ApiResponse(code = 401, message = "You are not authorized to validate a user."),
+                    @ApiResponse(
+                            code = 403,
+                            message = "Accessing the resource you were trying to reach is forbidden"
+                    ),
+                    @ApiResponse(code = 404, message = "The resource you were trying to reach is not found")
+            }
+    )
+    @GetMapping("/user/validate")
+    public ResponseEntity validateUserExist(@RequestParam("emailAddress") String emailAddress) {
+        LOG.info(String.format("Validating if %s exist...", emailAddress));
+        try {
+            User user = userService.findUser(emailAddress);
+            if (user != null) {
+                throw new EmailAddressExistException(String.format("%s already exist.", emailAddress));
+            }
+            LOG.info(String.format("%s found.", emailAddress));
+        } catch (EmailAddressExistException e) {
+            LOG.error(String.format("Email address %s already exist.", emailAddress));
+            LOG.error(e.getMessage());
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
     @ApiOperation(value = "Register a user", response = Iterable.class)
     @ApiResponses(
             value = {
@@ -61,7 +89,7 @@ public class AuthenticationController {
             }
     )
     @PostMapping
-    public ResponseEntity createUser(@RequestBody User user) {
+    public ResponseEntity registerUser(@RequestBody User user) {
         LOG.info("Registering a new user...");
         try {
             authenticationService.createUser(user);
@@ -69,8 +97,7 @@ public class AuthenticationController {
         } catch (EmailAddressExistException e) {
             LOG.error(String.format("Email address %s already exist.", user.getEmailAddress()));
             LOG.error(e.getMessage());
-            return new ResponseEntity<>(
-                    new FailedResponse(e.getMessage()), HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
 
         return new ResponseEntity<>(user.getId(), HttpStatus.CREATED);
@@ -111,7 +138,7 @@ public class AuthenticationController {
             }
 
             if (user.getProfileImage() != null) {
-                return new ResponseEntity<>(new FailedResponse("The user already has it's profile image set or it does not exist."), HttpStatus.INTERNAL_SERVER_ERROR);
+                return new ResponseEntity<>("The user already has it's profile image set or it does not exist.", HttpStatus.INTERNAL_SERVER_ERROR);
             }
 
             URL profileImageUrl;
@@ -128,12 +155,11 @@ public class AuthenticationController {
         } catch (AmazonServiceException e) {
             LOG.error("Failed to register the user profile image; there is an issue with Amazon.");
             LOG.error(e.getMessage());
-            return new ResponseEntity<>(
-                    new FailedResponse(e.getMessage()), HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         } catch (IOException e) {
             LOG.error("Failed to register the user profile image.");
             LOG.error(e.getMessage());
-            return new ResponseEntity<>(new FailedResponse(e.getMessage()), HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
 
         return new ResponseEntity<>(HttpStatus.OK);

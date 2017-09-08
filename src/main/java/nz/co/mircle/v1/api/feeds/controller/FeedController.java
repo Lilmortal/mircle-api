@@ -5,16 +5,16 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
-import java.util.List;
 import nz.co.mircle.v1.api.feeds.model.Feed;
 import nz.co.mircle.v1.api.feeds.services.FeedService;
-import nz.co.mircle.v1.lib.failedResponse.model.FailedResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @Api(value = "feeds", description = "Feeds API")
@@ -46,8 +46,7 @@ public class FeedController {
     } catch (AmazonServiceException e) {
       LOG.error("Failed to add feed.");
       LOG.error(e.getMessage());
-      return new ResponseEntity<>(
-          new FailedResponse(e.getMessage()), HttpStatus.INTERNAL_SERVER_ERROR);
+      return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
     LOG.info("Feed successfully added.");
@@ -77,8 +76,7 @@ public class FeedController {
     } catch (AmazonServiceException e) {
       LOG.error("Failed to get feeds.");
       LOG.error(e.getMessage());
-      return new ResponseEntity<>(
-          new FailedResponse(e.getMessage()), HttpStatus.INTERNAL_SERVER_ERROR);
+      return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
     LOG.info("Feeds successfully retrieved.");

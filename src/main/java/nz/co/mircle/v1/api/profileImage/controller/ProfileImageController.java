@@ -5,16 +5,9 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
-
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.net.MalformedURLException;
-import java.net.URL;
-
 import nz.co.mircle.v1.api.profileImage.services.ProfileImageService;
 import nz.co.mircle.v1.api.user.model.User;
 import nz.co.mircle.v1.api.user.services.UserService;
-import nz.co.mircle.v1.lib.failedResponse.model.FailedResponse;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,6 +16,11 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
 
 /**
  * Here are a lists of profile image API.
@@ -69,8 +67,7 @@ public class ProfileImageController {
         } catch (AmazonServiceException e) {
             LOG.error("Failed to get the default profile image");
             LOG.error(e.getMessage());
-            return new ResponseEntity<>(
-                    new FailedResponse(e.getMessage()), HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
 
         LOG.info("Default profile image successfully retrieved.");
@@ -115,23 +112,19 @@ public class ProfileImageController {
         } catch (AmazonServiceException e) {
             LOG.error("Failed to upload the profile image");
             LOG.error(e.getMessage());
-            return new ResponseEntity<>(
-                    new FailedResponse(e.getMessage()), HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         } catch (FileNotFoundException e) {
             LOG.error("Profile image not found.");
             LOG.error(e.getMessage());
-            return new ResponseEntity<>(
-                    new FailedResponse(e.getMessage()), HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         } catch (MalformedURLException e) {
             LOG.error("Malformed URL.");
             LOG.error(e.getMessage());
-            return new ResponseEntity<>(
-                    new FailedResponse(e.getMessage()), HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         } catch (IOException e) {
             LOG.error("IO Exception.");
             LOG.error(e.getMessage());
-            return new ResponseEntity<>(
-                    new FailedResponse(e.getMessage()), HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
 
         return new ResponseEntity<>(HttpStatus.OK);

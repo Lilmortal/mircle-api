@@ -5,20 +5,9 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
-
-import java.io.IOException;
-import java.io.UnsupportedEncodingException;
-import java.net.URL;
-import java.security.Principal;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-import java.util.List;
-
 import nz.co.mircle.v1.api.profileImage.services.ProfileImageService;
 import nz.co.mircle.v1.api.user.model.User;
 import nz.co.mircle.v1.api.user.services.UserService;
-import nz.co.mircle.v1.lib.failedResponse.model.FailedResponse;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -27,6 +16,13 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.net.URL;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 /**
  * Here are a lists of user API.
@@ -71,8 +67,7 @@ public class UserController {
         } catch (Exception e) {
             LOG.error(String.format("Attempt to find a user with id %d failed.", id));
             LOG.error(e.getMessage());
-            return new ResponseEntity<>(
-                    new FailedResponse(e.getMessage()), HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
 
         return new ResponseEntity<>(user, HttpStatus.OK);
@@ -102,8 +97,7 @@ public class UserController {
         } catch (Exception e) {
             LOG.error(String.format("Attempt to find %s failed.", emailAddress));
             LOG.error(e.getMessage());
-            return new ResponseEntity<>(
-                    new FailedResponse(e.getMessage()), HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
 
         return new ResponseEntity<>(user, HttpStatus.OK);
@@ -267,18 +261,15 @@ public class UserController {
         } catch (AmazonServiceException e) {
             LOG.error("Failed to update the user profile image; there is an issue with Amazon.");
             LOG.error(e.getMessage());
-            return new ResponseEntity<>(
-                    new FailedResponse(e.getMessage()), HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         } catch (UnsupportedEncodingException e) {
             LOG.error("Attempting to delete profile image from S3 failed; it failed to decode the key.");
             LOG.error(e.getMessage());
-            return new ResponseEntity<>(
-                    new FailedResponse(e.getMessage()), HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         } catch (IOException e) {
             LOG.error("Failed to update the user profile image.");
             LOG.error(e.getMessage());
-            return new ResponseEntity<>(
-                    new FailedResponse(e.getMessage()), HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
         return new ResponseEntity<>(HttpStatus.OK);
     }
@@ -307,8 +298,7 @@ public class UserController {
         } catch (Exception e) {
             LOG.error(String.format("Attempt to delete user with id %d failed.", id));
             LOG.error(e.getMessage());
-            return new ResponseEntity<>(
-                    new FailedResponse(e.getMessage()), HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
 
         return new ResponseEntity<>(HttpStatus.OK);
@@ -338,8 +328,7 @@ public class UserController {
         } catch (Exception e) {
             LOG.error(String.format("Attempt to delete %s failed.", emailAddress));
             LOG.error(e.getMessage());
-            return new ResponseEntity<>(
-                    new FailedResponse(e.getMessage()), HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
 
         return new ResponseEntity<>(HttpStatus.OK);
@@ -369,8 +358,7 @@ public class UserController {
 //        } catch (Exception e) {
 //            LOG.error(String.format("Attempt to find a user with id %d friends failed.", id));
 //            LOG.error(e.getMessage());
-//            return new ResponseEntity<>(
-//                    new FailedResponse(e.getMessage()), HttpStatus.INTERNAL_SERVER_ERROR);
+//            return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
 //        }
 //
 //        return new ResponseEntity<>(HttpStatus.OK);
@@ -400,8 +388,7 @@ public class UserController {
 //        } catch (Exception e) {
 //            LOG.error(String.format("Attempt to find a user with id %d friends failed.", id));
 //            LOG.error(e.getMessage());
-//            return new ResponseEntity<>(
-//                    new FailedResponse(e.getMessage()), HttpStatus.INTERNAL_SERVER_ERROR);
+//            return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
 //        }
 //
 //        return new ResponseEntity<>(friends, HttpStatus.CREATED);
@@ -431,8 +418,7 @@ public class UserController {
 //        } catch (Exception e) {
 //            LOG.error(String.format("Attempt to find a user with id %d friends failed.", id));
 //            LOG.error(e.getMessage());
-//            return new ResponseEntity<>(
-//                    new FailedResponse(e.getMessage()), HttpStatus.INTERNAL_SERVER_ERROR);
+//            return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
 //        }
 //
 //        return new ResponseEntity<>(HttpStatus.OK);

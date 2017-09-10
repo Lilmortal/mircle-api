@@ -1,0 +1,91 @@
+spring:
+  jackson:
+    serialization:
+      write_dates_as_timestamps: false
+
+server:
+  contextPath: /api/v${API_VERSION}
+
+security:
+  basic:
+    enabled: false
+  oauth2:
+    client:
+      #client-id: ${OAUTH2_CLIENT_ID}
+      #client-secret: ${OAUTH2_CLIENT_SECRET}
+      scope: read, write
+      access-token-uri: http://localhost:8080/auth/oauth/token
+      user-authorization-uri: http://localhost:8080/auth/oauth/authorize
+    resource:
+      user-info-uri: http://localhost:8080/login/auth
+  user:
+    name: user
+    password: user
+---
+
+spring:
+  profiles: dev
+  h2:
+    console:
+      enabled: true
+      path: /h2
+  jpa:
+    show-sql: true
+    hibernate:
+      ddl-auto: create
+  database:
+    driverClassName: org.h2.Driver
+  datasource:
+    platform: h2
+    url: jdbc:h2:file:~/test
+    username: sa
+    password:
+logging:
+  level:
+    org.springframework.web: INFO
+    hibernate: ERROR
+---
+
+spring:
+  profiles: test
+  jpa:
+    database: POSTGRESQL
+    show-sql: true
+    hibernate:
+      ddl-auto: create
+  #database:
+  #  driverClassName: org.postgresql.Driver
+  datasource:
+    platform: postgresql
+    url: jdbc:${DATABASE_URL}
+    username: ${POSTGRESQL_USERNAME}
+    password: ${POSTGRESQL_PASSWORD}
+    driverClassName: org.postgresql.Driver
+  server:
+    port: 80
+logging:
+  level:
+    org.springframework.web: INFO
+    hibernate: ERROR
+---
+
+spring:
+  profiles: prod
+  jpa:
+    database: POSTGRESQL
+    show-sql: true
+    hibernate:
+      ddl-auto: update
+  database:
+    driverClassName: org.postgresql.Driver
+  datasource:
+    platform: postgres
+    url: jdbc:${HEROKU_POSTGRESQL_GREEN_URL}
+    username: ${PROD_POSTGRESQL_USERNAME}
+    password: ${PROD_POSTGRESQL_PASSWORD}
+  server:
+    port: 80
+logging:
+  level:
+    org.springframework.web: INFO
+    hibernate: ERROR

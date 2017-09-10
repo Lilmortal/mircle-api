@@ -1,63 +1,64 @@
 package nz.co.mircle.v1.config.filter;
 
+import static nz.co.mircle.v1.config.SecurityConstants.HEADER_STRING;
+import static nz.co.mircle.v1.config.SecurityConstants.TOKEN_PREFIX;
+
 import io.jsonwebtoken.Jwts;
+import java.io.IOException;
+import java.util.ArrayList;
+import javax.servlet.FilterChain;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import nz.co.mircle.EnvironmentVariablesConfig;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
 
-import javax.servlet.FilterChain;
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
-import java.util.ArrayList;
-
-import static nz.co.mircle.v1.config.SecurityConstants.HEADER_STRING;
-import static nz.co.mircle.v1.config.SecurityConstants.TOKEN_PREFIX;
-
 public class JWTAuthorizationFilter extends BasicAuthenticationFilter {
-    private EnvironmentVariablesConfig environmentVariablesConfig;
+  private EnvironmentVariablesConfig environmentVariablesConfig;
 
-    public JWTAuthorizationFilter(AuthenticationManager authManager, EnvironmentVariablesConfig environmentVariablesConfig) {
-        super(authManager);
-        this.environmentVariablesConfig = environmentVariablesConfig;
+  public JWTAuthorizationFilter(
+      AuthenticationManager authManager, EnvironmentVariablesConfig environmentVariablesConfig) {
+    super(authManager);
+    this.environmentVariablesConfig = environmentVariablesConfig;
+  }
+
+  // Validate the token being sent back is valid, if it is valid, approve the request.
+  @Override
+  protected void doFilterInternal(
+      HttpServletRequest req, HttpServletResponse res, FilterChain chain)
+      throws IOException, ServletException {
+    String header = req.getHeader(HEADER_STRING);
+
+    if (header == null || !header.startsWith(TOKEN_PREFIX)) {
+      chain.doFilter(req, res);
+      return;
     }
 
-    // Validate the token being sent back is valid, if it is valid, approve the request.
-    @Override
-    protected void doFilterInternal(HttpServletRequest req,
-                                    HttpServletResponse res,
-                                    FilterChain chain) throws IOException, ServletException {
-        String header = req.getHeader(HEADER_STRING);
+    UsernamePasswordAuthenticationToken authentication = getAuthentication(req);
 
-        if (header == null || !header.startsWith(TOKEN_PREFIX)) {
-            chain.doFilter(req, res);
-            return;
-        }
+    SecurityContextHolder.getContext().setAuthentication(authentication);
+    chain.doFilter(req, res);
+  }
 
-        UsernamePasswordAuthenticationToken authentication = getAuthentication(req);
+  private UsernamePasswordAuthenticationToken getAuthentication(HttpServletRequest request) {
+    String token = request.getHeader(HEADER_STRING);
+    if (token != null) {
+      // parse the token.
+      String user =
+          Jwts.parser()
+              .setSigningKey(environmentVariablesConfig.getJwtSecretKey())
+              .parseClaimsJws(token.replace(TOKEN_PREFIX, ""))
+              .getBody()
+              .getSubject();
 
-        SecurityContextHolder.getContext().setAuthentication(authentication);
-        chain.doFilter(req, res);
+      if (user != null) {
+        return new UsernamePasswordAuthenticationToken(user, null, new ArrayList<>());
+      }
+      return null;
     }
-
-    private UsernamePasswordAuthenticationToken getAuthentication(HttpServletRequest request) {
-        String token = request.getHeader(HEADER_STRING);
-        if (token != null) {
-            // parse the token.
-            String user = Jwts.parser()
-                    .setSigningKey(environmentVariablesConfig.getJwtSecretKey())
-                    .parseClaimsJws(token.replace(TOKEN_PREFIX, ""))
-                    .getBody()
-                    .getSubject();
-
-            if (user != null) {
-                return new UsernamePasswordAuthenticationToken(user, null, new ArrayList<>());
-            }
-            return null;
-        }
-        return null;
-    }
+    return null;
+  }
 }

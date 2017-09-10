@@ -5,6 +5,14 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
+
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.net.URL;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+
 import nz.co.mircle.v1.api.profileImage.services.ProfileImageService;
 import nz.co.mircle.v1.api.user.model.User;
 import nz.co.mircle.v1.api.user.services.UserService;
@@ -14,15 +22,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-
-import java.io.IOException;
-import java.io.UnsupportedEncodingException;
-import java.net.URL;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 
 /**
  * Here are a lists of user API.
@@ -63,11 +65,11 @@ public class UserController {
         User user;
         try {
             user = userService.findUser(id);
-            LOG.info(String.format("User %d found.", user.getId()));
-        } catch (Exception e) {
-            LOG.error(String.format("Attempt to find a user with id %d failed.", id));
+            LOG.info(String.format("User ID %d found.", user.getId()));
+        } catch (UsernameNotFoundException e) {
+            LOG.error(String.format("Attempt to get the user failed - user ID %d not found.", id));
             LOG.error(e.getMessage());
-            return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
         }
 
         return new ResponseEntity<>(user, HttpStatus.OK);
@@ -120,41 +122,71 @@ public class UserController {
             }
     )
     @PatchMapping
-    public ResponseEntity updateUser(@RequestParam("emailAddress") String emailAddress,
-                                     @RequestParam(value = "gender", required = false) String gender,
-                                     @RequestParam(value = "phoneNumber", required = false) String phoneNumber,
-                                     @RequestParam(value = "birthDate", required = false) String birthDate,
-                                     @RequestParam(value = "occupation", required = false) String occupation) {
+    public ResponseEntity updateUser(
+            @RequestParam("emailAddress") String emailAddress,
+            @RequestParam(value = "gender", required = false) String gender,
+            @RequestParam(value = "phoneNumber", required = false) String phoneNumber,
+            @RequestParam(value = "birthDate", required = false) String birthDate,
+            @RequestParam(value = "occupation", required = false) String occupation) {
         try {
             LOG.info(String.format("Updating %s details...", emailAddress));
             User user = userService.findUser(emailAddress);
 
+            User.UserBuilder newUserBuilder = User.builder(user);
             if (!StringUtils.isBlank(gender)) {
-                user.setGender(gender);
+                newUserBuilder.setGender(gender);
             }
 
             if (!StringUtils.isBlank(phoneNumber)) {
-                user.setPhoneNumber(phoneNumber);
+                newUserBuilder.setPhoneNumber(phoneNumber);
             }
 
             if (!StringUtils.isBlank(birthDate)) {
                 // Dont know why dd/MM/yyyy passed from JS does not convert to LocalDateTime here. This is temp for now.
                 DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
                 LocalDateTime dateTime = LocalDate.parse(birthDate, formatter).atStartOfDay();
-                user.setBirthDate(dateTime);
+                newUserBuilder.setBirthDate(dateTime);
             }
 
             if (!StringUtils.isBlank(occupation)) {
-                user.setOccupation(occupation);
+                newUserBuilder.setOccupation(occupation);
             }
 
-            userService.saveUser(user);
+            User newUser = newUserBuilder.build();
+            userService.saveUser(newUser);
             LOG.info(
-                    String.format(
-                            "%s %s successfully updated.",
-                            user.getFirstName(), user.getSurname()));
+                    String.format("%s %s successfully updated.", user.getFirstName(), user.getSurname()));
         } catch (Exception e) {
             LOG.error(e.getMessage());
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @ApiOperation(value = "Update the user password via ID", response = Iterable.class)
+    @ApiResponses(
+            value = {
+                    @ApiResponse(code = 200, message = "Successfully updated the user password"),
+                    @ApiResponse(code = 201, message = "Successfully updated the user password"),
+                    @ApiResponse(code = 401, message = "You are not authorized to update the user password."),
+                    @ApiResponse(
+                            code = 403,
+                            message = "Accessing the resource you were trying to reach is forbidden"
+                    ),
+                    @ApiResponse(code = 404, message = "The resource you were trying to reach is not found")
+            }
+    )
+    @PatchMapping(value = "/password", params = {"id"})
+    public ResponseEntity givenIdUpdateUserPassword(
+            @RequestParam(value = "id") Long id,
+            @RequestParam(value = "oldPassword") String oldPassword,
+            @RequestParam("newPassword") String newPassword) {
+        try {
+            LOG.info(String.format("Getting user ID %d...", id));
+            User user = userService.findUser(id);
+            updateUserPassword(user, oldPassword, newPassword);
+        } catch (Exception e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
 
@@ -166,10 +198,7 @@ public class UserController {
             value = {
                     @ApiResponse(code = 200, message = "Successfully updated the user password"),
                     @ApiResponse(code = 201, message = "Successfully updated the user password"),
-                    @ApiResponse(
-                            code = 401,
-                            message = "You are not authorized to update the user password."
-                    ),
+                    @ApiResponse(code = 401, message = "You are not authorized to update the user password."),
                     @ApiResponse(
                             code = 403,
                             message = "Accessing the resource you were trying to reach is forbidden"
@@ -177,31 +206,15 @@ public class UserController {
                     @ApiResponse(code = 404, message = "The resource you were trying to reach is not found")
             }
     )
-    @PatchMapping("/password")
-    public ResponseEntity updateUserPassword(
-            @RequestParam(value = "id", required = false) Long id,
-            @RequestParam(value = "emailAddress", required = false) String emailAddress,
+    @PatchMapping(value = "/password", params = {"emailAddress"})
+    public ResponseEntity givenEmailAddressUpdateUserPassword(
+            @RequestParam(value = "emailAddress") String emailAddress,
             @RequestParam(value = "oldPassword") String oldPassword,
             @RequestParam("newPassword") String newPassword) {
         try {
-            User user;
-            if (id != null) {
-                LOG.info(String.format("Getting user ID %d...", id));
-                user = userService.findUser(emailAddress);
-            } else if (!StringUtils.isBlank(emailAddress)) {
-                LOG.info(String.format("Getting %s...", emailAddress));
-                user = userService.findUser(emailAddress);
-            } else {
-                return new ResponseEntity<>("Missing user ID or email address", HttpStatus.INTERNAL_SERVER_ERROR);
-            }
-
-            LOG.info(String.format("Updating %s %s password...", user.getFirstName(), user.getSurname()));
-
-            userService.changePassword(user, oldPassword, newPassword);
-            LOG.info(
-                    String.format(
-                            "%s %s password successfully updated.",
-                            user.getFirstName(), user.getSurname()));
+            LOG.info(String.format("Getting %s...", emailAddress));
+            User user = userService.findUser(emailAddress);
+            updateUserPassword(user, oldPassword, newPassword);
         } catch (Exception e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
@@ -226,44 +239,51 @@ public class UserController {
             }
     )
     @PatchMapping("/profileimage")
-    public ResponseEntity updateUserProfileImage(
+    public ResponseEntity givenIdUpdateUserProfileImage(
             @RequestParam(value = "profileImage", required = false) MultipartFile profileImage,
-            @RequestParam(value = "id", required = false) Long id,
-            @RequestParam(value = "emailAddress", required = false) String emailAddress) {
+            @RequestParam(value = "id") Long id) {
         try {
-            User user;
-            if (id != null) {
-                LOG.info(String.format("Getting user ID %d...", id));
-                user = userService.findUser(emailAddress);
-            } else if (!StringUtils.isBlank(emailAddress)) {
-                LOG.info(String.format("Getting %s...", emailAddress));
-                user = userService.findUser(emailAddress);
-            } else {
-                return new ResponseEntity<>("Missing user ID or email address", HttpStatus.INTERNAL_SERVER_ERROR);
-            }
-
-            LOG.info(String.format("Setting %s %s profile image...", user.getFirstName(), user.getSurname()));
-
-            URL defaultImage = profileImageService.getDefaultImage();
-            if (profileImage != null) {
-                if (!user.getProfileImage().getUri().equals(defaultImage)) {
-                    profileImageService.deleteProfileImage(user.getProfileImage().getUri());
-                }
-                URL profileImageUrl = profileImageService.uploadProfileImageToS3(profileImage, emailAddress);
-                userService.setUserProfileImage(user, profileImageUrl);
-            } else {
-                userService.setUserProfileImage(user, defaultImage);
-            }
-            LOG.info(
-                    String.format(
-                            "%s %s successfully has its profile image set to %s.",
-                            user.getFirstName(), user.getSurname(), user.getProfileImage().getUri()));
+            LOG.info(String.format("Getting user ID %d...", id));
+            User user = userService.findUser(id);
+            updateUserProfile(user, profileImage);
         } catch (AmazonServiceException e) {
             LOG.error("Failed to update the user profile image; there is an issue with Amazon.");
             LOG.error(e.getMessage());
             return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
-        } catch (UnsupportedEncodingException e) {
-            LOG.error("Attempting to delete profile image from S3 failed; it failed to decode the key.");
+        } catch (IOException e) {
+            LOG.error("Failed to update the user profile image.");
+            LOG.error(e.getMessage());
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @ApiOperation(value = "Update the user profile image", response = Iterable.class)
+    @ApiResponses(
+            value = {
+                    @ApiResponse(code = 200, message = "Successfully updated the user profile image"),
+                    @ApiResponse(code = 201, message = "Successfully updated the user profile image"),
+                    @ApiResponse(
+                            code = 401,
+                            message = "You are not authorized to update the user profile image."
+                    ),
+                    @ApiResponse(
+                            code = 403,
+                            message = "Accessing the resource you were trying to reach is forbidden"
+                    ),
+                    @ApiResponse(code = 404, message = "The resource you were trying to reach is not found")
+            }
+    )
+    @PatchMapping(value = "/profileimage", params = {"emailAddress"})
+    public ResponseEntity givenEmailAddressUpdateUserProfileImage(
+            @RequestParam(value = "profileImage", required = false) MultipartFile profileImage,
+            @RequestParam(value = "emailAddress") String emailAddress) {
+        try {
+            LOG.info(String.format("Getting %s...", emailAddress));
+            User user = userService.findUser(emailAddress);
+            updateUserProfile(user, profileImage);
+        } catch (AmazonServiceException e) {
+            LOG.error("Failed to update the user profile image; there is an issue with Amazon.");
             LOG.error(e.getMessage());
             return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         } catch (IOException e) {
@@ -318,7 +338,8 @@ public class UserController {
             }
     )
     @DeleteMapping("/email/{emailAddress:.+}")
-    public ResponseEntity deleteUserByEmailAddress(@PathVariable("emailAddress") String emailAddress) {
+    public ResponseEntity deleteUserByEmailAddress(
+            @PathVariable("emailAddress") String emailAddress) {
         LOG.info(String.format("Deleting %s...", emailAddress));
 
         try {
@@ -334,93 +355,123 @@ public class UserController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-//    @ApiOperation(value = "Getting a user by id", response = Iterable.class)
-//    @ApiResponses(
-//            value = {
-//                    @ApiResponse(code = 200, message = "Successfully retrieved a user"),
-//                    @ApiResponse(code = 201, message = "Successfully retrieved a user"),
-//                    @ApiResponse(code = 401, message = "You are not authorized to retrieved a user."),
-//                    @ApiResponse(
-//                            code = 403,
-//                            message = "Accessing the resource you were trying to reach is forbidden"
-//                    ),
-//                    @ApiResponse(code = 404, message = "The resource you were trying to reach is not found")
-//            }
-//    )
-//    @PostMapping("/{id}/friend/{friendId}")
-//    public ResponseEntity addFriend(
-//            @PathVariable("id") Long id, @PathVariable Long friendId) {
-//        LOG.info(String.format("Adding user ID %d friend ID...", id));
-//
-//        try {
-//            userService.addFriend(id, friendId);
-//            //LOG.info(String.format("%s %s is now on %s %s friends list."), id);
-//        } catch (Exception e) {
-//            LOG.error(String.format("Attempt to find a user with id %d friends failed.", id));
-//            LOG.error(e.getMessage());
-//            return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
-//        }
-//
-//        return new ResponseEntity<>(HttpStatus.OK);
-//    }
-//
-//    @ApiOperation(value = "Getting a user by id", response = Iterable.class)
-//    @ApiResponses(
-//            value = {
-//                    @ApiResponse(code = 200, message = "Successfully retrieved a user"),
-//                    @ApiResponse(code = 201, message = "Successfully retrieved a user"),
-//                    @ApiResponse(code = 401, message = "You are not authorized to retrieved a user."),
-//                    @ApiResponse(
-//                            code = 403,
-//                            message = "Accessing the resource you were trying to reach is forbidden"
-//                    ),
-//                    @ApiResponse(code = 404, message = "The resource you were trying to reach is not found")
-//            }
-//    )
-//    @GetMapping("/{id}/friends")
-//    public ResponseEntity findFriends(@PathVariable("id") Long id) {
-//        LOG.info(String.format("Getting user ID %d friends...", id));
-//
-//        List<User> friends;
-//        try {
-//            friends = userService.findFriends(id);
-//            LOG.info("User %d friends found.");
-//        } catch (Exception e) {
-//            LOG.error(String.format("Attempt to find a user with id %d friends failed.", id));
-//            LOG.error(e.getMessage());
-//            return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
-//        }
-//
-//        return new ResponseEntity<>(friends, HttpStatus.CREATED);
-//    }
-//
-//    @ApiOperation(value = "Getting a user by id", response = Iterable.class)
-//    @ApiResponses(
-//            value = {
-//                    @ApiResponse(code = 200, message = "Successfully retrieved a user"),
-//                    @ApiResponse(code = 201, message = "Successfully retrieved a user"),
-//                    @ApiResponse(code = 401, message = "You are not authorized to retrieved a user."),
-//                    @ApiResponse(
-//                            code = 403,
-//                            message = "Accessing the resource you were trying to reach is forbidden"
-//                    ),
-//                    @ApiResponse(code = 404, message = "The resource you were trying to reach is not found")
-//            }
-//    )
-//    @DeleteMapping("/{id}/friend/{friendId}")
-//    public ResponseEntity deleteFriend(
-//            @PathVariable("id") Long id, @PathVariable("friendId") Long friendId) {
-//        LOG.info(String.format("Getting user ID %d friends...", id));
-//
-//        try {
-//            userService.deleteFriend(id, friendId);
-//            LOG.info("User %d friends found.");
-//        } catch (Exception e) {
-//            LOG.error(String.format("Attempt to find a user with id %d friends failed.", id));
-//            LOG.error(e.getMessage());
-//            return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
-//        }
-//
-//        return new ResponseEntity<>(HttpStatus.OK);
-//    }
+    //    @ApiOperation(value = "Getting a user by id", response = Iterable.class)
+    //    @ApiResponses(
+    //            value = {
+    //                    @ApiResponse(code = 200, message = "Successfully retrieved a user"),
+    //                    @ApiResponse(code = 201, message = "Successfully retrieved a user"),
+    //                    @ApiResponse(code = 401, message = "You are not authorized to retrieved a user."),
+    //                    @ApiResponse(
+    //                            code = 403,
+    //                            message = "Accessing the resource you were trying to reach is forbidden"
+    //                    ),
+    //                    @ApiResponse(code = 404, message = "The resource you were trying to reach is not found")
+    //            }
+    //    )
+    //    @PostMapping("/{id}/friend/{friendId}")
+    //    public ResponseEntity addFriend(
+    //            @PathVariable("id") Long id, @PathVariable Long friendId) {
+    //        LOG.info(String.format("Adding user ID %d friend ID...", id));
+    //
+    //        try {
+    //            userService.addFriend(id, friendId);
+    //            //LOG.info(String.format("%s %s is now on %s %s friends list."), id);
+    //        } catch (Exception e) {
+    //            LOG.error(String.format("Attempt to find a user with id %d friends failed.", id));
+    //            LOG.error(e.getMessage());
+    //            return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+    //        }
+    //
+    //        return new ResponseEntity<>(HttpStatus.OK);
+    //    }
+    //
+    //    @ApiOperation(value = "Getting a user by id", response = Iterable.class)
+    //    @ApiResponses(
+    //            value = {
+    //                    @ApiResponse(code = 200, message = "Successfully retrieved a user"),
+    //                    @ApiResponse(code = 201, message = "Successfully retrieved a user"),
+    //                    @ApiResponse(code = 401, message = "You are not authorized to retrieved a user."),
+    //                    @ApiResponse(
+    //                            code = 403,
+    //                            message = "Accessing the resource you were trying to reach is forbidden"
+    //                    ),
+    //                    @ApiResponse(code = 404, message = "The resource you were trying to reach is not found")
+    //            }
+    //    )
+    //    @GetMapping("/{id}/friends")
+    //    public ResponseEntity findFriends(@PathVariable("id") Long id) {
+    //        LOG.info(String.format("Getting user ID %d friends...", id));
+    //
+    //        List<User> friends;
+    //        try {
+    //            friends = userService.findFriends(id);
+    //            LOG.info("User %d friends found.");
+    //        } catch (Exception e) {
+    //            LOG.error(String.format("Attempt to find a user with id %d friends failed.", id));
+    //            LOG.error(e.getMessage());
+    //            return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+    //        }
+    //
+    //        return new ResponseEntity<>(friends, HttpStatus.CREATED);
+    //    }
+    //
+    //    @ApiOperation(value = "Getting a user by id", response = Iterable.class)
+    //    @ApiResponses(
+    //            value = {
+    //                    @ApiResponse(code = 200, message = "Successfully retrieved a user"),
+    //                    @ApiResponse(code = 201, message = "Successfully retrieved a user"),
+    //                    @ApiResponse(code = 401, message = "You are not authorized to retrieved a user."),
+    //                    @ApiResponse(
+    //                            code = 403,
+    //                            message = "Accessing the resource you were trying to reach is forbidden"
+    //                    ),
+    //                    @ApiResponse(code = 404, message = "The resource you were trying to reach is not found")
+    //            }
+    //    )
+    //    @DeleteMapping("/{id}/friend/{friendId}")
+    //    public ResponseEntity deleteFriend(
+    //            @PathVariable("id") Long id, @PathVariable("friendId") Long friendId) {
+    //        LOG.info(String.format("Getting user ID %d friends...", id));
+    //
+    //        try {
+    //            userService.deleteFriend(id, friendId);
+    //            LOG.info("User %d friends found.");
+    //        } catch (Exception e) {
+    //            LOG.error(String.format("Attempt to find a user with id %d friends failed.", id));
+    //            LOG.error(e.getMessage());
+    //            return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+    //        }
+    //
+    //        return new ResponseEntity<>(HttpStatus.OK);
+    //    }
+
+    private void updateUserPassword(User user, String oldPassword, String newPassword) {
+        LOG.info(String.format("Updating %s %s password...", user.getFirstName(), user.getSurname()));
+
+        userService.changePassword(user, oldPassword, newPassword);
+        LOG.info(
+                String.format(
+                        "%s %s password successfully updated.", user.getFirstName(), user.getSurname()));
+    }
+
+    private void updateUserProfile(User user, MultipartFile profileImage) throws IOException {
+        LOG.info(
+                String.format("Setting %s %s profile image...", user.getFirstName(), user.getSurname()));
+
+        URL defaultImage = profileImageService.getDefaultImage();
+        if (profileImage != null) {
+            if (!user.getProfileImage().getUri().equals(defaultImage)) {
+                profileImageService.deleteProfileImage(user.getProfileImage().getUri());
+            }
+            URL profileImageUrl =
+                    profileImageService.uploadProfileImageToS3(profileImage, user.getEmailAddress());
+            userService.setUserProfileImage(user, profileImageUrl);
+        } else {
+            userService.setUserProfileImage(user, defaultImage);
+        }
+        LOG.info(
+                String.format(
+                        "%s %s successfully has its profile image set to %s.",
+                        user.getFirstName(), user.getSurname(), user.getProfileImage().getUri()));
+    }
 }

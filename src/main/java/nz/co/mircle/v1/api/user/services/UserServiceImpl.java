@@ -58,12 +58,12 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void saveUser(User user) {
-        userRepository.save(user);
+    public User saveUser(User user) {
+        return userRepository.save(user);
     }
 
     @Override
-    public void setUserProfileImage(User user, URL profileImageUrl) throws AmazonServiceException {
+    public User setUserProfileImage(User user, URL profileImageUrl) throws AmazonServiceException {
         ProfileImage profileImage = user.getProfileImage();
         if (profileImage == null) {
             profileImage = new ProfileImage();
@@ -71,16 +71,16 @@ public class UserServiceImpl implements UserService {
         profileImage.setUri(profileImageUrl);
 
         user.setProfileImage(profileImage);
-        userRepository.save(user);
+        return userRepository.save(user);
     }
 
     @Override
-    public void changePassword(User user, String oldPassword, String newPassword) {
+    public User changePassword(User user, String oldPassword, String newPassword) {
         if (!encoder.matches(oldPassword, user.getPassword())) {
             throw new RuntimeException("New password is not the same as the old password.");
         }
         user.setPassword(encoder.encode(newPassword));
-        userRepository.save(user);
+        return userRepository.save(user);
     }
 
     @Override

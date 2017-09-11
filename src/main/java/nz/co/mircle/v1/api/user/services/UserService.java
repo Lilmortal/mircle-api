@@ -1,6 +1,5 @@
 package nz.co.mircle.v1.api.user.services;
 
-import com.amazonaws.AmazonServiceException;
 import java.net.URL;
 import java.util.List;
 import nz.co.mircle.v1.api.user.model.User;
@@ -12,11 +11,11 @@ public interface UserService {
 
   User findUser(String emailAddress) throws UsernameNotFoundException;
 
-  void saveUser(User user);
+  User saveUser(User user);
 
-  void setUserProfileImage(User user, URL profileImage);
+  User setUserProfileImage(User user, URL profileImage);
 
-  void changePassword(User user, String oldPassword, String newPassword);
+  User changePassword(User user, String oldPassword, String newPassword);
 
   void deleteUser(User user);
 

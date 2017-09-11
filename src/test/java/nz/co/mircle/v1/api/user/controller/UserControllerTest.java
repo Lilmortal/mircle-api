@@ -95,7 +95,7 @@ public class UserControllerTest {
         when(profileImage.getUri()).thenReturn(profileImageUrl);
     }
 
-    /*@Test
+    @Test
     public void givenIdThenReturnUser() throws Exception {
         User user = populateUser();
 
@@ -122,7 +122,7 @@ public class UserControllerTest {
 
         String jsonResult = getJsonResult(user);
         assertThat(result.getResponse().getContentAsString()).isEqualTo(jsonResult);
-    }*/
+    }
 
     @Test
     public void givenInvalidIdWhenFindingUserShouldThrowUserNotFound() throws Exception {
@@ -146,7 +146,7 @@ public class UserControllerTest {
 
         User user = populateUser();
         when(userService.findUser(EMAIL_ADDRESS)).thenReturn(user);
-        doNothing().when(userService).saveUser(updatedUserCaptor.capture());
+        when(userService.saveUser(updatedUserCaptor.capture())).thenReturn(user);
 
         mvc.perform(patch(String.format("/user?emailAddress=%s&gender=%s", EMAIL_ADDRESS, gender)))
                 .andExpect(status().isOk())
@@ -161,7 +161,7 @@ public class UserControllerTest {
 
         User user = populateUser();
         when(userService.findUser(EMAIL_ADDRESS)).thenReturn(user);
-        doNothing().when(userService).saveUser(updatedUserCaptor.capture());
+        when(userService.saveUser(updatedUserCaptor.capture())).thenReturn(user);
 
         mvc.perform(patch(String.format("/user?emailAddress=%s&phoneNumber=%s", EMAIL_ADDRESS, phoneNumber)))
                 .andExpect(status().isOk())
@@ -177,7 +177,7 @@ public class UserControllerTest {
 
         User user = populateUser();
         when(userService.findUser(EMAIL_ADDRESS)).thenReturn(user);
-        doNothing().when(userService).saveUser(updatedUserCaptor.capture());
+        when(userService.saveUser(updatedUserCaptor.capture())).thenReturn(user);
 
         mvc.perform(patch(String.format("/user?emailAddress=%s&birthDate=%s", EMAIL_ADDRESS, birthDate)))
                 .andExpect(status().isOk())
@@ -192,7 +192,7 @@ public class UserControllerTest {
 
         User user = populateUser();
         when(userService.findUser(EMAIL_ADDRESS)).thenReturn(user);
-        doNothing().when(userService).saveUser(updatedUserCaptor.capture());
+        when(userService.saveUser(updatedUserCaptor.capture())).thenReturn(user);
 
         mvc.perform(patch(String.format("/user?emailAddress=%s&occupation=%s", EMAIL_ADDRESS, occupation)))
                 .andExpect(status().isOk())
@@ -208,7 +208,7 @@ public class UserControllerTest {
         User user = populateUser();
 
         when(userService.findUser(ID)).thenReturn(user);
-        doNothing().when(userService).changePassword(user, PASSWORD, newPassword);
+        when(userService.changePassword(user, PASSWORD, newPassword)).thenReturn(user);
         mvc.perform(patch(String.format("/user/password?id=%d&oldPassword=%s&newPassword=%s", ID, PASSWORD, newPassword)))
                 .andExpect(status().isOk())
                 .andReturn();
@@ -221,7 +221,7 @@ public class UserControllerTest {
         User user = populateUser();
 
         when(userService.findUser(EMAIL_ADDRESS)).thenReturn(user);
-        doNothing().when(userService).changePassword(user, PASSWORD, newPassword);
+        when(userService.changePassword(user, PASSWORD, newPassword)).thenReturn(user);
         mvc.perform(patch(String.format("/user/password?emailAddress=%s&oldPassword=%s&newPassword=%s", EMAIL_ADDRESS, PASSWORD, newPassword)))
                 .andExpect(status().isOk())
                 .andReturn();
@@ -233,7 +233,7 @@ public class UserControllerTest {
 
         when(userService.findUser(ID)).thenReturn(user);
         when(profileImageService.getDefaultImage()).thenReturn(profileImageUrl);
-        doNothing().when(userService).setUserProfileImage(user, profileImageUrl);
+        when(userService.setUserProfileImage(user, profileImageUrl)).thenReturn(user);
         mvc.perform(post(String.format("/user/profileimage?id=%d", ID)))
                 .andExpect(status().isOk());
     }
@@ -245,9 +245,9 @@ public class UserControllerTest {
 
         when(userService.findUser(EMAIL_ADDRESS)).thenReturn(user);
         doNothing().when(profileImageService).deleteProfileImage(any(URL.class));
-        doNothing().when(userService).setUserProfileImage(user, profileImageUrl);
+        when(userService.setUserProfileImage(user, profileImageUrl)).thenReturn(user);
         when(profileImageService.uploadProfileImageToS3(file, EMAIL_ADDRESS)).thenReturn(profileImageUrl);
-        doNothing().when(userService).setUserProfileImage(eq(user), urlCaptor.capture());
+        when(userService.setUserProfileImage(eq(user), urlCaptor.capture())).thenReturn(user);
 
         mvc.perform(MockMvcRequestBuilders.fileUpload(String.format("/user/profileimage"))
                     .file(file)

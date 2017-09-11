@@ -2,6 +2,7 @@ package nz.co.mircle.v1.api.user.controller;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -20,10 +21,13 @@ import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.http.MediaType;
+import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -79,6 +83,9 @@ public class UserControllerTest {
     @Captor
     private ArgumentCaptor<User> updatedUserCaptor;
 
+    @Captor
+    private ArgumentCaptor<URL> urlCaptor;
+
     @Mock
     private ProfileImage profileImage;
 
@@ -88,13 +95,13 @@ public class UserControllerTest {
         when(profileImage.getUri()).thenReturn(profileImageUrl);
     }
 
-    @Test
+    /*@Test
     public void givenIdThenReturnUser() throws Exception {
-        User user = populateUser().build();
+        User user = populateUser();
 
         when(userService.findUser(ID)).thenReturn(user);
 
-        MvcResult result = mvc.perform(get(String.format("/user/%d", ID)))
+        MvcResult result = mvc.perform(get(String.format("/user/%d", ID)).contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andReturn();
 
@@ -104,16 +111,8 @@ public class UserControllerTest {
     }
 
     @Test
-    public void givenInvalidIdWhenFindingUserShouldThrowUserNotFound() throws Exception {
-        when(userService.findUser(ID)).thenThrow(UsernameNotFoundException.class);
-
-        mvc.perform(get(String.format("/user/%d", ID)))
-                .andExpect(status().is5xxServerError());
-    }
-
-    @Test
     public void givenEmailAddressThenReturnUser() throws Exception {
-        User user = populateUser().build();
+        User user = populateUser();
 
         when(userService.findUser(EMAIL_ADDRESS)).thenReturn(user);
 
@@ -123,6 +122,14 @@ public class UserControllerTest {
 
         String jsonResult = getJsonResult(user);
         assertThat(result.getResponse().getContentAsString()).isEqualTo(jsonResult);
+    }*/
+
+    @Test
+    public void givenInvalidIdWhenFindingUserShouldThrowUserNotFound() throws Exception {
+        when(userService.findUser(ID)).thenThrow(UsernameNotFoundException.class);
+
+        mvc.perform(get(String.format("/user/%d", ID)))
+                .andExpect(status().is5xxServerError());
     }
 
     @Test
@@ -137,7 +144,7 @@ public class UserControllerTest {
     public void givenGenderThenUpdateUser() throws Exception {
         String gender = "F";
 
-        User user = populateUser().build();
+        User user = populateUser();
         when(userService.findUser(EMAIL_ADDRESS)).thenReturn(user);
         doNothing().when(userService).saveUser(updatedUserCaptor.capture());
 
@@ -152,7 +159,7 @@ public class UserControllerTest {
     public void givenPhoneNumberThenUpdateUser() throws Exception {
         String phoneNumber = "123";
 
-        User user = populateUser().build();
+        User user = populateUser();
         when(userService.findUser(EMAIL_ADDRESS)).thenReturn(user);
         doNothing().when(userService).saveUser(updatedUserCaptor.capture());
 
@@ -168,7 +175,7 @@ public class UserControllerTest {
         String birthDate = "23/08/1992";
         LocalDateTime parsedDateTime = LocalDate.parse(birthDate, FORMATTER).atStartOfDay();
 
-        User user = populateUser().build();
+        User user = populateUser();
         when(userService.findUser(EMAIL_ADDRESS)).thenReturn(user);
         doNothing().when(userService).saveUser(updatedUserCaptor.capture());
 
@@ -183,7 +190,7 @@ public class UserControllerTest {
     public void givenOccupationThenUpdateUser() throws Exception {
         String occupation = "Doctor";
 
-        User user = populateUser().build();
+        User user = populateUser();
         when(userService.findUser(EMAIL_ADDRESS)).thenReturn(user);
         doNothing().when(userService).saveUser(updatedUserCaptor.capture());
 
@@ -198,7 +205,7 @@ public class UserControllerTest {
     public void givenIdThenUpdateUserPassword() throws Exception {
         String newPassword = "cvb";
 
-        User user = populateUser().build();
+        User user = populateUser();
 
         when(userService.findUser(ID)).thenReturn(user);
         doNothing().when(userService).changePassword(user, PASSWORD, newPassword);
@@ -211,7 +218,7 @@ public class UserControllerTest {
     public void givenEmailAddressThenUpdateUserPassword() throws Exception {
         String newPassword = "cvb";
 
-        User user = populateUser().build();
+        User user = populateUser();
 
         when(userService.findUser(EMAIL_ADDRESS)).thenReturn(user);
         doNothing().when(userService).changePassword(user, PASSWORD, newPassword);
@@ -222,32 +229,37 @@ public class UserControllerTest {
 
     @Test
     public void givenIdAndNoProfileImageThenUpdateUserProfileImageToDefault() throws Exception {
-        User user = populateUser().build();
+        User user = populateUser();
 
         when(userService.findUser(ID)).thenReturn(user);
         when(profileImageService.getDefaultImage()).thenReturn(profileImageUrl);
         doNothing().when(userService).setUserProfileImage(user, profileImageUrl);
-        mvc.perform(patch(String.format("/user/profileimage?id=%d", ID)))
-                .andExpect(status().isOk())
-                .andReturn();
+        mvc.perform(post(String.format("/user/profileimage?id=%d", ID)))
+                .andExpect(status().isOk());
     }
 
-    //TODO
     @Test
     public void givenEmailAddressAndProfileImageThenUpdateUserProfileImage() throws Exception {
-        User user = populateUser().build();
+        User user = populateUser();
+        MockMultipartFile file = new MockMultipartFile("profileImage", "test.png", "application/json", "{}".getBytes());
 
         when(userService.findUser(EMAIL_ADDRESS)).thenReturn(user);
-        when(profileImageService.getDefaultImage()).thenReturn(profileImageUrl);
+        doNothing().when(profileImageService).deleteProfileImage(any(URL.class));
         doNothing().when(userService).setUserProfileImage(user, profileImageUrl);
-        mvc.perform(patch(String.format("/user/profileimage?id=%d", ID)))
-                .andExpect(status().isOk())
-                .andReturn();
+        when(profileImageService.uploadProfileImageToS3(file, EMAIL_ADDRESS)).thenReturn(profileImageUrl);
+        doNothing().when(userService).setUserProfileImage(eq(user), urlCaptor.capture());
+
+        mvc.perform(MockMvcRequestBuilders.fileUpload(String.format("/user/profileimage"))
+                    .file(file)
+                    .param("emailAddress", EMAIL_ADDRESS))
+                .andExpect(status().isOk());
+
+        assertThat(urlCaptor.getValue()).isEqualTo(profileImageUrl);
     }
 
     @Test
     public void givenIdThenDeleteUser() throws Exception {
-        User user = populateUser().build();
+        User user = populateUser();
 
         when(userService.findUser(ID)).thenReturn(user);
         doNothing().when(userService).deleteUser(user);
@@ -258,7 +270,7 @@ public class UserControllerTest {
 
     @Test
     public void givenEmailAddressThenDeleteUser() throws Exception {
-        User user = populateUser().build();
+        User user = populateUser();
 
         when(userService.findUser(EMAIL_ADDRESS)).thenReturn(user);
         doNothing().when(userService).deleteUser(user);
@@ -267,22 +279,11 @@ public class UserControllerTest {
                 .andReturn();
     }
 
-    private User.UserBuilder populateUser() {
-        return User.builder()
-                .setId(ID)
-                .setEmailAddress(EMAIL_ADDRESS)
-                .setUsername(USERNAME)
-                .setPassword(PASSWORD)
-                .setFirstName(FIRST_NAME)
-                .setSurname(SURNAME)
-                .setGender(GENDER)
-                .setPhoneNumber(PHONE_NUMBER)
-                .setBirthDate(BIRTH_DATE)
-                .setOccupation(OCCUPATION)
-                .setCreatedOn(CREATED_ON)
-                .setLastLoggedIn(LAST_LOGGED_IN)
-                .setLoggedIn(IS_LOGGED_IN)
-                .setProfileImage(profileImage);
+    private User populateUser() {
+        User user = new User(EMAIL_ADDRESS, PASSWORD, FIRST_NAME, SURNAME, GENDER, PHONE_NUMBER, BIRTH_DATE, OCCUPATION, CREATED_ON, LAST_LOGGED_IN, IS_LOGGED_IN, profileImage);
+        user.setId(ID);
+        user.setUsername(USERNAME);
+        return user;
     }
 
     private String getJsonResult(User user) {

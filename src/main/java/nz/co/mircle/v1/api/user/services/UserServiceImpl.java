@@ -70,8 +70,8 @@ public class UserServiceImpl implements UserService {
         }
         profileImage.setUri(profileImageUrl);
 
-        User newUser = User.builder(user).setProfileImage(profileImage).build();
-        userRepository.save(newUser);
+        user.setProfileImage(profileImage);
+        userRepository.save(user);
     }
 
     @Override
@@ -79,8 +79,8 @@ public class UserServiceImpl implements UserService {
         if (!encoder.matches(oldPassword, user.getPassword())) {
             throw new RuntimeException("New password is not the same as the old password.");
         }
-        User newUser = User.builder(user).setPassword(encoder.encode(newPassword)).build();
-        userRepository.save(newUser);
+        user.setPassword(encoder.encode(newPassword));
+        userRepository.save(user);
     }
 
     @Override

@@ -1,5 +1,6 @@
 package nz.co.mircle.v1.api.user.model;
 
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import io.swagger.annotations.ApiModelProperty;
 
 import java.time.LocalDateTime;
@@ -97,33 +98,47 @@ public class User {
     public User() {
     }
 
-    public User(UserBuilder userBuilder) {
-        this.emailAddress = userBuilder.emailAddress;
-        this.username = userBuilder.username;
-        this.password = userBuilder.password;
-        this.firstName = userBuilder.firstName;
-        this.surname = userBuilder.surname;
-        this.gender = userBuilder.gender;
-        this.phoneNumber = userBuilder.phoneNumber;
-        this.birthDate = userBuilder.birthDate;
-        this.occupation = userBuilder.occupation;
-        this.createdOn = userBuilder.createdOn;
-        this.lastLoggedIn = userBuilder.lastLoggedIn;
-        this.loggedIn = userBuilder.loggedIn;
-        this.profileImage = userBuilder.profileImage;
+    public User(
+            String emailAddress,
+            String password,
+            String firstName,
+            String surname,
+            String gender,
+            String phoneNumber,
+            LocalDateTime birthDate,
+            String occupation,
+            LocalDateTime createdOn,
+            LocalDateTime lastLoggedIn,
+            boolean loggedIn,
+            ProfileImage profileImage) {
+        this.emailAddress = emailAddress;
+        this.password = password;
+        this.firstName = firstName;
+        this.surname = surname;
+        this.gender = gender;
+        this.phoneNumber = phoneNumber;
+        this.birthDate = birthDate;
+        this.occupation = occupation;
+        this.createdOn = createdOn;
+        this.lastLoggedIn = lastLoggedIn;
+        this.loggedIn = loggedIn;
+        this.profileImage = profileImage;
     }
 
     public Long getId() {
         return id;
     }
 
-    // This is needed for testing purposes, see if there is another way to remove this
     public void setId(Long id) {
         this.id = id;
     }
 
     public String getEmailAddress() {
         return emailAddress;
+    }
+
+    public void setEmailAddress(String emailAddress) {
+        this.emailAddress = emailAddress;
     }
 
     public String getUsername() {
@@ -138,162 +153,87 @@ public class User {
         return password;
     }
 
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
     public String getFirstName() {
         return firstName;
+    }
+
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
     }
 
     public String getSurname() {
         return surname;
     }
 
+    public void setSurname(String surname) {
+        this.surname = surname;
+    }
+
     public String getGender() {
         return gender;
+    }
+
+    public void setGender(String gender) {
+        this.gender = gender;
     }
 
     public String getPhoneNumber() {
         return phoneNumber;
     }
 
+    public void setPhoneNumber(String phoneNumber) {
+        this.phoneNumber = phoneNumber;
+    }
+
     public LocalDateTime getBirthDate() {
         return birthDate;
+    }
+
+    public void setBirthDate(LocalDateTime birthDate) {
+        this.birthDate = birthDate;
     }
 
     public String getOccupation() {
         return occupation;
     }
 
+    public void setOccupation(String occupation) {
+        this.occupation = occupation;
+    }
+
     public LocalDateTime getCreatedOn() {
         return createdOn;
+    }
+
+    public void setCreatedOn(LocalDateTime createdOn) {
+        this.createdOn = createdOn;
     }
 
     public LocalDateTime getLastLoggedIn() {
         return lastLoggedIn;
     }
 
+    public void setLastLoggedIn(LocalDateTime lastLoggedIn) {
+        this.lastLoggedIn = lastLoggedIn;
+    }
+
     public boolean isLoggedIn() {
         return loggedIn;
+    }
+
+    public void setLoggedIn(boolean loggedIn) {
+        this.loggedIn = loggedIn;
     }
 
     public ProfileImage getProfileImage() {
         return profileImage;
     }
 
-    public static UserBuilder builder() {
-        return new UserBuilder();
-    }
-
-    public static UserBuilder builder(User user) {
-        return new UserBuilder(user);
-    }
-
-    public static class UserBuilder {
-        private Long id;
-        private String emailAddress;
-        private String username;
-        private String password;
-        private String firstName;
-        private String surname;
-        private String gender;
-        private String phoneNumber;
-        private LocalDateTime birthDate;
-        private String occupation;
-        private LocalDateTime createdOn;
-        private LocalDateTime lastLoggedIn;
-        private boolean loggedIn;
-        private ProfileImage profileImage;
-
-        public UserBuilder() {
-        }
-
-        public UserBuilder(User user) {
-            this.id = user.id;
-            this.emailAddress = user.emailAddress;
-            this.username = user.username;
-            this.password = user.password;
-            this.firstName = user.firstName;
-            this.surname = user.surname;
-            this.gender = user.gender;
-            this.phoneNumber = user.phoneNumber;
-            this.birthDate = user.birthDate;
-            this.occupation = user.occupation;
-            this.createdOn = user.createdOn;
-            this.lastLoggedIn = user.lastLoggedIn;
-            this.loggedIn = user.loggedIn;
-            this.profileImage = user.profileImage;
-        }
-
-        public UserBuilder setId(final Long id) {
-            this.id = id;
-            return this;
-        }
-
-        public UserBuilder setEmailAddress(final String emailAddress) {
-            this.emailAddress = emailAddress;
-            return this;
-        }
-
-        public UserBuilder setUsername(String username) {
-            this.username = username;
-            return this;
-        }
-
-        public UserBuilder setPassword(final String password) {
-            this.password = password;
-            return this;
-        }
-
-        public UserBuilder setFirstName(final String firstName) {
-            this.firstName = firstName;
-            return this;
-        }
-
-        public UserBuilder setSurname(final String surname) {
-            this.surname = surname;
-            return this;
-        }
-
-        public UserBuilder setGender(final String gender) {
-            this.gender = gender;
-            return this;
-        }
-
-        public UserBuilder setPhoneNumber(final String phoneNumber) {
-            this.phoneNumber = phoneNumber;
-            return this;
-        }
-
-        public UserBuilder setBirthDate(final LocalDateTime birthDate) {
-            this.birthDate = birthDate;
-            return this;
-        }
-
-        public UserBuilder setOccupation(final String occupation) {
-            this.occupation = occupation;
-            return this;
-        }
-
-        public UserBuilder setCreatedOn(final LocalDateTime createdOn) {
-            this.createdOn = createdOn;
-            return this;
-        }
-
-        public UserBuilder setLastLoggedIn(final LocalDateTime lastLoggedIn) {
-            this.lastLoggedIn = lastLoggedIn;
-            return this;
-        }
-
-        public UserBuilder setLoggedIn(final boolean loggedIn) {
-            this.loggedIn = loggedIn;
-            return this;
-        }
-
-        public UserBuilder setProfileImage(final ProfileImage profileImage) {
-            this.profileImage = profileImage;
-            return this;
-        }
-
-        public User build() {
-            return new User(this);
-        }
+    public void setProfileImage(ProfileImage profileImage) {
+        this.profileImage = profileImage;
     }
 }

@@ -69,7 +69,7 @@ public class AuthenticationController {
             userService.findUser(emailAddress);
             LOG.info(String.format("%s found.", emailAddress));
         } catch (UsernameNotFoundException e) {
-            throw new EmailAddressExistException(String.format("%s already exist.", emailAddress));
+            LOG.info(String.format("%s is available.", emailAddress));
         } catch (EmailAddressExistException e) {
             LOG.error(String.format("Email address %s already exist.", emailAddress));
             LOG.error(e.getMessage());
@@ -123,46 +123,22 @@ public class AuthenticationController {
                     @ApiResponse(code = 404, message = "The resource you were trying to reach is not found")
             }
     )
-    @PatchMapping("/profileimage")
-    public ResponseEntity registerUserProfileImage(
+    @PostMapping(value = "/profileimage", params = {"id"})
+    public ResponseEntity givenIdRegisterUserProfileImage(
             @RequestParam(value = "profileImage", required = false) MultipartFile profileImage,
-            @RequestParam(value = "id", required = false) Long id,
-            @RequestParam(value = "emailAddress", required = false) String emailAddress) {
+            @RequestParam(value = "id") Long id) {
         try {
-            User user;
-            if (id != null) {
-                LOG.info(
-                        String.format(
-                                "Retrieving User ID %d from the database to register its profile image...", id));
-                user = userService.findUser(id);
-            } else if (!StringUtils.isBlank(emailAddress)) {
-                LOG.info(
-                        String.format(
-                                "Retrieving %s from the database to register its profile image...", emailAddress));
-                user = userService.findUser(emailAddress);
-            } else {
-                return new ResponseEntity<>(
-                        "Missing User ID or email address.", HttpStatus.INTERNAL_SERVER_ERROR);
-            }
+            LOG.info(
+                    String.format(
+                            "Retrieving User ID %d from the database to register its profile image...", id));
+            User user = userService.findUser(id);
 
             if (user.getProfileImage() != null) {
                 return new ResponseEntity<>(
                         "The user already has it's profile image set or it does not exist.",
                         HttpStatus.INTERNAL_SERVER_ERROR);
             }
-
-            URL profileImageUrl;
-            if (profileImage == null) {
-                profileImageUrl = profileImageService.getDefaultImage();
-            } else {
-                profileImageUrl =
-                        profileImageService.uploadProfileImageToS3(profileImage, user.getEmailAddress());
-            }
-            userService.setUserProfileImage(user, profileImageUrl);
-            LOG.info(
-                    String.format(
-                            "%s %s successfully has its profile image set to %s.",
-                            user.getFirstName(), user.getSurname(), profileImageUrl));
+            setProfileImage(profileImage, user);
         } catch (UsernameNotFoundException e) {
             LOG.error("User does not exist.");
             LOG.error(e.getMessage());
@@ -178,5 +154,69 @@ public class AuthenticationController {
         }
 
         return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @ApiOperation(value = "Register the user profile image", response = Iterable.class)
+    @ApiResponses(
+            value = {
+                    @ApiResponse(code = 200, message = "Successfully registered user profile image"),
+                    @ApiResponse(code = 201, message = "Successfully registered user profile image"),
+                    @ApiResponse(
+                            code = 401,
+                            message = "You are not authorized to register the user profile image."
+                    ),
+                    @ApiResponse(
+                            code = 403,
+                            message = "Accessing the resource you were trying to reach is forbidden"
+                    ),
+                    @ApiResponse(code = 404, message = "The resource you were trying to reach is not found")
+            }
+    )
+    @PostMapping(value = "/profileimage", params = {"emailAddress"})
+    public ResponseEntity givenEmailAddressRegisterUserProfileImage(
+            @RequestParam(value = "profileImage", required = false) MultipartFile profileImage,
+            @RequestParam(value = "emailAddress") String emailAddress) {
+        try {
+            LOG.info(
+                    String.format(
+                            "Retrieving %s from the database to register its profile image...", emailAddress));
+            User user = userService.findUser(emailAddress);
+
+            if (user.getProfileImage() != null) {
+                return new ResponseEntity<>(
+                        "The user already has it's profile image set or it does not exist.",
+                        HttpStatus.INTERNAL_SERVER_ERROR);
+            }
+            setProfileImage(profileImage, user);
+        } catch (UsernameNotFoundException e) {
+            LOG.error("User does not exist.");
+            LOG.error(e.getMessage());
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+        } catch (AmazonServiceException e) {
+            LOG.error("Failed to register the user profile image; there is an issue with Amazon.");
+            LOG.error(e.getMessage());
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+        } catch (IOException e) {
+            LOG.error("Failed to register the user profile image.");
+            LOG.error(e.getMessage());
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    private void setProfileImage(MultipartFile profileImage, User user) throws IOException {
+        URL profileImageUrl;
+        if (profileImage == null) {
+            profileImageUrl = profileImageService.getDefaultImage();
+        } else {
+            profileImageUrl =
+                    profileImageService.uploadProfileImageToS3(profileImage, user.getEmailAddress());
+        }
+        userService.setUserProfileImage(user, profileImageUrl);
+        LOG.info(
+                String.format(
+                        "%s %s successfully has its profile image set to %s.",
+                        user.getFirstName(), user.getSurname(), profileImageUrl));
     }
 }

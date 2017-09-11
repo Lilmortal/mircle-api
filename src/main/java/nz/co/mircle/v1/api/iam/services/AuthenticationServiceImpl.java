@@ -41,23 +41,23 @@ public class AuthenticationServiceImpl implements AuthenticationService, UserDet
 
     @Override
     public void createUser(User user) throws EmailAddressExistException {
-        if (userService.findUser(user.getEmailAddress()) != null) {
-            throw new EmailAddressExistException(
-                    String.format("Email address %s already exist.", user.getEmailAddress()));
+        try {
+            if (userService.findUser(user.getEmailAddress()) != null) {
+                throw new EmailAddressExistException(
+                        String.format("Email address %s already exist.", user.getEmailAddress()));
+            }
+        } catch (UsernameNotFoundException e) {
+            // This is needed because UsernamePasswordTokenAuthentication only accepts the keyword "username"
+            user.setUsername(user.getEmailAddress());
+            LocalDateTime currentDateTime = LocalDateTime.now(Clock.systemUTC());
+            user.setCreatedOn(currentDateTime);
+            user.setLastLoggedIn(currentDateTime);
+            user.setLoggedIn(false);
+            String hashedPassword = encoder.encode(user.getPassword());
+            user.setPassword(hashedPassword);
+
+            userRepository.save(user);
         }
-
-        // This is needed because UsernamePasswordTokenAuthentication only accepts the keyword "username"
-        String hashedPassword = encoder.encode(user.getPassword());
-        LocalDateTime currentDateTime = LocalDateTime.now(Clock.systemUTC());
-        User newUser = User.builder(user)
-                .setUsername(user.getEmailAddress())
-                .setCreatedOn(currentDateTime)
-                .setLastLoggedIn(currentDateTime)
-                .setLoggedIn(false)
-                .setPassword(hashedPassword)
-                .build();
-
-        userRepository.save(newUser);
     }
 
     @Override

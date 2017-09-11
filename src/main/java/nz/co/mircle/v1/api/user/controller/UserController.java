@@ -69,7 +69,8 @@ public class UserController {
         } catch (UsernameNotFoundException e) {
             LOG.error(String.format("Attempt to get the user failed - user ID %d not found.", id));
             LOG.error(e.getMessage());
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+            //return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
         }
 
         return new ResponseEntity<>(user, HttpStatus.OK);
@@ -132,28 +133,26 @@ public class UserController {
             LOG.info(String.format("Updating %s details...", emailAddress));
             User user = userService.findUser(emailAddress);
 
-            User.UserBuilder newUserBuilder = User.builder(user);
             if (!StringUtils.isBlank(gender)) {
-                newUserBuilder.setGender(gender);
+                user.setGender(gender);
             }
 
             if (!StringUtils.isBlank(phoneNumber)) {
-                newUserBuilder.setPhoneNumber(phoneNumber);
+                user.setPhoneNumber(phoneNumber);
             }
 
             if (!StringUtils.isBlank(birthDate)) {
                 // Dont know why dd/MM/yyyy passed from JS does not convert to LocalDateTime here. This is temp for now.
                 DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
                 LocalDateTime dateTime = LocalDate.parse(birthDate, formatter).atStartOfDay();
-                newUserBuilder.setBirthDate(dateTime);
+                user.setBirthDate(dateTime);
             }
 
             if (!StringUtils.isBlank(occupation)) {
-                newUserBuilder.setOccupation(occupation);
+                user.setOccupation(occupation);
             }
 
-            User newUser = newUserBuilder.build();
-            userService.saveUser(newUser);
+            userService.saveUser(user);
             LOG.info(
                     String.format("%s %s successfully updated.", user.getFirstName(), user.getSurname()));
         } catch (Exception e) {
@@ -238,7 +237,7 @@ public class UserController {
                     @ApiResponse(code = 404, message = "The resource you were trying to reach is not found")
             }
     )
-    @PatchMapping("/profileimage")
+    @PostMapping("/profileimage")
     public ResponseEntity givenIdUpdateUserProfileImage(
             @RequestParam(value = "profileImage", required = false) MultipartFile profileImage,
             @RequestParam(value = "id") Long id) {
@@ -274,7 +273,7 @@ public class UserController {
                     @ApiResponse(code = 404, message = "The resource you were trying to reach is not found")
             }
     )
-    @PatchMapping(value = "/profileimage", params = {"emailAddress"})
+    @PostMapping(value = "/profileimage", params = {"emailAddress"})
     public ResponseEntity givenEmailAddressUpdateUserProfileImage(
             @RequestParam(value = "profileImage", required = false) MultipartFile profileImage,
             @RequestParam(value = "emailAddress") String emailAddress) {

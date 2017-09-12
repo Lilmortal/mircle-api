@@ -1,27 +1,20 @@
-package nz.co.mircle.v1.api.user.services;
+package nz.co.mircle.v1.api.iam.services;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Mockito.doNothing;
-import static org.mockito.Mockito.when;
-
+import nz.co.mircle.v1.api.iam.exception.EmailAddressExistException;
 import nz.co.mircle.v1.api.profileImage.model.ProfileImage;
-import nz.co.mircle.v1.api.profileImage.services.ProfileImageService;
 import nz.co.mircle.v1.api.user.dao.UserRepository;
 import nz.co.mircle.v1.api.user.model.User;
+import nz.co.mircle.v1.api.user.services.UserService;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.ArgumentCaptor;
-import org.mockito.Captor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnit;
 import org.mockito.junit.MockitoRule;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.context.annotation.Bean;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.test.context.ContextConfiguration;
@@ -30,13 +23,16 @@ import org.springframework.test.context.junit4.SpringRunner;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.time.LocalDateTime;
+import java.util.Collections;
 
-/**
- * User service layer test
- */
+import static java.util.Collections.emptyList;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.when;
+
 @RunWith(SpringRunner.class)
 @ContextConfiguration
-public class UserServiceImplTest {
+public class AuthenticationServiceImplTest {
     private static final Long ID = Long.parseLong("1");
 
     private static final String EMAIL_ADDRESS = "test@test.com";
@@ -63,29 +59,26 @@ public class UserServiceImplTest {
 
     private static final boolean IS_LOGGED_IN = false;
 
+    @Mock
+    private BCryptPasswordEncoder encoder;
+
+    @Mock
+    private UserService userService;
+
+    @Mock
+    private UserRepository userRepository;
+
+    @InjectMocks
+    private AuthenticationService service = new AuthenticationServiceImpl(encoder, userService, userRepository);
+
+    @Rule
+    public MockitoRule rule = MockitoJUnit.rule();
+
     private ProfileImage profileImage;
 
     private URL url;
 
     private User user;
-
-    @MockBean
-    private ProfileImageService profileImageService;
-
-    @MockBean
-    private UserRepository userRepository;
-
-    @MockBean
-    private BCryptPasswordEncoder encoder;
-
-    @Captor
-    private ArgumentCaptor<User> userCaptor;
-
-    @InjectMocks
-    private UserService userService = new UserServiceImpl(profileImageService, userRepository, encoder);
-
-    @Rule
-    public MockitoRule rule = MockitoJUnit.rule();
 
     @Before
     public void setup() throws MalformedURLException {
@@ -95,59 +88,35 @@ public class UserServiceImplTest {
     }
 
     @Test
-    public void givenIdReturnUser() {
-        when(userRepository.findOne(ID)).thenReturn(user);
+    public void createUser() {
+        when(userService.findUser(EMAIL_ADDRESS)).thenThrow(UsernameNotFoundException.class);
+        when(encoder.encode(PASSWORD)).thenReturn(PASSWORD);
+        when(userRepository.save(user)).thenReturn(user);
 
-        User result = userService.findUser(ID);
-        assertThat(result).isEqualTo(user);
+        service.createUser(user);
+    }
+
+    @Test(expected = EmailAddressExistException.class)
+    public void givenAnExistingUserThrowAnEmailAddressExistException() {
+        when(userService.findUser(EMAIL_ADDRESS)).thenReturn(user);
+
+        service.createUser(user);
     }
 
     @Test
-    public void givenEmailAddressReturnUser() {
-        when(userRepository.findByEmailAddress(EMAIL_ADDRESS)).thenReturn(user);
+    public void givenUsernameReturnUser() {
+        org.springframework.security.core.userdetails.User securityUser = new org.springframework.security.core.userdetails.User(USERNAME, PASSWORD, emptyList());
 
-        User result = userService.findUser(EMAIL_ADDRESS);
-        assertThat(result).isEqualTo(user);
+        when(userRepository.findByUsername(USERNAME)).thenReturn(user);
+        UserDetails result = service.loadUserByUsername(USERNAME);
+        assertThat(result).isEqualTo(securityUser);
     }
 
     @Test(expected = UsernameNotFoundException.class)
-    public void givenInvalidEmailAddressReturnUser() {
-        User result = userService.findUser("Invalid Email Address");
-    }
+    public void givenInvalidUsernameThrowUsernameNotFoundException() {
+        when(userRepository.findByUsername(USERNAME)).thenReturn(null);
 
-    @Test
-    public void setUserInitialProfileImage() {
-        user.setProfileImage(null);
-        assertThat(user.getProfileImage()).isEqualTo(null);
-        when(userRepository.save(userCaptor.capture())).thenReturn(user);
-
-        User result = userService.setUserProfileImage(user, url);
-        assertThat(userCaptor.getValue().getProfileImage().getUri()).isEqualTo(url);
-    }
-
-    @Test
-    public void changeUserPassword() {
-        String oldPassword = "abc";
-        String newPassword = "qwe";
-        String encodedPassword = "qqqqq";
-
-        when(encoder.matches(oldPassword, user.getPassword())).thenReturn(true);
-        when(encoder.encode(newPassword)).thenReturn(encodedPassword);
-        when(userRepository.save(userCaptor.capture())).thenReturn(user);
-
-        User result = userService.changePassword(user, oldPassword, newPassword);
-        assertThat(userCaptor.getValue().getPassword()).isEqualTo(encodedPassword);
-    }
-
-    @Test(expected = RuntimeException.class)
-    public void givenUserPasswordNotEqualToOldPasswordThrowException() {
-        String oldPassword = "abc";
-        String newPassword = "qwe";
-        String encodedPassword = "qqqqq";
-
-        when(encoder.matches(oldPassword, user.getPassword())).thenReturn(false);
-
-        User result = userService.changePassword(user, oldPassword, newPassword);
+        service.loadUserByUsername(USERNAME);
     }
 
     private User populateUser() {

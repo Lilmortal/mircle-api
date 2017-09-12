@@ -101,13 +101,13 @@ public class UserControllerTest {
 
         when(userService.findUser(ID)).thenReturn(user);
 
-        MvcResult result = mvc.perform(get(String.format("/user/%d", ID)).contentType(MediaType.APPLICATION_JSON))
+        String result = mvc.perform(get(String.format("/user/%d", ID)))
                 .andExpect(status().isOk())
-                .andReturn();
+                .andReturn().getResponse().getContentAsString();
 
         String jsonResult = getJsonResult(user);
 
-        assertThat(result.getResponse().getContentAsString()).isEqualTo(jsonResult);
+        assertThat(result).isEqualTo(jsonResult);
     }
 
     @Test
@@ -249,7 +249,7 @@ public class UserControllerTest {
         when(profileImageService.uploadProfileImageToS3(file, EMAIL_ADDRESS)).thenReturn(profileImageUrl);
         when(userService.setUserProfileImage(eq(user), urlCaptor.capture())).thenReturn(user);
 
-        mvc.perform(MockMvcRequestBuilders.fileUpload(String.format("/user/profileimage"))
+        mvc.perform(MockMvcRequestBuilders.fileUpload("/user/profileimage")
                     .file(file)
                     .param("emailAddress", EMAIL_ADDRESS))
                 .andExpect(status().isOk());

@@ -8,6 +8,7 @@ import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import com.google.gson.Gson;
 import nz.co.mircle.v1.api.profileImage.model.ProfileImage;
 import nz.co.mircle.v1.api.profileImage.services.ProfileImageService;
 import nz.co.mircle.v1.api.user.model.User;
@@ -69,8 +70,6 @@ public class UserControllerTest {
 
     private static final DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern("dd/MM/yyyy");
 
-    private URL profileImageUrl;
-
     @Autowired
     private MockMvc mvc;
 
@@ -86,13 +85,15 @@ public class UserControllerTest {
     @Captor
     private ArgumentCaptor<URL> urlCaptor;
 
-    @Mock
     private ProfileImage profileImage;
+
+    private URL profileImageUrl;
 
     @Before
     public void setup() throws MalformedURLException {
         profileImageUrl = new URL("http://test.com");
-        when(profileImage.getUri()).thenReturn(profileImageUrl);
+        profileImage = new ProfileImage(profileImageUrl, "", "", true);
+        profileImage.setId(ID);
     }
 
     @Test
@@ -101,13 +102,13 @@ public class UserControllerTest {
 
         when(userService.findUser(ID)).thenReturn(user);
 
-        String result = mvc.perform(get(String.format("/user/%d", ID)))
+        MvcResult result = mvc.perform(get(String.format("/user/%d", ID)).contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andReturn().getResponse().getContentAsString();
+                .andReturn();
 
         String jsonResult = getJsonResult(user);
 
-        assertThat(result).isEqualTo(jsonResult);
+        assertThat(result.getResponse().getContentAsString()).isEqualTo(jsonResult);
     }
 
     @Test
@@ -116,7 +117,7 @@ public class UserControllerTest {
 
         when(userService.findUser(EMAIL_ADDRESS)).thenReturn(user);
 
-        MvcResult result = mvc.perform(get(String.format("/user/email/%s", EMAIL_ADDRESS)))
+        MvcResult result = mvc.perform(get(String.format("/user/email/%s", EMAIL_ADDRESS)).contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andReturn();
 
@@ -287,6 +288,7 @@ public class UserControllerTest {
     }
 
     private String getJsonResult(User user) {
+        Gson gson = new Gson();
         StringBuilder sb = new StringBuilder();
         sb.append("{");
         sb.append(String.format("\"id\":%d,", user.getId()));
@@ -302,7 +304,7 @@ public class UserControllerTest {
         sb.append(String.format("\"createdOn\":\"%s\",", user.getCreatedOn()));
         sb.append(String.format("\"lastLoggedIn\":\"%s\",", user.getLastLoggedIn()));
         sb.append(String.format("\"loggedIn\":%b,", user.isLoggedIn()));
-        sb.append(String.format("\"profileImage\":%s", user.getProfileImage()));
+        sb.append(String.format("\"profileImage\":%s", gson.toJson(user.getProfileImage())));
         sb.append("}");
         return sb.toString();
     }

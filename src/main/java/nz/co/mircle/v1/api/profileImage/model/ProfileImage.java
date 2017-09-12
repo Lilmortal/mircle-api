@@ -70,7 +70,7 @@ public class ProfileImage {
     this.name = name;
   }
 
-  public boolean isDefault() {
+  public boolean getIsDefault() {
     return isDefault;
   }
 

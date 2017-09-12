@@ -6,6 +6,10 @@ spring:
 server:
   contextPath: /api/v${API_VERSION}
 
+security:
+  basic:
+    enabled: false
+
 ---
 
 spring:

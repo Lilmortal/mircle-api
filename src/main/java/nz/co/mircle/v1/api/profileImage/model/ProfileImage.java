@@ -25,7 +25,7 @@ public class ProfileImage {
   @ApiModelProperty(notes = "Profile picture name")
   private String name;
 
-  @Column(name = "default")
+  @Column(name = "isDefault")
   @ApiModelProperty(notes = "Whether this profile picture is default or not")
   private boolean isDefault;
 

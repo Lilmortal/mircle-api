@@ -41,7 +41,7 @@ spring:
     database: POSTGRESQL
     show-sql: true
     hibernate:
-      ddl-auto: create
+      ddl-auto: update
   #database:
   #  driverClassName: org.postgresql.Driver
   datasource:
@@ -55,7 +55,7 @@ spring:
 logging:
   level:
     org.springframework.web: INFO
-    hibernate: ERROR
+    hibernate: INFO
 ---
 
 spring:

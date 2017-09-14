@@ -66,14 +66,13 @@ public class AuthenticationController {
     public ResponseEntity validateUserExist(@RequestParam("emailAddress") String emailAddress) {
         LOG.info(String.format("Validating if %s exist...", emailAddress));
         try {
-            userService.findUser(emailAddress);
-            LOG.info(String.format("%s found.", emailAddress));
+            User user = userService.findUser(emailAddress);
+            if (user != null) {
+                LOG.error(String.format("Email address %s already exist.", emailAddress));
+                return new ResponseEntity<>(String.format("Email address %s already exist.", emailAddress), HttpStatus.INTERNAL_SERVER_ERROR);
+            }
         } catch (UsernameNotFoundException e) {
             LOG.info(String.format("%s is available.", emailAddress));
-        } catch (EmailAddressExistException e) {
-            LOG.error(String.format("Email address %s already exist.", emailAddress));
-            LOG.error(e.getMessage());
-            return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
 
         return new ResponseEntity<>(HttpStatus.OK);

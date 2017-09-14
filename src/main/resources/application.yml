@@ -46,7 +46,7 @@ spring:
   #  driverClassName: org.postgresql.Driver
   datasource:
     platform: postgresql
-    url: jdbc:${DATABASE_URL}
+    url: jdbc:${TEST_DATABASE_URL}
     username: ${POSTGRESQL_USERNAME}
     password: ${POSTGRESQL_PASSWORD}
     driverClassName: org.postgresql.Driver

@@ -19,7 +19,7 @@ public interface UserService {
 
   void deleteUser(User user);
 
-  void addFriend(Long id, Long friendId);
+  void addFriend(User user, Long friendId);
 
   List<User> findFriends(Long id);
 

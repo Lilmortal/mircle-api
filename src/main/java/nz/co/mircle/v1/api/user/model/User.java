@@ -4,9 +4,11 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import io.swagger.annotations.ApiModelProperty;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 
+import nz.co.mircle.v1.api.feeds.model.Feed;
 import nz.co.mircle.v1.api.profileImage.model.ProfileImage;
 import org.codehaus.jackson.annotate.JsonIgnore;
 import org.codehaus.jackson.annotate.JsonProperty;
@@ -85,35 +87,25 @@ public class User {
     @OneToOne(cascade = CascadeType.ALL)
     private ProfileImage profileImage;
 
-  /*@ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-  @JoinColumn(name = "friend_id")
-  @ApiModelProperty(notes = "Friend", required = true)
-  private User friend;
+    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JsonIgnore
+    @JoinColumn(name = "friend_id")
+    @ApiModelProperty(notes = "Friend", required = true)
+    private User friend;
 
-  @OneToMany(mappedBy = "friend", fetch = FetchType.LAZY)
-  private List<User> friends;
+    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
+    private List<User> friends;
 
-  @OneToMany(mappedBy = "id", fetch = FetchType.LAZY)
-  private List<Feed> feeds;*/
+    @OneToMany(mappedBy = "feed", fetch = FetchType.LAZY)
+    private List<Feed> feeds;
 
     // no args constructor needed for hibernate
     public User() {
     }
 
-    public User(
-            String emailAddress,
-            String password,
-            String firstName,
-            String surname,
-            String gender,
-            String phoneNumber,
-            LocalDateTime birthDate,
-            String occupation,
-            LocalDateTime createdOn,
-            LocalDateTime lastLoggedIn,
-            boolean loggedIn,
-            ProfileImage profileImage) {
+    public User(String emailAddress, String username, String password, String firstName, String surname, String gender, String phoneNumber, LocalDateTime birthDate, String occupation, LocalDateTime createdOn, LocalDateTime lastLoggedIn, boolean loggedIn, ProfileImage profileImage, User friend, List<User> friends, List<Feed> feeds) {
         this.emailAddress = emailAddress;
+        this.username = username;
         this.password = password;
         this.firstName = firstName;
         this.surname = surname;
@@ -125,6 +117,9 @@ public class User {
         this.lastLoggedIn = lastLoggedIn;
         this.loggedIn = loggedIn;
         this.profileImage = profileImage;
+        this.friend = friend;
+        this.friends = friends;
+        this.feeds = feeds;
     }
 
     public Long getId() {
@@ -237,5 +232,29 @@ public class User {
 
     public void setProfileImage(ProfileImage profileImage) {
         this.profileImage = profileImage;
+    }
+
+    public User getFriend() {
+        return friend;
+    }
+
+    public void setFriend(User friend) {
+        this.friend = friend;
+    }
+
+    public List<User> getFriends() {
+        return friends;
+    }
+
+    public void setFriends(List<User> friends) {
+        this.friends = friends;
+    }
+
+    public List<Feed> getFeeds() {
+        return feeds;
+    }
+
+    public void setFeeds(List<Feed> feeds) {
+        this.feeds = feeds;
     }
 }

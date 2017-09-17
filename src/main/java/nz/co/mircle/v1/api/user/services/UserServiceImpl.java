@@ -89,10 +89,9 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void addFriend(Long id, Long friendId) {
-        User user = userRepository.findById(id);
+    public void addFriend(User user, Long friendId) {
         User friend = userRepository.findById(friendId);
-        //user.getFriends().add(friend);
+        user.getFriends().add(friend);
         userRepository.save(user);
     }
 

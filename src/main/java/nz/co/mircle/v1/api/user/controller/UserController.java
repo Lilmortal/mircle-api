@@ -12,6 +12,7 @@ import java.net.URL;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.List;
 
 import nz.co.mircle.v1.api.profileImage.services.ProfileImageService;
 import nz.co.mircle.v1.api.user.model.User;
@@ -354,95 +355,157 @@ public class UserController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    //    @ApiOperation(value = "Getting a user by id", response = Iterable.class)
-    //    @ApiResponses(
-    //            value = {
-    //                    @ApiResponse(code = 200, message = "Successfully retrieved a user"),
-    //                    @ApiResponse(code = 201, message = "Successfully retrieved a user"),
-    //                    @ApiResponse(code = 401, message = "You are not authorized to retrieved a user."),
-    //                    @ApiResponse(
-    //                            code = 403,
-    //                            message = "Accessing the resource you were trying to reach is forbidden"
-    //                    ),
-    //                    @ApiResponse(code = 404, message = "The resource you were trying to reach is not found")
-    //            }
-    //    )
-    //    @PostMapping("/{id}/friend/{friendId}")
-    //    public ResponseEntity addFriend(
-    //            @PathVariable("id") Long id, @PathVariable Long friendId) {
-    //        LOG.info(String.format("Adding user ID %d friend ID...", id));
-    //
-    //        try {
-    //            userService.addFriend(id, friendId);
-    //            //LOG.info(String.format("%s %s is now on %s %s friends list."), id);
-    //        } catch (Exception e) {
-    //            LOG.error(String.format("Attempt to find a user with id %d friends failed.", id));
-    //            LOG.error(e.getMessage());
-    //            return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
-    //        }
-    //
-    //        return new ResponseEntity<>(HttpStatus.OK);
-    //    }
-    //
-    //    @ApiOperation(value = "Getting a user by id", response = Iterable.class)
-    //    @ApiResponses(
-    //            value = {
-    //                    @ApiResponse(code = 200, message = "Successfully retrieved a user"),
-    //                    @ApiResponse(code = 201, message = "Successfully retrieved a user"),
-    //                    @ApiResponse(code = 401, message = "You are not authorized to retrieved a user."),
-    //                    @ApiResponse(
-    //                            code = 403,
-    //                            message = "Accessing the resource you were trying to reach is forbidden"
-    //                    ),
-    //                    @ApiResponse(code = 404, message = "The resource you were trying to reach is not found")
-    //            }
-    //    )
-    //    @GetMapping("/{id}/friends")
-    //    public ResponseEntity findFriends(@PathVariable("id") Long id) {
-    //        LOG.info(String.format("Getting user ID %d friends...", id));
-    //
-    //        List<User> friends;
-    //        try {
-    //            friends = userService.findFriends(id);
-    //            LOG.info("User %d friends found.");
-    //        } catch (Exception e) {
-    //            LOG.error(String.format("Attempt to find a user with id %d friends failed.", id));
-    //            LOG.error(e.getMessage());
-    //            return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
-    //        }
-    //
-    //        return new ResponseEntity<>(friends, HttpStatus.CREATED);
-    //    }
-    //
-    //    @ApiOperation(value = "Getting a user by id", response = Iterable.class)
-    //    @ApiResponses(
-    //            value = {
-    //                    @ApiResponse(code = 200, message = "Successfully retrieved a user"),
-    //                    @ApiResponse(code = 201, message = "Successfully retrieved a user"),
-    //                    @ApiResponse(code = 401, message = "You are not authorized to retrieved a user."),
-    //                    @ApiResponse(
-    //                            code = 403,
-    //                            message = "Accessing the resource you were trying to reach is forbidden"
-    //                    ),
-    //                    @ApiResponse(code = 404, message = "The resource you were trying to reach is not found")
-    //            }
-    //    )
-    //    @DeleteMapping("/{id}/friend/{friendId}")
-    //    public ResponseEntity deleteFriend(
-    //            @PathVariable("id") Long id, @PathVariable("friendId") Long friendId) {
-    //        LOG.info(String.format("Getting user ID %d friends...", id));
-    //
-    //        try {
-    //            userService.deleteFriend(id, friendId);
-    //            LOG.info("User %d friends found.");
-    //        } catch (Exception e) {
-    //            LOG.error(String.format("Attempt to find a user with id %d friends failed.", id));
-    //            LOG.error(e.getMessage());
-    //            return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
-    //        }
-    //
-    //        return new ResponseEntity<>(HttpStatus.OK);
-    //    }
+    @ApiOperation(value = "Getting a user by id", response = Iterable.class)
+    @ApiResponses(
+            value = {
+                    @ApiResponse(code = 200, message = "Successfully retrieved a user"),
+                    @ApiResponse(code = 201, message = "Successfully retrieved a user"),
+                    @ApiResponse(code = 401, message = "You are not authorized to retrieved a user."),
+                    @ApiResponse(
+                            code = 403,
+                            message = "Accessing the resource you were trying to reach is forbidden"
+                    ),
+                    @ApiResponse(code = 404, message = "The resource you were trying to reach is not found")
+            }
+    )
+    @PostMapping(value = "/{id}/friend/{friendId}", params = {"id"})
+    public ResponseEntity givenUserIdAddFriend(
+            @PathVariable("id") Long id, @PathVariable Long friendId) {
+        LOG.info(String.format("Adding user ID %d friend ID...", id));
+
+        try {
+            User user = userService.findUser(id);
+            userService.addFriend(user, friendId);
+            LOG.info(String.format("%s %s is now on %s %s friends list.", user.getFirstName(), user.getSurname()));
+        } catch (Exception e) {
+            LOG.error(String.format("Attempt to find a user with id %d friends failed.", id));
+            LOG.error(e.getMessage());
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @ApiOperation(value = "Getting a user by id", response = Iterable.class)
+    @ApiResponses(
+            value = {
+                    @ApiResponse(code = 200, message = "Successfully retrieved a user"),
+                    @ApiResponse(code = 201, message = "Successfully retrieved a user"),
+                    @ApiResponse(code = 401, message = "You are not authorized to retrieved a user."),
+                    @ApiResponse(
+                            code = 403,
+                            message = "Accessing the resource you were trying to reach is forbidden"
+                    ),
+                    @ApiResponse(code = 404, message = "The resource you were trying to reach is not found")
+            }
+    )
+    @PostMapping(value = "/email/{emailAddress}/friend/{friendId}", params = {"emailAddress"})
+    public ResponseEntity givenUserEmailAddressAddFriend(
+            @PathVariable("id") String emailAddress, @PathVariable Long friendId) {
+        LOG.info(String.format("Adding %s friend ID...", emailAddress));
+
+        try {
+            User user = userService.findUser(emailAddress);
+            userService.addFriend(user, friendId);
+            LOG.info(String.format("%s %s is now on %s %s friends list.", user.getFirstName(), user.getSurname()));
+        } catch (Exception e) {
+            LOG.error(String.format("Attempt to find %s friends failed.", emailAddress));
+            LOG.error(e.getMessage());
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @ApiOperation(value = "Getting a user by id", response = Iterable.class)
+    @ApiResponses(
+            value = {
+                    @ApiResponse(code = 200, message = "Successfully retrieved a user"),
+                    @ApiResponse(code = 201, message = "Successfully retrieved a user"),
+                    @ApiResponse(code = 401, message = "You are not authorized to retrieved a user."),
+                    @ApiResponse(
+                            code = 403,
+                            message = "Accessing the resource you were trying to reach is forbidden"
+                    ),
+                    @ApiResponse(code = 404, message = "The resource you were trying to reach is not found")
+            }
+    )
+    @GetMapping("/{id}/friends")
+    public ResponseEntity givenUserIdFindAllFriends(@PathVariable("id") Long id) {
+        LOG.info(String.format("Getting user ID %d friends...", id));
+
+        List<User> friends;
+        try {
+            friends = userService.findFriends(id);
+            LOG.info("User %d friends found.");
+        } catch (Exception e) {
+            LOG.error(String.format("Attempt to find a user with id %d friends failed.", id));
+            LOG.error(e.getMessage());
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+
+        return new ResponseEntity<>(friends, HttpStatus.CREATED);
+    }
+
+    @ApiOperation(value = "Getting a user by id", response = Iterable.class)
+    @ApiResponses(
+            value = {
+                    @ApiResponse(code = 200, message = "Successfully retrieved a user"),
+                    @ApiResponse(code = 201, message = "Successfully retrieved a user"),
+                    @ApiResponse(code = 401, message = "You are not authorized to retrieved a user."),
+                    @ApiResponse(
+                            code = 403,
+                            message = "Accessing the resource you were trying to reach is forbidden"
+                    ),
+                    @ApiResponse(code = 404, message = "The resource you were trying to reach is not found")
+            }
+    )
+    @GetMapping("/email/{emailAddress}/friends")
+    public ResponseEntity givenUserEmailAddressFindAllFriends(@PathVariable("id") Long id) {
+        LOG.info(String.format("Getting user ID %d friends...", id));
+
+        List<User> friends;
+        try {
+            friends = userService.findFriends(id);
+            LOG.info("User %d friends found.");
+        } catch (Exception e) {
+            LOG.error(String.format("Attempt to find a user with id %d friends failed.", id));
+            LOG.error(e.getMessage());
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+
+        return new ResponseEntity<>(friends, HttpStatus.CREATED);
+    }
+
+    @ApiOperation(value = "Getting a user by id", response = Iterable.class)
+    @ApiResponses(
+            value = {
+                    @ApiResponse(code = 200, message = "Successfully retrieved a user"),
+                    @ApiResponse(code = 201, message = "Successfully retrieved a user"),
+                    @ApiResponse(code = 401, message = "You are not authorized to retrieved a user."),
+                    @ApiResponse(
+                            code = 403,
+                            message = "Accessing the resource you were trying to reach is forbidden"
+                    ),
+                    @ApiResponse(code = 404, message = "The resource you were trying to reach is not found")
+            }
+    )
+    @DeleteMapping("/{id}/friend/{friendId}")
+    public ResponseEntity deleteFriend(
+            @PathVariable("id") Long id, @PathVariable("friendId") Long friendId) {
+        LOG.info(String.format("Getting user ID %d friends...", id));
+
+        try {
+            userService.deleteFriend(id, friendId);
+            LOG.info("User %d friends found.");
+        } catch (Exception e) {
+            LOG.error(String.format("Attempt to find a user with id %d friends failed.", id));
+            LOG.error(e.getMessage());
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
 
     private void updateUserPassword(User user, String oldPassword, String newPassword) {
         LOG.info(String.format("Updating %s %s password...", user.getFirstName(), user.getSurname()));

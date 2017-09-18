@@ -14,6 +14,7 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 
+import nz.co.mircle.v1.api.feeds.model.Feed;
 import nz.co.mircle.v1.api.profileImage.services.ProfileImageService;
 import nz.co.mircle.v1.api.user.model.User;
 import nz.co.mircle.v1.api.user.services.UserService;
@@ -506,6 +507,36 @@ public class UserController {
 
         return new ResponseEntity<>(HttpStatus.OK);
     }
+
+    /*@ApiOperation(value = "Getting a user by id", response = Iterable.class)
+    @ApiResponses(
+            value = {
+                    @ApiResponse(code = 200, message = "Successfully retrieved a user"),
+                    @ApiResponse(code = 201, message = "Successfully retrieved a user"),
+                    @ApiResponse(code = 401, message = "You are not authorized to retrieved a user."),
+                    @ApiResponse(
+                            code = 403,
+                            message = "Accessing the resource you were trying to reach is forbidden"
+                    ),
+                    @ApiResponse(code = 404, message = "The resource you were trying to reach is not found")
+            }
+    )
+    @PostMapping("/{id}/feed")
+    public ResponseEntity givenUserIdFindAllFriends(@PathVariable("id") Long id, @RequestBody Feed feed) {
+        LOG.info(String.format("Uploading feed..."));
+
+        User user = userService.findUser(id);
+        try {
+            userService.addFeed(feed);
+            LOG.info("User %d friends found.");
+        } catch (Exception e) {
+            LOG.error(String.format("Attempt to find a user with id %d friends failed.", id));
+            LOG.error(e.getMessage());
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+
+        return new ResponseEntity<>(friends, HttpStatus.CREATED);
+    }*/
 
     private void updateUserPassword(User user, String oldPassword, String newPassword) {
         LOG.info(String.format("Updating %s %s password...", user.getFirstName(), user.getSurname()));

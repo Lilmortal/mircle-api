@@ -9,7 +9,7 @@ import nz.co.mircle.v1.api.user.model.User;
 import org.codehaus.jackson.annotate.JsonIgnore;
 
 @Entity
-@Table(name = "feeds")
+@Table(name = "feed")
 public class Feed implements Serializable {
   @Id
   @GeneratedValue(strategy = GenerationType.AUTO)

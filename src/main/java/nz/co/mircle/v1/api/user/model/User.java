@@ -93,7 +93,7 @@ public class User {
     @ApiModelProperty(notes = "Friend", required = true)
     private User friend;
 
-    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "friend", fetch = FetchType.LAZY)
     private List<User> friends;
 
     @OneToMany(mappedBy = "feed", fetch = FetchType.LAZY)

@@ -13,6 +13,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.Set;
 
 import nz.co.mircle.v1.api.feeds.model.Feed;
 import nz.co.mircle.v1.api.profileImage.services.ProfileImageService;
@@ -369,15 +370,16 @@ public class UserController {
                     @ApiResponse(code = 404, message = "The resource you were trying to reach is not found")
             }
     )
-    @PostMapping(value = "/{id}/friend/{friendId}", params = {"id"})
+    @PostMapping(value = "/{id}/friend/{friendId}")
     public ResponseEntity givenUserIdAddFriend(
             @PathVariable("id") Long id, @PathVariable Long friendId) {
         LOG.info(String.format("Adding user ID %d friend ID...", id));
 
         try {
             User user = userService.findUser(id);
-            userService.addFriend(user, friendId);
-            LOG.info(String.format("%s %s is now on %s %s friends list.", user.getFirstName(), user.getSurname()));
+            User friend = userService.findUser(friendId);
+            userService.addFriend(user, friend);
+            LOG.info(String.format("%s %s is now on %s %s friends list.", friend.getFirstName(), friend.getSurname(), user.getFirstName(), user.getSurname()));
         } catch (Exception e) {
             LOG.error(String.format("Attempt to find a user with id %d friends failed.", id));
             LOG.error(e.getMessage());
@@ -400,15 +402,16 @@ public class UserController {
                     @ApiResponse(code = 404, message = "The resource you were trying to reach is not found")
             }
     )
-    @PostMapping(value = "/email/{emailAddress}/friend/{friendId}", params = {"emailAddress"})
+    @PostMapping(value = "/email/{emailAddress}/friend/{friendId}")
     public ResponseEntity givenUserEmailAddressAddFriend(
             @PathVariable("id") String emailAddress, @PathVariable Long friendId) {
         LOG.info(String.format("Adding %s friend ID...", emailAddress));
 
         try {
             User user = userService.findUser(emailAddress);
-            userService.addFriend(user, friendId);
-            LOG.info(String.format("%s %s is now on %s %s friends list.", user.getFirstName(), user.getSurname()));
+            User friend = userService.findUser(friendId);
+            userService.addFriend(user, friend);
+            LOG.info(String.format("%s %s is now on %s %s friends list.", friend.getFirstName(), friend.getSurname(), user.getFirstName(), user.getSurname()));
         } catch (Exception e) {
             LOG.error(String.format("Attempt to find %s friends failed.", emailAddress));
             LOG.error(e.getMessage());
@@ -435,17 +438,17 @@ public class UserController {
     public ResponseEntity givenUserIdFindAllFriends(@PathVariable("id") Long id) {
         LOG.info(String.format("Getting user ID %d friends...", id));
 
-        List<User> friends;
+        Set<User> friends;
         try {
             friends = userService.findFriends(id);
-            LOG.info("User %d friends found.");
+            LOG.info(String.format("User %d friends found.", id));
         } catch (Exception e) {
             LOG.error(String.format("Attempt to find a user with id %d friends failed.", id));
             LOG.error(e.getMessage());
             return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
 
-        return new ResponseEntity<>(friends, HttpStatus.CREATED);
+        return new ResponseEntity<>(friends, HttpStatus.OK);
     }
 
     @ApiOperation(value = "Getting a user by id", response = Iterable.class)
@@ -465,17 +468,17 @@ public class UserController {
     public ResponseEntity givenUserEmailAddressFindAllFriends(@PathVariable("id") Long id) {
         LOG.info(String.format("Getting user ID %d friends...", id));
 
-        List<User> friends;
+        Set<User> friends;
         try {
             friends = userService.findFriends(id);
-            LOG.info("User %d friends found.");
+            LOG.info(String.format("User %d friends found.", id));
         } catch (Exception e) {
             LOG.error(String.format("Attempt to find a user with id %d friends failed.", id));
             LOG.error(e.getMessage());
             return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
 
-        return new ResponseEntity<>(friends, HttpStatus.CREATED);
+        return new ResponseEntity<>(friends, HttpStatus.OK);
     }
 
     @ApiOperation(value = "Getting a user by id", response = Iterable.class)

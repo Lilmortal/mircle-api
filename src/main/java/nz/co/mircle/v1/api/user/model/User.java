@@ -5,6 +5,7 @@ import io.swagger.annotations.ApiModelProperty;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Set;
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 
@@ -87,14 +88,16 @@ public class User {
     @OneToOne(cascade = CascadeType.ALL)
     private ProfileImage profileImage;
 
-    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @JsonIgnore
-    @JoinColumn(name = "friend_id")
-    @ApiModelProperty(notes = "Friend", required = true)
-    private User friend;
+    @ManyToMany
+    @JoinTable(name = "user_friends")
+    @JoinColumns({
+            @JoinColumn(name = "user_id", referencedColumnName = "id"),
+            @JoinColumn(name = "friend_id", referencedColumnName = "id")
+    })
+    private Set<User> friends;
 
-    @OneToMany(mappedBy = "friend", fetch = FetchType.LAZY)
-    private List<User> friends;
+    /*@ManyToMany(mappedBy = "friends")
+    private Set<User> userFriends;*/
 
     @OneToMany(mappedBy = "id", fetch = FetchType.LAZY)
     private List<Feed> feeds;
@@ -103,7 +106,7 @@ public class User {
     public User() {
     }
 
-    public User(String emailAddress, String password, String firstName, String surname, String gender, String phoneNumber, LocalDateTime birthDate, String occupation, LocalDateTime createdOn, LocalDateTime lastLoggedIn, boolean loggedIn, ProfileImage profileImage, List<User> friends, List<Feed> feeds) {
+    public User(String emailAddress, String password, String firstName, String surname, String gender, String phoneNumber, LocalDateTime birthDate, String occupation, LocalDateTime createdOn, LocalDateTime lastLoggedIn, boolean loggedIn, ProfileImage profileImage, Set<User> friends, List<Feed> feeds) {
         this.emailAddress = emailAddress;
         this.password = password;
         this.firstName = firstName;
@@ -232,11 +235,11 @@ public class User {
         this.profileImage = profileImage;
     }
 
-    public List<User> getFriends() {
+    public Set<User> getFriends() {
         return friends;
     }
 
-    public void setFriends(List<User> friends) {
+    public void setFriends(Set<User> friends) {
         this.friends = friends;
     }
 

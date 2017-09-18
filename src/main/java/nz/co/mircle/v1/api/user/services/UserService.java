@@ -1,7 +1,8 @@
 package nz.co.mircle.v1.api.user.services;
 
 import java.net.URL;
-import java.util.List;
+import java.util.Set;
+
 import nz.co.mircle.v1.api.user.model.User;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 
@@ -19,9 +20,9 @@ public interface UserService {
 
   void deleteUser(User user);
 
-  void addFriend(User user, Long friendId);
+  void addFriend(User user, User friend);
 
-  List<User> findFriends(Long id);
+  Set<User> findFriends(Long id);
 
   void deleteFriend(Long id, Long friendId);
 }

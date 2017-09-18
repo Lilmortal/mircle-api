@@ -3,7 +3,7 @@ package nz.co.mircle.v1.api.user.services;
 import com.amazonaws.AmazonServiceException;
 
 import java.net.URL;
-import java.util.List;
+import java.util.Set;
 
 import nz.co.mircle.v1.api.profileImage.model.ProfileImage;
 import nz.co.mircle.v1.api.profileImage.services.ProfileImageService;
@@ -89,17 +89,15 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void addFriend(User user, Long friendId) {
-        User friend = userRepository.findById(friendId);
+    public void addFriend(User user, User friend) {
         user.getFriends().add(friend);
         userRepository.save(user);
     }
 
     @Override
-    public List<User> findFriends(Long id) {
+    public Set<User> findFriends(Long id) {
         User user = userRepository.findById(id);
-        //return user.getFriends();
-        return null;
+        return user.getFriends();
     }
 
     @Override

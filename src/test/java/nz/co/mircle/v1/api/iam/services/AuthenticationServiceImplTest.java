@@ -120,7 +120,7 @@ public class AuthenticationServiceImplTest {
     }
 
     private User populateUser() {
-        User user = new User(EMAIL_ADDRESS, PASSWORD, FIRST_NAME, SURNAME, GENDER, PHONE_NUMBER, BIRTH_DATE, OCCUPATION, CREATED_ON, LAST_LOGGED_IN, IS_LOGGED_IN, profileImage);
+        User user = new User(EMAIL_ADDRESS, PASSWORD, FIRST_NAME, SURNAME, GENDER, PHONE_NUMBER, BIRTH_DATE, OCCUPATION, CREATED_ON, LAST_LOGGED_IN, IS_LOGGED_IN, profileImage, null, null);
         user.setId(ID);
         user.setUsername(USERNAME);
         return user;

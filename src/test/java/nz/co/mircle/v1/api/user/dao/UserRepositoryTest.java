@@ -99,18 +99,19 @@ public class UserRepositoryTest {
 
     private User populateUser() {
         User user = new User(
-                        EMAIL_ADDRESS,
-                        PASSWORD,
-                        FIRST_NAME,
-                        SURNAME,
-                        GENDER,
-                        PHONE_NUMBER,
-                        BIRTH_DATE,
-                        OCCUPATION,
-                        CREATED_ON,
-                        LAST_LOGGED_IN,
-                        LOGGED_IN,
-                        profileImage);
+                EMAIL_ADDRESS,
+                PASSWORD,
+                FIRST_NAME,
+                SURNAME,
+                GENDER,
+                PHONE_NUMBER,
+                BIRTH_DATE,
+                OCCUPATION,
+                CREATED_ON,
+                LAST_LOGGED_IN,
+                LOGGED_IN,
+                profileImage,
+                null, null);
         user.setUsername(USERNAME);
         return user;
     }

@@ -89,11 +89,19 @@ public class AuthenticationControllerTest {
     }
 
     @Test
-    public void validateIfUserExist() throws Exception {
-        when(userService.findUser(EMAIL_ADDRESS)).thenReturn(user);
+    public void givenInvalidUserValidateThatItDoesNotExist() throws Exception {
+        when(userService.findUser(EMAIL_ADDRESS)).thenReturn(null);
 
         mvc.perform(get(String.format("/register/user/validate?emailAddress=%s", EMAIL_ADDRESS)))
                 .andExpect(status().isOk());
+    }
+
+    @Test
+    public void givenUserValidateThatItExist() throws Exception {
+        when(userService.findUser(EMAIL_ADDRESS)).thenReturn(user);
+
+        mvc.perform(get(String.format("/register/user/validate?emailAddress=%s", EMAIL_ADDRESS)))
+                .andExpect(status().is5xxServerError());
     }
 
     @Test
@@ -138,7 +146,7 @@ public class AuthenticationControllerTest {
     private User populateUser() {
         //TODO
         // Have to set LocalDateTime to null for now as there is an issue converting it to JSON, fix later.
-        User user = new User(EMAIL_ADDRESS, PASSWORD, FIRST_NAME, SURNAME, GENDER, PHONE_NUMBER, null, OCCUPATION, null, null, IS_LOGGED_IN, null);
+        User user = new User(EMAIL_ADDRESS, PASSWORD, FIRST_NAME, SURNAME, GENDER, PHONE_NUMBER, null, OCCUPATION, null, null, IS_LOGGED_IN, null, null, null);
         user.setId(ID);
         user.setUsername(USERNAME);
         return user;
@@ -161,6 +169,8 @@ public class AuthenticationControllerTest {
         sb.append(String.format("\"lastLoggedIn\":\"%s\",", user.getLastLoggedIn()));
         sb.append(String.format("\"loggedIn\":%b,", user.isLoggedIn()));
         sb.append(String.format("\"profileImage\":%s", user.getProfileImage()));
+        sb.append(String.format("\"friends\":%s", user.getFriends()));
+        sb.append(String.format("\"feeds\":%s", user.getFeeds()));
         sb.append("}");
         return sb.toString();
     }

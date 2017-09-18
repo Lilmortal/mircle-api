@@ -151,7 +151,7 @@ public class UserServiceImplTest {
     }
 
     private User populateUser() {
-        User user = new User(EMAIL_ADDRESS, PASSWORD, FIRST_NAME, SURNAME, GENDER, PHONE_NUMBER, BIRTH_DATE, OCCUPATION, CREATED_ON, LAST_LOGGED_IN, IS_LOGGED_IN, profileImage);
+        User user = new User(EMAIL_ADDRESS, PASSWORD, FIRST_NAME, SURNAME, GENDER, PHONE_NUMBER, BIRTH_DATE, OCCUPATION, CREATED_ON, LAST_LOGGED_IN, IS_LOGGED_IN, profileImage, null, null);
         user.setId(ID);
         user.setUsername(USERNAME);
         return user;
@@ -174,6 +174,8 @@ public class UserServiceImplTest {
         sb.append(String.format("\"lastLoggedIn\":\"%s\",", user.getLastLoggedIn()));
         sb.append(String.format("\"loggedIn\":%b,", user.isLoggedIn()));
         sb.append(String.format("\"profileImage\":%s", user.getProfileImage()));
+        sb.append(String.format("\"friends\":%s", user.getFriends()));
+        sb.append(String.format("\"feeds\":%s", user.getFeeds()));
         sb.append("}");
         return sb.toString();
     }

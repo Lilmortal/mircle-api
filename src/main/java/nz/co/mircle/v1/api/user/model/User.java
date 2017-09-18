@@ -96,16 +96,15 @@ public class User {
     @OneToMany(mappedBy = "friend", fetch = FetchType.LAZY)
     private List<User> friends;
 
-    @OneToMany(mappedBy = "feed", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "id", fetch = FetchType.LAZY)
     private List<Feed> feeds;
 
     // no args constructor needed for hibernate
     public User() {
     }
 
-    public User(String emailAddress, String username, String password, String firstName, String surname, String gender, String phoneNumber, LocalDateTime birthDate, String occupation, LocalDateTime createdOn, LocalDateTime lastLoggedIn, boolean loggedIn, ProfileImage profileImage, User friend, List<User> friends, List<Feed> feeds) {
+    public User(String emailAddress, String password, String firstName, String surname, String gender, String phoneNumber, LocalDateTime birthDate, String occupation, LocalDateTime createdOn, LocalDateTime lastLoggedIn, boolean loggedIn, ProfileImage profileImage, List<User> friends, List<Feed> feeds) {
         this.emailAddress = emailAddress;
-        this.username = username;
         this.password = password;
         this.firstName = firstName;
         this.surname = surname;
@@ -117,7 +116,6 @@ public class User {
         this.lastLoggedIn = lastLoggedIn;
         this.loggedIn = loggedIn;
         this.profileImage = profileImage;
-        this.friend = friend;
         this.friends = friends;
         this.feeds = feeds;
     }
@@ -232,14 +230,6 @@ public class User {
 
     public void setProfileImage(ProfileImage profileImage) {
         this.profileImage = profileImage;
-    }
-
-    public User getFriend() {
-        return friend;
-    }
-
-    public void setFriend(User friend) {
-        this.friend = friend;
     }
 
     public List<User> getFriends() {

@@ -91,14 +91,16 @@ public class ProfileImageController {
                     @ApiResponse(code = 404, message = "The resource you were trying to reach is not found")
             }
     )
-    @PostMapping(value = "/upload/s3", params = {"id"})
-    public ResponseEntity givenIdUploadProfileImageToS3(
-            @RequestParam("profileImage") MultipartFile profileImage,
-            @RequestParam("id") Long id) {
+    @PostMapping(value = "/{id}/upload/s3")
+    public ResponseEntity uploadProfileImageToS3(
+            @RequestParam("profileimage") MultipartFile profileImage,
+            @PathVariable("id") Long id) {
         URL uploadedProfileImage;
         try {
             User user = userService.findUser(id);
-            uploadedProfileImage = uploadProfileImageToS3(profileImage, user.getEmailAddress());
+            LOG.info(String.format("Uploading %s profile image to AWS S3 ...", user.getEmailAddress()));
+            uploadedProfileImage = profileImageService.uploadProfileImageToS3(profileImage, user.getEmailAddress());
+            LOG.info(String.format("Profile image successfully uploaded."));
         } catch (IOException e) {
             LOG.error("There is an error attempting to upload profile image to AWS S3.");
             LOG.error(e.getMessage());
@@ -106,44 +108,5 @@ public class ProfileImageController {
         }
 
         return new ResponseEntity<>(uploadedProfileImage, HttpStatus.OK);
-    }
-
-    @ApiOperation(value = "Upload a profile image to S3", response = Iterable.class)
-    @ApiResponses(
-            value = {
-                    @ApiResponse(code = 200, message = "Successfully upload a profile image to S3"),
-                    @ApiResponse(code = 201, message = "Successfully upload a profile image to S3"),
-                    @ApiResponse(
-                            code = 401,
-                            message = "You are not authorized to upload a profile image to AWS S3."
-                    ),
-                    @ApiResponse(
-                            code = 403,
-                            message = "Accessing the resource you were trying to reach is forbidden"
-                    ),
-                    @ApiResponse(code = 404, message = "The resource you were trying to reach is not found")
-            }
-    )
-    @PostMapping(value = "/upload/s3", params = {"emailAddress"})
-    public ResponseEntity givenEmailAddressUploadProfileImageToS3(
-            @RequestParam("profileImage") MultipartFile profileImage,
-            @RequestParam("emailAddress") String emailAddress) {
-        URL uploadedProfileImage;
-        try {
-            uploadedProfileImage = uploadProfileImageToS3(profileImage, emailAddress);
-        } catch (IOException e) {
-            LOG.error("There is an error attempting to upload profile image to AWS S3.");
-            LOG.error(e.getMessage());
-            return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-
-        return new ResponseEntity<>(uploadedProfileImage, HttpStatus.OK);
-    }
-
-    private URL uploadProfileImageToS3(MultipartFile profileImage, String emailAddress) throws IOException {
-        LOG.info(String.format("Uploading %s profile image to AWS S3 ...", emailAddress));
-        URL uploadedProfileImage = profileImageService.uploadProfileImageToS3(profileImage, emailAddress);
-        LOG.info(String.format("Profile image successfully uploaded."));
-        return uploadedProfileImage;
     }
 }

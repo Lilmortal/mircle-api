@@ -3,6 +3,7 @@ package nz.co.mircle.v1.api.user.services;
 import java.net.URL;
 import java.util.Set;
 
+import nz.co.mircle.v1.api.feeds.model.Feed;
 import nz.co.mircle.v1.api.user.model.User;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 
@@ -25,4 +26,8 @@ public interface UserService {
   Set<User> findFriends(Long id);
 
   void deleteFriend(Long id, Long friendId);
+
+  void addFeed(Long id, Feed feed);
+
+  Set<Feed> findFeeds(Long id);
 }

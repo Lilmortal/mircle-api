@@ -9,7 +9,7 @@ import nz.co.mircle.v1.api.user.model.User;
 import org.codehaus.jackson.annotate.JsonIgnore;
 
 @Entity
-@Table(name = "feed")
+@Table(name = "feeds")
 public class Feed implements Serializable {
   @Id
   @GeneratedValue(strategy = GenerationType.AUTO)
@@ -35,9 +35,6 @@ public class Feed implements Serializable {
   @ApiModelProperty(notes = "First name")
   private String message;
 
-  @OneToOne(cascade = CascadeType.ALL)
-  private User user;
-
   public Feed() {}
 
   public Feed(
@@ -45,14 +42,12 @@ public class Feed implements Serializable {
       String firstName,
       String surname,
       LocalDateTime feedDate,
-      String message,
-      User user) {
+      String message) {
     this.profileImage = profileImage;
     this.firstName = firstName;
     this.surname = surname;
     this.feedDate = feedDate;
     this.message = message;
-    this.user = user;
   }
 
   public Long getId() {
@@ -101,13 +96,5 @@ public class Feed implements Serializable {
 
   public void setMessage(String message) {
     this.message = message;
-  }
-
-  public User getUser() {
-    return user;
-  }
-
-  public void setUser(User user) {
-    this.user = user;
   }
 }

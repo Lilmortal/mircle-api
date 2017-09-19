@@ -85,7 +85,7 @@ public class User {
     @ApiModelProperty(notes = "Is user currently logged in", required = true)
     private boolean loggedIn;
 
-    @OneToOne(cascade = CascadeType.ALL)
+    @OneToOne(cascade = CascadeType.MERGE)
     private ProfileImage profileImage;
 
     @ManyToMany
@@ -96,17 +96,14 @@ public class User {
     })
     private Set<User> friends;
 
-    /*@ManyToMany(mappedBy = "friends")
-    private Set<User> userFriends;*/
-
     @OneToMany(mappedBy = "id", fetch = FetchType.LAZY)
-    private List<Feed> feeds;
+    private Set<Feed> feeds;
 
     // no args constructor needed for hibernate
     public User() {
     }
 
-    public User(String emailAddress, String password, String firstName, String surname, String gender, String phoneNumber, LocalDateTime birthDate, String occupation, LocalDateTime createdOn, LocalDateTime lastLoggedIn, boolean loggedIn, ProfileImage profileImage, Set<User> friends, List<Feed> feeds) {
+    public User(String emailAddress, String password, String firstName, String surname, String gender, String phoneNumber, LocalDateTime birthDate, String occupation, LocalDateTime createdOn, LocalDateTime lastLoggedIn, boolean loggedIn, ProfileImage profileImage, Set<User> friends, Set<Feed> feeds) {
         this.emailAddress = emailAddress;
         this.password = password;
         this.firstName = firstName;
@@ -243,11 +240,11 @@ public class User {
         this.friends = friends;
     }
 
-    public List<Feed> getFeeds() {
+    public Set<Feed> getFeeds() {
         return feeds;
     }
 
-    public void setFeeds(List<Feed> feeds) {
+    public void setFeeds(Set<Feed> feeds) {
         this.feeds = feeds;
     }
 }

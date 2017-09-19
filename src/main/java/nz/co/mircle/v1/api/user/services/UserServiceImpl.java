@@ -5,6 +5,7 @@ import com.amazonaws.AmazonServiceException;
 import java.net.URL;
 import java.util.Set;
 
+import nz.co.mircle.v1.api.feeds.model.Feed;
 import nz.co.mircle.v1.api.profileImage.model.ProfileImage;
 import nz.co.mircle.v1.api.profileImage.services.ProfileImageService;
 import nz.co.mircle.v1.api.user.dao.UserRepository;
@@ -104,7 +105,20 @@ public class UserServiceImpl implements UserService {
     public void deleteFriend(Long id, Long friendId) {
         User user = userRepository.findById(id);
         User friend = userRepository.findById(friendId);
-        //user.getFriends().remove(friend);
+        user.getFriends().remove(friend);
         userRepository.save(user);
+    }
+
+    @Override
+    public void addFeed(Long id, Feed feed) {
+        User user = userRepository.findById(id);
+        user.getFeeds().add(feed);
+        userRepository.save(user);
+    }
+
+    @Override
+    public Set<Feed> findFeeds(Long id) {
+        User user = userRepository.findById(id);
+        return user.getFeeds();
     }
 }

@@ -511,12 +511,12 @@ public class UserController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    /*@ApiOperation(value = "Getting a user by id", response = Iterable.class)
+    @ApiOperation(value = "Add feed", response = Iterable.class)
     @ApiResponses(
             value = {
-                    @ApiResponse(code = 200, message = "Successfully retrieved a user"),
-                    @ApiResponse(code = 201, message = "Successfully retrieved a user"),
-                    @ApiResponse(code = 401, message = "You are not authorized to retrieved a user."),
+                    @ApiResponse(code = 200, message = "Successfully add feed"),
+                    @ApiResponse(code = 201, message = "Successfully add feed"),
+                    @ApiResponse(code = 401, message = "You are not authorized to add feed."),
                     @ApiResponse(
                             code = 403,
                             message = "Accessing the resource you were trying to reach is forbidden"
@@ -525,21 +525,50 @@ public class UserController {
             }
     )
     @PostMapping("/{id}/feed")
-    public ResponseEntity givenUserIdFindAllFriends(@PathVariable("id") Long id, @RequestBody Feed feed) {
-        LOG.info(String.format("Uploading feed..."));
+    public ResponseEntity addFeed(@PathVariable("id") Long id, @RequestBody Feed feed) {
+        LOG.info("Adding feed...");
 
-        User user = userService.findUser(id);
         try {
-            userService.addFeed(feed);
-            LOG.info("User %d friends found.");
-        } catch (Exception e) {
-            LOG.error(String.format("Attempt to find a user with id %d friends failed.", id));
+            userService.addFeed(id, feed);
+        } catch (AmazonServiceException e) {
+            LOG.error("Failed to add feed.");
             LOG.error(e.getMessage());
             return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
 
-        return new ResponseEntity<>(friends, HttpStatus.CREATED);
-    }*/
+        LOG.info("Feed successfully added.");
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @ApiOperation(value = "Get feed", response = Iterable.class)
+    @ApiResponses(
+            value = {
+                    @ApiResponse(code = 200, message = "Successfully add feed"),
+                    @ApiResponse(code = 201, message = "Successfully add feed"),
+                    @ApiResponse(code = 401, message = "You are not authorized to add feed."),
+                    @ApiResponse(
+                            code = 403,
+                            message = "Accessing the resource you were trying to reach is forbidden"
+                    ),
+                    @ApiResponse(code = 404, message = "The resource you were trying to reach is not found")
+            }
+    )
+    @GetMapping("/{id}/feeds")
+    public ResponseEntity getFeeds(@RequestParam Long id) {
+        LOG.info(String.format("Getting feed from user ID %d..."), id);
+
+        Set<Feed> feeds;
+        try {
+            feeds = userService.findFeeds(id);
+        } catch (AmazonServiceException e) {
+            LOG.error("Failed to get feeds.");
+            LOG.error(e.getMessage());
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+
+        LOG.info("Feeds successfully retrieved.");
+        return new ResponseEntity<>(feeds, HttpStatus.OK);
+    }
 
     private void updateUserPassword(User user, String oldPassword, String newPassword) {
         LOG.info(String.format("Updating %s %s password...", user.getFirstName(), user.getSurname()));

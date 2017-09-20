@@ -96,7 +96,8 @@ public class User {
     })
     private Set<User> friends;
 
-    @OneToMany(mappedBy = "id", fetch = FetchType.LAZY)
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JoinColumn(name = "feed_id")
     private Set<Feed> feeds;
 
     // no args constructor needed for hibernate

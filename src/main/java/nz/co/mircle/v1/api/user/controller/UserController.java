@@ -93,7 +93,7 @@ public class UserController {
             }
     )
     @GetMapping("/email/{emailAddress:.+}")
-    public ResponseEntity getUserByEmailAddress(@PathVariable("emailaddress") String emailAddress) {
+    public ResponseEntity getUserByEmailAddress(@PathVariable("emailAddress") String emailAddress) {
         LOG.info(String.format("Getting %s details...", emailAddress));
 
         User user;
@@ -418,8 +418,8 @@ public class UserController {
             }
     )
     @GetMapping("/{id}/feeds")
-    public ResponseEntity getFeeds(@RequestParam Long id) {
-        LOG.info(String.format("Getting feed from user ID %d..."), id);
+    public ResponseEntity getFeeds(@PathVariable Long id) {
+        LOG.info(String.format("Getting feed from user ID %d...", id));
 
         Set<Feed> feeds;
         try {

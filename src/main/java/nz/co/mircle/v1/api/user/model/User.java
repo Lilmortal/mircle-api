@@ -1,18 +1,14 @@
 package nz.co.mircle.v1.api.user.model;
 
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import io.swagger.annotations.ApiModelProperty;
 
 import java.time.LocalDateTime;
-import java.util.List;
 import java.util.Set;
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 
 import nz.co.mircle.v1.api.feeds.model.Feed;
 import nz.co.mircle.v1.api.profileImage.model.ProfileImage;
-import org.codehaus.jackson.annotate.JsonIgnore;
-import org.codehaus.jackson.annotate.JsonProperty;
 
 /**
  * User entity.
@@ -88,13 +84,12 @@ public class User {
     @OneToOne(cascade = CascadeType.MERGE)
     private ProfileImage profileImage;
 
-    @ManyToMany
-    @JoinTable(name = "user_friends")
+    @OneToMany
     @JoinColumns({
-            @JoinColumn(name = "user_id", referencedColumnName = "id"),
-            @JoinColumn(name = "friend_id", referencedColumnName = "id")
+            @JoinColumn(name = "user_id", referencedColumnName = "user"),
+            @JoinColumn(name = "friend_id", referencedColumnName = "friend")
     })
-    private Set<User> friends;
+    private Set<Friend> friends;
 
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name = "feed_id")
@@ -104,7 +99,7 @@ public class User {
     public User() {
     }
 
-    public User(String emailAddress, String password, String firstName, String surname, String gender, String phoneNumber, LocalDateTime birthDate, String occupation, LocalDateTime createdOn, LocalDateTime lastLoggedIn, boolean loggedIn, ProfileImage profileImage, Set<User> friends, Set<Feed> feeds) {
+    public User(String emailAddress, String password, String firstName, String surname, String gender, String phoneNumber, LocalDateTime birthDate, String occupation, LocalDateTime createdOn, LocalDateTime lastLoggedIn, boolean loggedIn, ProfileImage profileImage, Set<Friend> friends, Set<Feed> feeds) {
         this.emailAddress = emailAddress;
         this.password = password;
         this.firstName = firstName;
@@ -233,11 +228,11 @@ public class User {
         this.profileImage = profileImage;
     }
 
-    public Set<User> getFriends() {
+    public Set<Friend> getFriends() {
         return friends;
     }
 
-    public void setFriends(Set<User> friends) {
+    public void setFriends(Set<Friend> friends) {
         this.friends = friends;
     }
 

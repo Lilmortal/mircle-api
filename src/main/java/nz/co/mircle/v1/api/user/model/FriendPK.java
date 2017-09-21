@@ -1,15 +1,25 @@
 package nz.co.mircle.v1.api.user.model;
 
-import javax.persistence.Column;
-import javax.persistence.Embeddable;
+
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
+
+import javax.persistence.*;
 import java.io.Serializable;
 
 @Embeddable
+@JsonIdentityInfo(
+        generator = ObjectIdGenerators.PropertyGenerator.class,
+        property = "friend")
 public class FriendPK implements Serializable {
-    @Column(name = "user")
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id")
     private User user;
 
-    @Column(name = "friend")
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "friend_id")
     private User friend;
 
     public FriendPK() {

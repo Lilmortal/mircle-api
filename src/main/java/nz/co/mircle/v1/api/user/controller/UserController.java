@@ -17,6 +17,7 @@ import java.util.Set;
 
 import nz.co.mircle.v1.api.feeds.model.Feed;
 import nz.co.mircle.v1.api.profileImage.services.ProfileImageService;
+import nz.co.mircle.v1.api.user.model.Friend;
 import nz.co.mircle.v1.api.user.model.User;
 import nz.co.mircle.v1.api.user.services.UserService;
 import org.apache.commons.lang3.StringUtils;
@@ -332,7 +333,7 @@ public class UserController {
     public ResponseEntity findAllFriends(@PathVariable("id") Long id) {
         LOG.info(String.format("Getting user ID %d friends...", id));
 
-        Set<User> friends;
+        Set<Friend> friends;
         try {
             friends = userService.findFriends(id);
             LOG.info(String.format("User %d friends found.", id));

@@ -1,14 +1,17 @@
 package nz.co.mircle.v1.api.user.model;
 
-import javax.persistence.Column;
-import javax.persistence.EmbeddedId;
-import javax.persistence.Entity;
+import javax.persistence.*;
 import java.time.LocalDateTime;
 
 @Entity
+@Table(name ="user_friend")
+@AssociationOverrides({
+        @AssociationOverride(name ="pk.user", joinColumns = @JoinColumn(name ="user_id")),
+        @AssociationOverride(name ="pk.friend", joinColumns = @JoinColumn(name ="friend_id"))
+})
 public class Friend {
     @EmbeddedId
-    private FriendPK id;
+    private FriendPK pk;
 
     @Column(name = "addedTime")
     private LocalDateTime addedTime;
@@ -17,16 +20,16 @@ public class Friend {
     }
 
     public Friend(User user, User friend, LocalDateTime addedTime) {
-        this.id = new FriendPK(user, friend);
+        this.pk = new FriendPK(user, friend);
         this.addedTime = addedTime;
     }
 
-    public FriendPK getId() {
-        return id;
+    public FriendPK getPk() {
+        return pk;
     }
 
-    public void setId(FriendPK id) {
-        this.id = id;
+    public void setPk(FriendPK pk) {
+        this.pk = pk;
     }
 
     public LocalDateTime getAddedTime() {

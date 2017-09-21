@@ -3,12 +3,14 @@ package nz.co.mircle.v1.api.user.services;
 import com.amazonaws.AmazonServiceException;
 
 import java.net.URL;
+import java.time.LocalDateTime;
 import java.util.Set;
 
 import nz.co.mircle.v1.api.feeds.model.Feed;
 import nz.co.mircle.v1.api.profileImage.model.ProfileImage;
 import nz.co.mircle.v1.api.profileImage.services.ProfileImageService;
 import nz.co.mircle.v1.api.user.dao.UserRepository;
+import nz.co.mircle.v1.api.user.model.Friend;
 import nz.co.mircle.v1.api.user.model.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -91,12 +93,14 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void addFriend(User user, User friend) {
-        user.getFriends().add(friend);
+        LocalDateTime addedTime = LocalDateTime.now();
+        Friend userFriend = new Friend(user, friend, addedTime);
+        user.getFriends().add(userFriend);
         userRepository.save(user);
     }
 
     @Override
-    public Set<User> findFriends(Long id) {
+    public Set<Friend> findFriends(Long id) {
         User user = userRepository.findById(id);
         return user.getFriends();
     }

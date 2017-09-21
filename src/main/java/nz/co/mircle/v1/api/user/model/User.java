@@ -1,5 +1,9 @@
 package nz.co.mircle.v1.api.user.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import io.swagger.annotations.ApiModelProperty;
 
 import java.time.LocalDateTime;
@@ -15,6 +19,9 @@ import nz.co.mircle.v1.api.profileImage.model.ProfileImage;
  */
 @Entity
 @Table(name = "usr")
+@JsonIdentityInfo(
+        generator = ObjectIdGenerators.PropertyGenerator.class,
+        property = "id")
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -84,16 +91,12 @@ public class User {
     @OneToOne(cascade = CascadeType.MERGE)
     private ProfileImage profileImage;
 
-    @OneToMany
-    @JoinColumns({
-            @JoinColumn(name = "user_id", referencedColumnName = "user"),
-            @JoinColumn(name = "friend_id", referencedColumnName = "friend")
-    })
-    private Set<Friend> friends;
-
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name = "feed_id")
     private Set<Feed> feeds;
+
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "pk.friend")
+    private Set<Friend> friends;
 
     // no args constructor needed for hibernate
     public User() {

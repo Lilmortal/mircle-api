@@ -88,14 +88,14 @@ public class User {
     @ApiModelProperty(notes = "Is user currently logged in", required = true)
     private boolean loggedIn;
 
-    @OneToOne(cascade = CascadeType.MERGE)
+    @OneToOne(cascade = CascadeType.ALL)
     private ProfileImage profileImage;
 
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name = "feed_id")
     private Set<Feed> feeds;
 
-    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "pk.friend")
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER, mappedBy = "pk.friend")
     private Set<Friend> friends;
 
     // no args constructor needed for hibernate

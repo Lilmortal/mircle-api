@@ -18,7 +18,7 @@ public class FriendPK implements Serializable {
     @JoinColumn(name = "user_id")
     private User user;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "friend_id")
     private User friend;
 

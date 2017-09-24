@@ -2,6 +2,7 @@ spring:
   jackson:
     serialization:
       write_dates_as_timestamps: false
+      FAIL_ON_EMPTY_BEANS: false
 
 server:
   contextPath: /api/v${API_VERSION}

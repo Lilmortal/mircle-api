@@ -13,6 +13,9 @@ public class Friend {
     @EmbeddedId
     private FriendPK pk;
 
+    @Transient
+    private User friend;
+
     @Column(name = "addedTime")
     private LocalDateTime addedTime;
 
@@ -21,6 +24,7 @@ public class Friend {
 
     public Friend(User user, User friend, LocalDateTime addedTime) {
         this.pk = new FriendPK(user, friend);
+        this.friend = friend;
         this.addedTime = addedTime;
     }
 
@@ -30,6 +34,14 @@ public class Friend {
 
     public void setPk(FriendPK pk) {
         this.pk = pk;
+    }
+
+    public User getFriend() {
+        return friend;
+    }
+
+    public void setFriend(User friend) {
+        this.friend = friend;
     }
 
     public LocalDateTime getAddedTime() {

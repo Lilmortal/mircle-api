@@ -22,7 +22,7 @@ public interface UserService {
 
   void deleteUser(User user);
 
-  void addFriend(User user, User friend);
+  Friend addFriend(User user, User friend);
 
   Set<Friend> findFriends(Long id);
 

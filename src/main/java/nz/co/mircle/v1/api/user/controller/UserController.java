@@ -302,18 +302,19 @@ public class UserController {
             @PathVariable("id") Long id, @PathVariable("friendId") Long friendId) {
         LOG.info(String.format("Adding user ID %d friend ID...", id));
 
+        Friend friend;
         try {
             User user = userService.findUser(id);
-            User friend = userService.findUser(friendId);
-            userService.addFriend(user, friend);
-            LOG.info(String.format("%s %s is now on %s %s friends list.", friend.getFirstName(), friend.getSurname(), user.getFirstName(), user.getSurname()));
+            User userFriend = userService.findUser(friendId);
+            friend = userService.addFriend(user, userFriend);
+            LOG.info(String.format("%s %s is now on %s %s friends list.", userFriend.getFirstName(), userFriend.getSurname(), user.getFirstName(), user.getSurname()));
         } catch (Exception e) {
             LOG.error(String.format("Attempt to find a user with id %d friends failed.", id));
             LOG.error(e.getMessage());
             return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
 
-        return new ResponseEntity<>(HttpStatus.OK);
+        return new ResponseEntity<>(friend, HttpStatus.OK);
     }
 
     @ApiOperation(value = "Getting a user by id", response = Iterable.class)

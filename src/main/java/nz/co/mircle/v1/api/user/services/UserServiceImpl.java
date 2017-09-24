@@ -4,6 +4,7 @@ import com.amazonaws.AmazonServiceException;
 
 import java.net.URL;
 import java.time.LocalDateTime;
+import java.util.HashSet;
 import java.util.Set;
 
 import nz.co.mircle.v1.api.feeds.model.Feed;
@@ -19,10 +20,13 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
+
 /**
  * List of user services implementation that are used to call the repository.
  */
 @Service
+@Transactional
 public class UserServiceImpl implements UserService {
     private final Logger LOG = LoggerFactory.getLogger(getClass());
 
@@ -92,11 +96,12 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void addFriend(User user, User friend) {
+    public Friend addFriend(User user, User friend) {
         LocalDateTime addedTime = LocalDateTime.now();
         Friend userFriend = new Friend(user, friend, addedTime);
         user.getFriends().add(userFriend);
         userRepository.save(user);
+        return userFriend;
     }
 
     @Override

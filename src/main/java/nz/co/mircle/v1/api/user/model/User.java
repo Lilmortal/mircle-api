@@ -59,8 +59,7 @@ public class User {
     private String gender;
 
     @Column(name = "phone_number")
-    @NotNull
-    @ApiModelProperty(notes = "User phone number", required = false)
+    @ApiModelProperty(notes = "User phone number")
     private String phoneNumber;
 
     @Column(name = "birth_date")
@@ -69,8 +68,7 @@ public class User {
     private LocalDateTime birthDate;
 
     @Column(name = "occupation")
-    @NotNull
-    @ApiModelProperty(notes = "User occupation", required = false)
+    @ApiModelProperty(notes = "User occupation")
     private String occupation;
 
     @Column(name = "created_on")

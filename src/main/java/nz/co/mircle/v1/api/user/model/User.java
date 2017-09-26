@@ -1,24 +1,25 @@
 package nz.co.mircle.v1.api.user.model;
 
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import io.swagger.annotations.ApiModelProperty;
 
 import java.time.LocalDateTime;
-import java.util.List;
 import java.util.Set;
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 
 import nz.co.mircle.v1.api.feeds.model.Feed;
 import nz.co.mircle.v1.api.profileImage.model.ProfileImage;
-import org.codehaus.jackson.annotate.JsonIgnore;
-import org.codehaus.jackson.annotate.JsonProperty;
 
 /**
  * User entity.
  */
 @Entity
 @Table(name = "usr")
+@JsonIdentityInfo(
+        generator = ObjectIdGenerators.PropertyGenerator.class,
+        property = "id")
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -56,8 +57,7 @@ public class User {
     private String gender;
 
     @Column(name = "phone_number")
-    @NotNull
-    @ApiModelProperty(notes = "User phone number", required = false)
+    @ApiModelProperty(notes = "User phone number")
     private String phoneNumber;
 
     @Column(name = "birth_date")
@@ -66,8 +66,7 @@ public class User {
     private LocalDateTime birthDate;
 
     @Column(name = "occupation")
-    @NotNull
-    @ApiModelProperty(notes = "User occupation", required = false)
+    @ApiModelProperty(notes = "User occupation")
     private String occupation;
 
     @Column(name = "created_on")
@@ -85,26 +84,22 @@ public class User {
     @ApiModelProperty(notes = "Is user currently logged in", required = true)
     private boolean loggedIn;
 
-    @OneToOne(cascade = CascadeType.MERGE)
+    @OneToOne(cascade = CascadeType.ALL)
     private ProfileImage profileImage;
-
-    @ManyToMany
-    @JoinTable(name = "user_friends")
-    @JoinColumns({
-            @JoinColumn(name = "user_id", referencedColumnName = "id"),
-            @JoinColumn(name = "friend_id", referencedColumnName = "id")
-    })
-    private Set<User> friends;
 
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name = "feed_id")
     private Set<Feed> feeds;
 
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY/*, mappedBy = "pk.friend"*/)
+    @JoinColumn(name = "user_id")
+    private Set<UserFriend> userFriends;
+
     // no args constructor needed for hibernate
     public User() {
     }
 
-    public User(String emailAddress, String password, String firstName, String surname, String gender, String phoneNumber, LocalDateTime birthDate, String occupation, LocalDateTime createdOn, LocalDateTime lastLoggedIn, boolean loggedIn, ProfileImage profileImage, Set<User> friends, Set<Feed> feeds) {
+    public User(String emailAddress, String password, String firstName, String surname, String gender, String phoneNumber, LocalDateTime birthDate, String occupation, LocalDateTime createdOn, LocalDateTime lastLoggedIn, boolean loggedIn, ProfileImage profileImage, Set<UserFriend> userFriends, Set<Feed> feeds) {
         this.emailAddress = emailAddress;
         this.password = password;
         this.firstName = firstName;
@@ -117,7 +112,7 @@ public class User {
         this.lastLoggedIn = lastLoggedIn;
         this.loggedIn = loggedIn;
         this.profileImage = profileImage;
-        this.friends = friends;
+        this.userFriends = userFriends;
         this.feeds = feeds;
     }
 
@@ -233,12 +228,12 @@ public class User {
         this.profileImage = profileImage;
     }
 
-    public Set<User> getFriends() {
-        return friends;
+    public Set<UserFriend> getUserFriends() {
+        return userFriends;
     }
 
-    public void setFriends(Set<User> friends) {
-        this.friends = friends;
+    public void setUserFriends(Set<UserFriend> userFriends) {
+        this.userFriends = userFriends;
     }
 
     public Set<Feed> getFeeds() {

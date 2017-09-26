@@ -1,7 +1,6 @@
 package nz.co.mircle.v1.api.user.services;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
 
 import nz.co.mircle.v1.api.profileImage.model.ProfileImage;
@@ -15,13 +14,9 @@ import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.InjectMocks;
-import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnit;
 import org.mockito.junit.MockitoRule;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.context.annotation.Bean;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.test.context.ContextConfiguration;
@@ -174,7 +169,7 @@ public class UserServiceImplTest {
         sb.append(String.format("\"lastLoggedIn\":\"%s\",", user.getLastLoggedIn()));
         sb.append(String.format("\"loggedIn\":%b,", user.isLoggedIn()));
         sb.append(String.format("\"profileImage\":%s", user.getProfileImage()));
-        sb.append(String.format("\"friends\":%s", user.getFriends()));
+        sb.append(String.format("\"friends\":%s", user.getUserFriends()));
         sb.append(String.format("\"feeds\":%s", user.getFeeds()));
         sb.append("}");
         return sb.toString();

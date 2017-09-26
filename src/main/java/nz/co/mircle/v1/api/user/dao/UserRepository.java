@@ -12,7 +12,6 @@ import java.util.List;
  */
 @Repository
 public interface UserRepository extends CrudRepository<User, Long> {
-    @EntityGraph(attributePaths = {"friends"})
     User findById(Long id);
 
     User findByUsername(String username);

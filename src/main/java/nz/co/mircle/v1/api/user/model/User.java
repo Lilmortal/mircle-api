@@ -1,8 +1,6 @@
 package nz.co.mircle.v1.api.user.model;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import io.swagger.annotations.ApiModelProperty;
 
@@ -95,13 +93,13 @@ public class User {
 
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY/*, mappedBy = "pk.friend"*/)
     @JoinColumn(name = "user_id")
-    private Set<Friend> friends;
+    private Set<UserFriend> userFriends;
 
     // no args constructor needed for hibernate
     public User() {
     }
 
-    public User(String emailAddress, String password, String firstName, String surname, String gender, String phoneNumber, LocalDateTime birthDate, String occupation, LocalDateTime createdOn, LocalDateTime lastLoggedIn, boolean loggedIn, ProfileImage profileImage, Set<Friend> friends, Set<Feed> feeds) {
+    public User(String emailAddress, String password, String firstName, String surname, String gender, String phoneNumber, LocalDateTime birthDate, String occupation, LocalDateTime createdOn, LocalDateTime lastLoggedIn, boolean loggedIn, ProfileImage profileImage, Set<UserFriend> userFriends, Set<Feed> feeds) {
         this.emailAddress = emailAddress;
         this.password = password;
         this.firstName = firstName;
@@ -114,7 +112,7 @@ public class User {
         this.lastLoggedIn = lastLoggedIn;
         this.loggedIn = loggedIn;
         this.profileImage = profileImage;
-        this.friends = friends;
+        this.userFriends = userFriends;
         this.feeds = feeds;
     }
 
@@ -230,12 +228,12 @@ public class User {
         this.profileImage = profileImage;
     }
 
-    public Set<Friend> getFriends() {
-        return friends;
+    public Set<UserFriend> getUserFriends() {
+        return userFriends;
     }
 
-    public void setFriends(Set<Friend> friends) {
-        this.friends = friends;
+    public void setUserFriends(Set<UserFriend> userFriends) {
+        this.userFriends = userFriends;
     }
 
     public Set<Feed> getFeeds() {

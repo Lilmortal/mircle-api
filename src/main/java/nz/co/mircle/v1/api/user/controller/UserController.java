@@ -7,17 +7,16 @@ import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 import java.net.URL;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.List;
 import java.util.Set;
 
 import nz.co.mircle.v1.api.feeds.model.Feed;
 import nz.co.mircle.v1.api.profileImage.services.ProfileImageService;
 import nz.co.mircle.v1.api.user.model.Friend;
+import nz.co.mircle.v1.api.user.model.UserFriend;
 import nz.co.mircle.v1.api.user.model.User;
 import nz.co.mircle.v1.api.user.services.UserService;
 import org.apache.commons.lang3.StringUtils;
@@ -128,14 +127,14 @@ public class UserController {
     )
     @PatchMapping("/{id}")
     public ResponseEntity updateUser(
-            @PathVariable("id") String emailAddress,
+            @PathVariable("id") Long id,
             @RequestParam(value = "gender", required = false) String gender,
             @RequestParam(value = "phonenumber", required = false) String phoneNumber,
             @RequestParam(value = "birthdate", required = false) String birthDate,
             @RequestParam(value = "occupation", required = false) String occupation) {
         try {
-            LOG.info(String.format("Updating %s details...", emailAddress));
-            User user = userService.findUser(emailAddress);
+            LOG.info(String.format("Updating user %d details...", id));
+            User user = userService.findUser(id);
 
             if (!StringUtils.isBlank(gender)) {
                 user.setGender(gender);
@@ -334,17 +333,17 @@ public class UserController {
     public ResponseEntity findAllFriends(@PathVariable("id") Long id) {
         LOG.info(String.format("Getting user ID %d friends...", id));
 
-        Set<Friend> friends;
+        Set<Friend> userFriends;
         try {
-            friends = userService.findFriends(id);
-            LOG.info(String.format("User %d friends found.", id));
+            userFriends = userService.findFriends(id);
+            LOG.info(String.format("User %d userFriends found.", id));
         } catch (Exception e) {
-            LOG.error(String.format("Attempt to find a user with id %d friends failed.", id));
+            LOG.error(String.format("Attempt to find a user with id %d userFriends failed.", id));
             LOG.error(e.getMessage());
             return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
 
-        return new ResponseEntity<>(friends, HttpStatus.OK);
+        return new ResponseEntity<>(userFriends, HttpStatus.OK);
     }
 
     @ApiOperation(value = "Getting a user by id", response = Iterable.class)

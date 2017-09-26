@@ -4,14 +4,15 @@ import com.amazonaws.AmazonServiceException;
 
 import java.net.URL;
 import java.time.LocalDateTime;
-import java.util.HashSet;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import nz.co.mircle.v1.api.feeds.model.Feed;
 import nz.co.mircle.v1.api.profileImage.model.ProfileImage;
 import nz.co.mircle.v1.api.profileImage.services.ProfileImageService;
 import nz.co.mircle.v1.api.user.dao.UserRepository;
 import nz.co.mircle.v1.api.user.model.Friend;
+import nz.co.mircle.v1.api.user.model.UserFriend;
 import nz.co.mircle.v1.api.user.model.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -98,23 +99,29 @@ public class UserServiceImpl implements UserService {
     @Override
     public Friend addFriend(User user, User friend) {
         LocalDateTime addedTime = LocalDateTime.now();
-        Friend userFriend = new Friend(user, friend, addedTime);
-        user.getFriends().add(userFriend);
+        UserFriend userUserFriend = new UserFriend(user, friend, addedTime);
+        user.getUserFriends().add(userUserFriend);
         userRepository.save(user);
-        return userFriend;
+
+        Friend newFriend = new Friend(user, addedTime);
+        return newFriend;
     }
 
     @Override
     public Set<Friend> findFriends(Long id) {
         User user = userRepository.findById(id);
-        return user.getFriends();
+        Set<Friend> friends = user.getUserFriends().stream().map(userFriend -> {
+            Friend friend = new Friend(userFriend.getPk().getFriend(), userFriend.getAddedTime());
+            return friend;
+        }).collect(Collectors.toSet());
+        return friends;
     }
 
     @Override
     public void deleteFriend(Long id, Long friendId) {
         User user = userRepository.findById(id);
         User friend = userRepository.findById(friendId);
-        user.getFriends().remove(friend);
+        user.getUserFriends().remove(friend);
         userRepository.save(user);
     }
 

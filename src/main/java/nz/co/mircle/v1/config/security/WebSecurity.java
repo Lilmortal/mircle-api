@@ -1,8 +1,8 @@
-package nz.co.mircle.v1.config;
+package nz.co.mircle.v1.config.security;
 
-import static nz.co.mircle.v1.config.SecurityConstants.REGISTER_URL;
+import static nz.co.mircle.v1.config.security.SecurityConstants.REGISTER_URL;
 
-import nz.co.mircle.EnvironmentVariablesConfig;
+import nz.co.mircle.v1.config.environment.EnvironmentVariablesConfig;
 import nz.co.mircle.v1.config.filter.JWTAuthenticationFilter;
 import nz.co.mircle.v1.config.filter.JWTAuthorizationFilter;
 import org.springframework.context.annotation.Bean;

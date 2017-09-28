@@ -1,4 +1,4 @@
-package nz.co.mircle;
+package nz.co.mircle.v1.config.swagger;
 
 import java.util.ArrayList;
 import org.springframework.context.annotation.Bean;

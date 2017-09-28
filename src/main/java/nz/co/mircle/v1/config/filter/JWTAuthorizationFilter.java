@@ -1,7 +1,7 @@
 package nz.co.mircle.v1.config.filter;
 
-import static nz.co.mircle.v1.config.SecurityConstants.HEADER_STRING;
-import static nz.co.mircle.v1.config.SecurityConstants.TOKEN_PREFIX;
+import static nz.co.mircle.v1.config.security.SecurityConstants.HEADER_STRING;
+import static nz.co.mircle.v1.config.security.SecurityConstants.TOKEN_PREFIX;
 
 import io.jsonwebtoken.Jwts;
 import java.io.IOException;
@@ -10,7 +10,7 @@ import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import nz.co.mircle.EnvironmentVariablesConfig;
+import nz.co.mircle.v1.config.environment.EnvironmentVariablesConfig;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;

@@ -1,4 +1,4 @@
-package nz.co.mircle;
+package nz.co.mircle.v1.config.environment;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;

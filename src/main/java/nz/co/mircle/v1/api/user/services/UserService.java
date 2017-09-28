@@ -2,7 +2,6 @@ package nz.co.mircle.v1.api.user.services;
 
 import java.net.URL;
 import java.util.Set;
-
 import nz.co.mircle.v1.api.feeds.model.Feed;
 import nz.co.mircle.v1.api.user.model.Friend;
 import nz.co.mircle.v1.api.user.model.User;

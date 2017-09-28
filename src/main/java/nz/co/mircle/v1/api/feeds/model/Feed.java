@@ -5,8 +5,6 @@ import java.io.Serializable;
 import java.time.LocalDateTime;
 import javax.persistence.*;
 import nz.co.mircle.v1.api.profileImage.model.ProfileImage;
-import nz.co.mircle.v1.api.user.model.User;
-import org.codehaus.jackson.annotate.JsonIgnore;
 
 @Entity
 @Table(name = "feeds")

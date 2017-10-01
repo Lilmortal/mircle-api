@@ -8,8 +8,8 @@ import org.springframework.stereotype.Controller;
 
 @Controller
 public class FriendController {
-    @MessageMapping("/connect")
-    @SendTo("/friend/request")
+    @MessageMapping("/request")
+    @SendTo("/pending/request")
     public Message sendFriendRequest(FriendRequest friendRequest) {
         String message =
                 String.format(

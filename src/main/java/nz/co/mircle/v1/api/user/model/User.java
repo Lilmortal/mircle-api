@@ -87,8 +87,7 @@ public class User {
     @OneToOne(cascade = CascadeType.ALL)
     private ProfileImage profileImage;
 
-    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @JoinColumn(name = "feed_id")
+    @OneToMany(mappedBy = "id", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private Set<Feed> feeds;
 
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY/*, mappedBy = "pk.friend"*/)
